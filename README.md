@@ -23,7 +23,7 @@ The module will configure for you several response headers with the values recom
 
 If you wish to modify them you can do so from the configuration:
 
-```js
+```ts
  helm: {
   crossOriginResourcePolicy: string | boolean;
   crossOriginOpenerPolicy: string | boolean;
@@ -38,7 +38,7 @@ If you wish to modify them you can do so from the configuration:
   xFrameOptions: string | boolean;
   xPermittedCrossDomainPolicies: string | boolean;
   xXSSProtection: number | boolean;
-  }
+}
 ```
 
 The default values are as follows:
