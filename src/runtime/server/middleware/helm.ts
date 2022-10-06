@@ -1,6 +1,7 @@
 import { setHeaders, defineEventHandler } from 'h3'
 import { useRuntimeConfig } from '#imports'
 
+// Probably will be removed due to easier working with separate middlewares
 const helmConfig = useRuntimeConfig().helm
 
 export default defineEventHandler((event) => {

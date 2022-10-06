@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     MyModule
   ],
   helm: {
-    crossOriginResourcePolicy: 'same-origin',
+    crossOriginResourcePolicy: false,
     crossOriginOpenerPolicy: 'same-origin',
     // Other headers
   }

@@ -4,19 +4,19 @@ import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
 
 export interface ModuleOptions {
-  crossOriginResourcePolicy: string;
-  crossOriginOpenerPolicy: string;
-  crossOriginEmbedderPolicy: string;
-  contentSecurityPolicy: string;
-  originAgentCluster: string;
-  referrerPolicy: string;
-  strictTransportSecurity: string;
-  xContentTypeOptions: string;
-  xDNSPrefetchControl: string;
-  xDownloadOptions: string;
-  xFrameOptions: string;
-  xPermittedCrossDomainPolicies: string;
-  xXSSProtection: number;
+  crossOriginResourcePolicy: string | boolean;
+  crossOriginOpenerPolicy: string | boolean;
+  crossOriginEmbedderPolicy: string | boolean;
+  contentSecurityPolicy: string | boolean;
+  originAgentCluster: string | boolean;
+  referrerPolicy: string | boolean;
+  strictTransportSecurity: string | boolean;
+  xContentTypeOptions: string | boolean;
+  xDNSPrefetchControl: string | boolean;
+  xDownloadOptions: string | boolean;
+  xFrameOptions: string | boolean;
+  xPermittedCrossDomainPolicies: string | boolean;
+  xXSSProtection: number | boolean;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -45,6 +45,12 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.helm = defu(nuxt.options.runtimeConfig.helm, {
       ...options
     })
-    addServerHandler({ route: '', handler: resolve(runtimeDir, 'server/middleware/helm') })
+
+    // Register enabled middlewares that will return appriopriate security headers
+    for (const header in nuxt.options.runtimeConfig.helm) {
+      if (nuxt.options.runtimeConfig.helm[header]) {
+        addServerHandler({ route: '', handler: resolve(runtimeDir, `server/middleware/${header}`) })
+      }
+    }
   }
 })
