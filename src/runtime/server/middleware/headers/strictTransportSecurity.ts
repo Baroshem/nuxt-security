@@ -1,8 +1,8 @@
 import { setHeader, defineEventHandler } from 'h3'
 import { useRuntimeConfig } from '#imports'
 
-const helmConfig = useRuntimeConfig().helm
+const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler((event) => {
-  setHeader(event, 'X-Download-Options', helmConfig.xDownloadOptions)
+  setHeader(event, 'Strict-Transport-Security', securityConfig.headers.strictTransportSecurity)
 })
