@@ -3,6 +3,11 @@ import { fileURLToPath } from 'url'
 import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
 
+export type RequestSizeLimiter = {
+  maxRequestSizeInBytes: number;
+  maxUploadFileRequestInBytes: number;
+}
+
 export interface ModuleOptions {
   crossOriginResourcePolicy: string | boolean;
   crossOriginOpenerPolicy: string | boolean;
@@ -17,6 +22,7 @@ export interface ModuleOptions {
   xFrameOptions: string | boolean;
   xPermittedCrossDomainPolicies: string | boolean;
   xXSSProtection: number | boolean;
+  requestSizeLimiter: RequestSizeLimiter | boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -37,7 +43,11 @@ export default defineNuxtModule<ModuleOptions>({
     xDownloadOptions: 'noopen',
     xFrameOptions: 'SAMEORIGIN',
     xPermittedCrossDomainPolicies: 'none',
-    xXSSProtection: 0
+    xXSSProtection: 0,
+    requestSizeLimiter: {
+      maxRequestSizeInBytes: 2000000,
+      maxUploadFileRequestInBytes: 8000000
+    }
   },
   setup (options, nuxt) {
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
@@ -51,6 +61,10 @@ export default defineNuxtModule<ModuleOptions>({
       if (nuxt.options.runtimeConfig.helm[header]) {
         addServerHandler({ route: '', handler: resolve(runtimeDir, `server/middleware/${header}`) })
       }
+    }
+
+    if(nuxt.options.runtimeConfig.security.requestSizeLimiter) {
+      addServerHandler({ route: '', handler: resolve(runtimeDir, 'server/middleware/requestSizeLimiter') })
     }
   }
 })
