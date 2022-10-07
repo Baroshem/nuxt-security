@@ -2,32 +2,7 @@ import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
-
-export type RequestSizeLimiter = {
-  maxRequestSizeInBytes: number;
-  maxUploadFileRequestInBytes: number;
-};
-
-export type SecurityHeaders = {
-  crossOriginResourcePolicy: string | boolean;
-  crossOriginOpenerPolicy: string | boolean;
-  crossOriginEmbedderPolicy: string | boolean;
-  contentSecurityPolicy: string | boolean;
-  originAgentCluster: string | boolean;
-  referrerPolicy: string | boolean;
-  strictTransportSecurity: string | boolean;
-  xContentTypeOptions: string | boolean;
-  xDNSPrefetchControl: string | boolean;
-  xDownloadOptions: string | boolean;
-  xFrameOptions: string | boolean;
-  xPermittedCrossDomainPolicies: string | boolean;
-  xXSSProtection: number | boolean;
-};
-
-export interface ModuleOptions {
-  headers: SecurityHeaders;
-  requestSizeLimiter: RequestSizeLimiter | boolean
-}
+import { ModuleOptions } from './types'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -69,7 +44,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
-    // Register requestSizeLimiter middleware with default values that will throw an error when the payload will be too big.
+    // Register requestSizeLimiter middleware with default values that will throw an error when the payload will be too big for methods like POST/PUT/DELETE.
     if(nuxt.options.runtimeConfig.security.requestSizeLimiter) {
       addServerHandler({ route: '', handler: resolve(runtimeDir, 'server/middleware/requestSizeLimiter') })
     }
