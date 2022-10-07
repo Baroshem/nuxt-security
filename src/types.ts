@@ -3,6 +3,12 @@ export type RequestSizeLimiter = {
   maxUploadFileRequestInBytes: number;
 };
 
+export type RateLimiter = {
+  tokensPerInterval: number;
+  interval: string | number;
+  fireImmediately?: boolean;
+};
+
 export type SecurityHeaders = {
   crossOriginResourcePolicy: string | boolean;
   crossOriginOpenerPolicy: string | boolean;
@@ -21,5 +27,6 @@ export type SecurityHeaders = {
 
 export interface ModuleOptions {
   headers: SecurityHeaders;
-  requestSizeLimiter: RequestSizeLimiter | boolean
+  requestSizeLimiter: RequestSizeLimiter | boolean;
+  rateLimiter: RateLimiter | boolean;
 }

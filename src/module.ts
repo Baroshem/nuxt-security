@@ -4,6 +4,8 @@ import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
 import { ModuleOptions } from './types'
 
+// TODO: add route to each middleware attached so that it can be added on certain routes and globally.
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-security',
@@ -28,6 +30,11 @@ export default defineNuxtModule<ModuleOptions>({
     requestSizeLimiter: {
       maxRequestSizeInBytes: 2000000,
       maxUploadFileRequestInBytes: 8000000
+    },
+    rateLimiter: {
+      // Twitter search rate limiting
+      tokensPerInterval: 150,
+      interval: "hour"
     }
   },
   setup (options, nuxt) {
@@ -47,6 +54,12 @@ export default defineNuxtModule<ModuleOptions>({
     // Register requestSizeLimiter middleware with default values that will throw an error when the payload will be too big for methods like POST/PUT/DELETE.
     if(nuxt.options.runtimeConfig.security.requestSizeLimiter) {
       addServerHandler({ route: '', handler: resolve(runtimeDir, 'server/middleware/requestSizeLimiter') })
+    }
+
+    // Register rateLimiter middleware with default values that will throw an error when there will be too many requests from the same IP during certain interval.
+    // Based on 'limiter' package and stored in 'memory-cache'
+    if (nuxt.options.runtimeConfig.security.rateLimiter) {
+      addServerHandler({ route: '', handler: resolve(runtimeDir, 'server/middleware/rateLimiter') })
     }
   }
 })
