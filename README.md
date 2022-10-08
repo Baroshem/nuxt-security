@@ -73,8 +73,8 @@ export interface ModuleOptions {
 The default values are as follows:
 
 ```js
-  security: {
-    headers: {
+security: {
+  headers: {
     crossOriginResourcePolicy: {
       value: "same-origin",
       route: '',,
@@ -145,7 +145,7 @@ The default values are as follows:
     },
     route: '',,
   },
-  }
+}
 ```
 
 ## Development
