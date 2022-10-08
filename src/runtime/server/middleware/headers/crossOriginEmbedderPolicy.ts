@@ -4,5 +4,5 @@ import { useRuntimeConfig } from '#imports'
 const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler((event) => {
-  setHeader(event, 'Cross-Origin-Embedder-Policy', securityConfig.headers.crossOriginEmbedderPolicy)
+  setHeader(event, 'Cross-Origin-Embedder-Policy', securityConfig.headers.crossOriginEmbedderPolicy.value)
 })

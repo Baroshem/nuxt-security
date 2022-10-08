@@ -4,5 +4,5 @@ import { useRuntimeConfig } from '#imports'
 const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler((event) => {
-  setHeader(event, 'X-Frame-Options', securityConfig.headers.xFrameOptions)
+  setHeader(event, 'X-Frame-Options', securityConfig.headers.xFrameOptions.value)
 })

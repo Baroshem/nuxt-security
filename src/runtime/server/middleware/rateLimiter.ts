@@ -10,15 +10,16 @@ export default defineEventHandler(async (event) => {
   let cachedLimiter;
   if (!cache.get(ip)) {
     // TODO: send rate limiting configuration from the module
-    cachedLimiter = new RateLimiter(securityConfig.rateLimiter)
+    cachedLimiter = new RateLimiter(securityConfig.rateLimiter.value)
     cache.put(ip, cachedLimiter, 10000)
   } else {
     cachedLimiter = cache.get(ip)
-    if(cachedLimiter.getTokensRemaining() > 1) {
+    if (cachedLimiter.getTokensRemaining() > 1) {
       cachedLimiter.removeTokens(1)
       cache.put(ip, cachedLimiter, 10000)
+    } else {
+      const error = createError({ statusCode: 429, statusMessage: 'Too Many Requests' })
+      sendError(event, error)
     }
-    const error = createError({ statusCode: 429, statusMessage: 'Too Many Requests' })
-    sendError(event, error)
   }
 })

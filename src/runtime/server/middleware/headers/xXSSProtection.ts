@@ -4,5 +4,5 @@ import { useRuntimeConfig } from '#imports'
 const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler((event) => {
-  setHeader(event, 'X-XSS-Protection', securityConfig.headers.xXSSProtection)
+  setHeader(event, 'X-XSS-Protection', securityConfig.headers.xXSSProtection.value)
 })

@@ -4,5 +4,5 @@ import { useRuntimeConfig } from '#imports'
 const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler((event) => {
-  setHeader(event, 'Strict-Transport-Security', securityConfig.headers.strictTransportSecurity)
+  setHeader(event, 'Strict-Transport-Security', securityConfig.headers.strictTransportSecurity.value)
 })

@@ -9,24 +9,29 @@ export type RateLimiter = {
   fireImmediately?: boolean;
 };
 
+export type MiddlewareConfiguration<MIDDLEWARE> = {
+  value: MIDDLEWARE;
+  route: string;
+}
+
 export type SecurityHeaders = {
-  crossOriginResourcePolicy: string | boolean;
-  crossOriginOpenerPolicy: string | boolean;
-  crossOriginEmbedderPolicy: string | boolean;
-  contentSecurityPolicy: string | boolean;
-  originAgentCluster: string | boolean;
-  referrerPolicy: string | boolean;
-  strictTransportSecurity: string | boolean;
-  xContentTypeOptions: string | boolean;
-  xDNSPrefetchControl: string | boolean;
-  xDownloadOptions: string | boolean;
-  xFrameOptions: string | boolean;
-  xPermittedCrossDomainPolicies: string | boolean;
-  xXSSProtection: number | boolean;
+  crossOriginResourcePolicy: MiddlewareConfiguration<string> | boolean;
+  crossOriginOpenerPolicy: MiddlewareConfiguration<string> | boolean;
+  crossOriginEmbedderPolicy: MiddlewareConfiguration<string> | boolean;
+  contentSecurityPolicy: MiddlewareConfiguration<string> | boolean;
+  originAgentCluster: MiddlewareConfiguration<string> | boolean;
+  referrerPolicy: MiddlewareConfiguration<string> | boolean;
+  strictTransportSecurity: MiddlewareConfiguration<string> | boolean;
+  xContentTypeOptions: MiddlewareConfiguration<string> | boolean;
+  xDNSPrefetchControl: MiddlewareConfiguration<string> | boolean;
+  xDownloadOptions: MiddlewareConfiguration<string> | boolean;
+  xFrameOptions: MiddlewareConfiguration<string> | boolean;
+  xPermittedCrossDomainPolicies: MiddlewareConfiguration<string> | boolean;
+  xXSSProtection: MiddlewareConfiguration<number> | boolean;
 };
 
 export interface ModuleOptions {
   headers: SecurityHeaders;
-  requestSizeLimiter: RequestSizeLimiter | boolean;
-  rateLimiter: RateLimiter | boolean;
+  requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | boolean;
+  rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
 }

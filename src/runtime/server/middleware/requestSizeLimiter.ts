@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 
     const isFileUpload = contentTypeValue?.includes(FILE_UPLOAD_HEADER)
 
-    const requestLimit = isFileUpload ? securityConfig.requestSizeLimiter.maxUploadFileRequestInBytes : securityConfig.requestSizeLimiter.maxRequestSizeInBytes
+    const requestLimit = isFileUpload ? securityConfig.requestSizeLimiter.value.maxUploadFileRequestInBytes : securityConfig.requestSizeLimiter.value.maxRequestSizeInBytes
 
     if (parseInt(contentLengthValue as string) >= requestLimit) {
       const error = createError({ statusCode: 413, statusMessage: 'Payload Too Large' })

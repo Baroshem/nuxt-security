@@ -4,5 +4,5 @@ import { useRuntimeConfig } from '#imports'
 const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler((event) => {
-  setHeader(event, 'X-Permitted-Cross-Domain-Policies', securityConfig.headers.xPermittedCrossDomainPolicies)
+  setHeader(event, 'X-Permitted-Cross-Domain-Policies', securityConfig.headers.xPermittedCrossDomainPolicies.value)
 })
