@@ -1,12 +1,19 @@
-# nuxt-helm
+# nuxt-security
 
-This module is a H3/Nuxt version of the popular Express Middleware [helmet](https://helmetjs.github.io/) or check out the [GitHub Repository](https://github.com/helmetjs/helmet). `nuxt-helm` automatically sets the same response headers for H3 events as a global Nuxt middleware.
+[OWASP Top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#nodejs-security-cheat-sheet) module that adds a few security improvements in form of a customizable server middlewares to your Nuxt 3 application. All middlewares can be modified or disabled if needed. They can also be configured to work only on certain routes. By default all middlewares are configured to work globally.
+
+## Features
+
+* Same Security headers set as by popular Express.js middleware [helmet](https://helmetjs.github.io/)
+* Request Size Limiter solving [this](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#set-request-size-limits)
+* Rate Limiter solving [this](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#take-precautions-against-brute-forcing)
+* Parameter Polution is handled by Nuxt automatically
 
 ## Usage
 
 ```sh
-yarn add nuxt-helm # yarn
-npm i nuxt-helm # npm
+yarn add nuxt-security # yarn
+npm i nuxt-security # npm
 ```
 
 ```javascript
@@ -14,50 +21,130 @@ npm i nuxt-helm # npm
 
 {
   modules: [
-    "nuxt-helm",
+    "nuxt-security",
   ],
 }
 ```
 
-The module will configure for you several response headers with the values recommended by Helmet.
+The module will configure for you several response headers with the values recommended by Helmet as well as two custom middlewares for rate and request size limiting.
 
 If you wish to modify them you can do so from the configuration:
 
 ```ts
- helm: {
-  crossOriginResourcePolicy: string | boolean;
-  crossOriginOpenerPolicy: string | boolean;
-  crossOriginEmbedderPolicy: string | boolean;
-  contentSecurityPolicy: string | boolean;
-  originAgentCluster: string | boolean;
-  referrerPolicy: string | boolean;
-  strictTransportSecurity: string | boolean;
-  xContentTypeOptions: string | boolean;
-  xDNSPrefetchControl: string | boolean;
-  xDownloadOptions: string | boolean;
-  xFrameOptions: string | boolean;
-  xPermittedCrossDomainPolicies: string | boolean;
-  xXSSProtection: number | boolean;
+export type RequestSizeLimiter = {
+  maxRequestSizeInBytes: number;
+  maxUploadFileRequestInBytes: number;
+};
+
+export type RateLimiter = {
+  tokensPerInterval: number;
+  interval: string | number;
+  fireImmediately?: boolean;
+};
+
+export type MiddlewareConfiguration<MIDDLEWARE> = {
+  value: MIDDLEWARE;
+  route: string;
+}
+
+export type SecurityHeaders = {
+  crossOriginResourcePolicy: MiddlewareConfiguration<string> | boolean;
+  crossOriginOpenerPolicy: MiddlewareConfiguration<string> | boolean;
+  crossOriginEmbedderPolicy: MiddlewareConfiguration<string> | boolean;
+  contentSecurityPolicy: MiddlewareConfiguration<string> | boolean;
+  originAgentCluster: MiddlewareConfiguration<string> | boolean;
+  referrerPolicy: MiddlewareConfiguration<string> | boolean;
+  strictTransportSecurity: MiddlewareConfiguration<string> | boolean;
+  xContentTypeOptions: MiddlewareConfiguration<string> | boolean;
+  xDNSPrefetchControl: MiddlewareConfiguration<string> | boolean;
+  xDownloadOptions: MiddlewareConfiguration<string> | boolean;
+  xFrameOptions: MiddlewareConfiguration<string> | boolean;
+  xPermittedCrossDomainPolicies: MiddlewareConfiguration<string> | boolean;
+  xXSSProtection: MiddlewareConfiguration<number> | boolean;
+};
+
+export interface ModuleOptions {
+  headers: SecurityHeaders | boolean;
+  requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | boolean;
+  rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
 }
 ```
 
 The default values are as follows:
 
 ```js
-  helm: {
-    crossOriginResourcePolicy: "same-origin",
-    crossOriginOpenerPolicy: "same-origin",
-    crossOriginEmbedderPolicy: "require-corp",
-    contentSecurityPolicy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
-    originAgentCluster: '?1',
-    referrerPolicy: 'no-referrer',
-    strictTransportSecurity: 'max-age=15552000; includeSubDomains',
-    xContentTypeOptions: 'nosniff',
-    xDNSPrefetchControl: 'off',
-    xDownloadOptions: 'noopen',
-    xFrameOptions: 'SAMEORIGIN',
-    xPermittedCrossDomainPolicies: 'none',
-    xXSSProtection: 0
+  security: {
+    headers: {
+    crossOriginResourcePolicy: {
+      value: "same-origin",
+      route: '',,
+    },
+    crossOriginOpenerPolicy: {
+      value: "same-origin",
+      route: '',,
+    },
+    crossOriginEmbedderPolicy: {
+      value: "require-corp",
+      route: '',,
+    },
+    contentSecurityPolicy: {
+      value:
+        "base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+      route: '',,
+    },
+    originAgentCluster: {
+      value: "?1",
+      route: '',,
+    },
+    referrerPolicy: {
+      value: "no-referrer",
+      route: '',,
+    },
+    strictTransportSecurity: {
+      value: "max-age=15552000; includeSubDomains",
+      route: '',,
+    },
+    xContentTypeOptions: {
+      value: "nosniff",
+      route: '',,
+    },
+    xDNSPrefetchControl: {
+      value: "off",
+      route: '',,
+    },
+    xDownloadOptions: {
+      value: "noopen",
+      route: '',,
+    },
+    xFrameOptions: {
+      value: "SAMEORIGIN",
+      route: '',,
+    },
+    xPermittedCrossDomainPolicies: {
+      value: "none",
+      route: '',,
+    },
+    xXSSProtection: {
+      value: 0,
+      route: '',,
+    },
+  },
+  requestSizeLimiter: {
+    value: {
+      maxRequestSizeInBytes: 2000000,
+      maxUploadFileRequestInBytes: 8000000,
+    },
+    route: '',,
+  },
+  rateLimiter: {
+    // Twitter search rate limiting
+    value: {
+      tokensPerInterval: 150,
+      interval: "hour",
+      fireImmediately: true,
+    },
+    route: '',,
+  },
   }
 ```
 

@@ -31,7 +31,7 @@ export type SecurityHeaders = {
 };
 
 export interface ModuleOptions {
-  headers: SecurityHeaders;
+  headers: SecurityHeaders | boolean;
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | boolean;
   rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
 }
