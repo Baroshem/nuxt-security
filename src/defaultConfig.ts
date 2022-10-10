@@ -75,4 +75,8 @@ export const defaultSecurityConfig: ModuleOptions = {
     },
     ...defaultRoute,
   },
+  xssValidator: {
+    value: {},
+    ...defaultRoute
+  }
 };
