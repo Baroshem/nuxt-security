@@ -38,5 +38,12 @@ export default defineNuxtModule<ModuleOptions>({
     if (rateLimiterConfig) {
       addServerHandler({ route: rateLimiterConfig.route, handler: resolve(runtimeDir, 'server/middleware/rateLimiter') })
     }
+
+    // Register xssValidator middleware with default config that will return 400 Bad Request when either query or body will include unwanted characteds like <script>
+    // Based on 'xss' package and works for both GET and POST requests
+    const xssValidatorConfig = nuxt.options.runtimeConfig.security.xssValidator
+    if (xssValidatorConfig) {
+      addServerHandler({ route: xssValidatorConfig.route, handler: resolve(runtimeDir, 'server/middleware/xssValidator') })
+    }
   }
 })

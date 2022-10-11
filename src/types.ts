@@ -9,6 +9,13 @@ export type RateLimiter = {
   fireImmediately?: boolean;
 };
 
+export type XssValidator = {
+  whiteList: Record<string, any>;
+  stripIgnoreTag: boolean;
+  stripIgnoreTagBody: boolean;
+  css: Record<string, any> | boolean;
+} | {};
+
 export type MiddlewareConfiguration<MIDDLEWARE> = {
   value: MIDDLEWARE;
   route: string;
@@ -34,4 +41,5 @@ export interface ModuleOptions {
   headers: SecurityHeaders | boolean;
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | boolean;
   rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
+  xssValidator: MiddlewareConfiguration<XssValidator> | boolean;
 }
