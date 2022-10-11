@@ -8,6 +8,7 @@
 * Request Size Limiter solving [this](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#set-request-size-limits)
 * Rate Limiter solving [this](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#take-precautions-against-brute-forcing)
 * Parameter Polution is handled by Nuxt automatically
+* XSS Validator for both GET and POST requests
 
 ## Usage
 
@@ -47,6 +48,13 @@ export type MiddlewareConfiguration<MIDDLEWARE> = {
   route: string;
 }
 
+export type XssValidator = {
+  whiteList: Record<string, any>;
+  stripIgnoreTag: boolean;
+  stripIgnoreTagBody: boolean;
+  css: Record<string, any> | boolean;
+} | {};
+
 export type SecurityHeaders = {
   crossOriginResourcePolicy: MiddlewareConfiguration<string> | boolean;
   crossOriginOpenerPolicy: MiddlewareConfiguration<string> | boolean;
@@ -67,6 +75,7 @@ export interface ModuleOptions {
   headers: SecurityHeaders | boolean;
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | boolean;
   rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
+  xssValidator: MiddlewareConfiguration<XssValidator> | boolean;
 }
 ```
 
@@ -77,56 +86,56 @@ security: {
   headers: {
     crossOriginResourcePolicy: {
       value: "same-origin",
-      route: '',,
+      route: '',
     },
     crossOriginOpenerPolicy: {
       value: "same-origin",
-      route: '',,
+      route: '',
     },
     crossOriginEmbedderPolicy: {
       value: "require-corp",
-      route: '',,
+      route: '',
     },
     contentSecurityPolicy: {
       value:
         "base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
-      route: '',,
+      route: '',
     },
     originAgentCluster: {
       value: "?1",
-      route: '',,
+      route: '',
     },
     referrerPolicy: {
       value: "no-referrer",
-      route: '',,
+      route: '',
     },
     strictTransportSecurity: {
       value: "max-age=15552000; includeSubDomains",
-      route: '',,
+      route: '',
     },
     xContentTypeOptions: {
       value: "nosniff",
-      route: '',,
+      route: '',
     },
     xDNSPrefetchControl: {
       value: "off",
-      route: '',,
+      route: '',
     },
     xDownloadOptions: {
       value: "noopen",
-      route: '',,
+      route: '',
     },
     xFrameOptions: {
       value: "SAMEORIGIN",
-      route: '',,
+      route: '',
     },
     xPermittedCrossDomainPolicies: {
       value: "none",
-      route: '',,
+      route: '',
     },
     xXSSProtection: {
       value: 0,
-      route: '',,
+      route: '',
     },
   },
   requestSizeLimiter: {
@@ -134,7 +143,7 @@ security: {
       maxRequestSizeInBytes: 2000000,
       maxUploadFileRequestInBytes: 8000000,
     },
-    route: '',,
+    route: '',
   },
   rateLimiter: {
     // Twitter search rate limiting
@@ -143,8 +152,12 @@ security: {
       interval: "hour",
       fireImmediately: true,
     },
-    route: '',,
+    route: '',
   },
+  xssValidator: {
+    value: {},
+    route: '',
+  }
 }
 ```
 
