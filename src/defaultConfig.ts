@@ -77,6 +77,20 @@ export const defaultSecurityConfig: ModuleOptions = {
   },
   xssValidator: {
     value: {},
-    ...defaultRoute
+    ...defaultRoute,
+  },
+  corsHandler: {
+    value: {
+      origin: '*',
+      methods: '*',
+      allowHeaders: '*',
+      exposeHeaders: '*',
+      credentials: true,
+      maxAge: '100000000',
+      preflight: {
+        statusCode: 200
+      }
+    },
+    ...defaultRoute,
   }
 };
