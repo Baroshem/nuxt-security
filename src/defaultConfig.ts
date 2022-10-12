@@ -80,15 +80,12 @@ export const defaultSecurityConfig: ModuleOptions = {
     ...defaultRoute,
   },
   corsHandler: {
+    // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
     value: {
       origin: '*',
-      methods: '*',
-      allowHeaders: '*',
-      exposeHeaders: '*',
-      credentials: true,
-      maxAge: '100000000',
+      methods: ['GET','HEAD','PUT','PATCH','POST','DELETE'],
       preflight: {
-        statusCode: 200
+        statusCode: 204
       }
     },
     ...defaultRoute,
