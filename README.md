@@ -7,7 +7,7 @@
 * Same Security headers set as by popular Express.js middleware [helmet](https://helmetjs.github.io/)
 * Request Size Limiter solving [this](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#set-request-size-limits)
 * Rate Limiter solving [this](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#take-precautions-against-brute-forcing)
-* Parameter Polution is handled by Nuxt automatically
+* Parameter Pollution is handled by Nuxt automatically
 * XSS Validator for both GET and POST requests
 
 ## Usage
