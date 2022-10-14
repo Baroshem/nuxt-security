@@ -5,10 +5,10 @@
 ## Features
 
 * Same Security headers set as by popular Express.js middleware [helmet](https://helmetjs.github.io/)
-* Request Size Limiter solving [this](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#set-request-size-limits)
-* Rate Limiter solving [this](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#take-precautions-against-brute-forcing)
-* Parameter Polution is handled by Nuxt automatically
+* Request Size Limiter
+* Rate Limiter
 * XSS Validator for both GET and POST requests
+* CORS Handler similar to popular Express.js middlware
 
 ## Usage
 
@@ -32,6 +32,18 @@ The module will configure for you several response headers with the values recom
 If you wish to modify them you can do so from the configuration:
 
 ```ts
+export interface CorsOptions {
+    origin?: '*' | 'null' | (string | RegExp)[] | ((origin: string) => boolean);
+    methods?: '*' | HTTPMethod[];
+    allowHeaders?: '*' | string[];
+    exposeHeaders?: '*' | string[];
+    credentials?: boolean;
+    maxAge?: string | false;
+    preflight?: {
+        statusCode?: number;
+    };
+}
+
 export type RequestSizeLimiter = {
   maxRequestSizeInBytes: number;
   maxUploadFileRequestInBytes: number;
@@ -76,6 +88,7 @@ export interface ModuleOptions {
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | boolean;
   rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
   xssValidator: MiddlewareConfiguration<XssValidator> | boolean;
+  corsHandler: MiddlewareConfiguration<CorsOptions> | boolean;
 }
 ```
 
@@ -156,6 +169,16 @@ security: {
   },
   xssValidator: {
     value: {},
+    route: '',
+  },
+  corsHandler: {
+    value: {
+      origin: '*',
+      methods: ['GET','HEAD','PUT','PATCH','POST','DELETE'],
+      preflight: {
+        statusCode: 204
+      }
+    },
     route: '',
   }
 }
