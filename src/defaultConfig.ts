@@ -77,6 +77,17 @@ export const defaultSecurityConfig: ModuleOptions = {
   },
   xssValidator: {
     value: {},
-    ...defaultRoute
+    ...defaultRoute,
+  },
+  corsHandler: {
+    // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
+    value: {
+      origin: '*',
+      methods: ['GET','HEAD','PUT','PATCH','POST','DELETE'],
+      preflight: {
+        statusCode: 204
+      }
+    },
+    ...defaultRoute,
   }
 };

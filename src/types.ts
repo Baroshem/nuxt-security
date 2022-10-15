@@ -1,3 +1,5 @@
+import { CorsOptions } from '@nozomuikuta/h3-cors'
+
 export type RequestSizeLimiter = {
   maxRequestSizeInBytes: number;
   maxUploadFileRequestInBytes: number;
@@ -42,4 +44,5 @@ export interface ModuleOptions {
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | boolean;
   rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
   xssValidator: MiddlewareConfiguration<XssValidator> | boolean;
+  corsHandler: MiddlewareConfiguration<CorsOptions> | boolean;
 }

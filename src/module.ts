@@ -45,5 +45,10 @@ export default defineNuxtModule<ModuleOptions>({
     if (xssValidatorConfig) {
       addServerHandler({ route: xssValidatorConfig.route, handler: resolve(runtimeDir, 'server/middleware/xssValidator') })
     }
+
+    const corsHandlerConfig = nuxt.options.runtimeConfig.security.corsHandler
+    if (corsHandlerConfig) {
+      addServerHandler({ route: corsHandlerConfig.route, handler: resolve(runtimeDir, 'server/middleware/corsHandler') })
+    }
   }
 })

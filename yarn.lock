@@ -431,6 +431,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@nozomuikuta/h3-cors@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@nozomuikuta/h3-cors/-/h3-cors-0.1.5.tgz#23ab3533d1c176e2de1e48cbca000327102b619b"
+  integrity sha512-b20JBFYUl059HN6fwK9mmpeiVUZpQ1st7jVECrTWXS3F4yePnXi6VDfLTfECflHWQMRI6PQTeXLVTQrFnv+3Jw==
+
 "@nuxt/devalue@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
