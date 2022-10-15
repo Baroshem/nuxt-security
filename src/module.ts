@@ -4,6 +4,7 @@ import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
 import { ModuleOptions } from './types'
 import { defaultSecurityConfig } from './defaultConfig'
+import { RuntimeConfig } from '@nuxt/schema'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -15,13 +16,15 @@ export default defineNuxtModule<ModuleOptions>({
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     nuxt.options.build.transpile.push(runtimeDir)
     nuxt.options.runtimeConfig.security = defu(nuxt.options.runtimeConfig.security, {
-      ...options
+      ...options as RuntimeConfig["security"]
     })
 
     // Register enabled middlewares to automatically set default values for security response headers.
-    for (const header in nuxt.options.runtimeConfig.security.headers) {
-      if (nuxt.options.runtimeConfig.security.headers[header]) {
-        addServerHandler({ route: nuxt.options.runtimeConfig.security.headers[header].route, handler: resolve(runtimeDir, `server/middleware/headers/${header}`) })
+    if (nuxt.options.runtimeConfig.security.headers) {
+      for (const header in nuxt.options.runtimeConfig.security.headers) {
+        if (nuxt.options.runtimeConfig.security.headers[header]) {
+          addServerHandler({ route: nuxt.options.runtimeConfig.security.headers[header].route, handler: resolve(runtimeDir, `server/middleware/headers/${header}`) })
+        }
       }
     }
 
@@ -46,6 +49,8 @@ export default defineNuxtModule<ModuleOptions>({
       addServerHandler({ route: xssValidatorConfig.route, handler: resolve(runtimeDir, 'server/middleware/xssValidator') })
     }
 
+    // Register corsHandler middleware with default config that will add CORS setup
+    // Based on '@nozomuikuta/h3-cors' package
     const corsHandlerConfig = nuxt.options.runtimeConfig.security.corsHandler
     if (corsHandlerConfig) {
       addServerHandler({ route: corsHandlerConfig.route, handler: resolve(runtimeDir, 'server/middleware/corsHandler') })
