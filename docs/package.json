@@ -1,0 +1,17 @@
+{
+  "name": "nuxt-security-docs",
+  "version": "1.0.0",
+  "description": "Docs for nuxt-security",
+  "author": "NuxtJS",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "preview": "nuxi preview",
+    "generate": "nuxi generate"
+  },
+  "devDependencies": {
+    "@docus/docs-theme": "npm:@docus/docs-theme-edge@latest",
+    "@docus/github": "npm:@docus/github-edge@latest",
+    "nuxt": "3.0.0-rc.4"
+  }
+}
