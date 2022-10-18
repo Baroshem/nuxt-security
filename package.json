@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "license": "MIT",
   "type": "module",
+  "homepage": "https://nuxt-security.vercel.app",
   "exports": {
     ".": {
       "import": "./dist/module.mjs",
@@ -18,7 +19,9 @@
     "prepack": "nuxt-module-build",
     "dev": "nuxt-module-build --stub && nuxi prepare playground && nuxi dev playground",
     "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground"
+    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
+    "lint": "eslint --ext .js,.ts,.vue",
+    "docs": "cd docs && yarn dev"
   },
   "dependencies": {
     "@nozomuikuta/h3-cors": "^0.1.5",
