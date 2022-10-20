@@ -27,7 +27,7 @@
 
 ## Preview
 
-Coming soon! -> https://github.com/Baroshem/nuxt-security/issues/14
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/baroshem/nuxt-security-stackblitz)
 
 ## Setup
 
