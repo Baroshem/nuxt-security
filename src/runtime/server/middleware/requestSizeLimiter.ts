@@ -1,4 +1,4 @@
-import { defineEventHandler, getRequestHeader, sendError, createError } from 'h3'
+import { defineEventHandler, getRequestHeader, createError } from 'h3'
 import { useRuntimeConfig } from '#imports'
 
 const securityConfig = useRuntimeConfig().security
@@ -15,8 +15,7 @@ export default defineEventHandler(async (event) => {
     const requestLimit = isFileUpload ? securityConfig.requestSizeLimiter.value.maxUploadFileRequestInBytes : securityConfig.requestSizeLimiter.value.maxRequestSizeInBytes
 
     if (parseInt(contentLengthValue as string) >= requestLimit) {
-      const error = createError({ statusCode: 413, statusMessage: 'Payload Too Large' })
-      sendError(event, error)
+      throw createError({ statusCode: 413, statusMessage: 'Payload Too Large' })
     }
   }
 })

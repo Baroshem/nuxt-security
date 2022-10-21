@@ -1,5 +1,5 @@
 import { RateLimiter } from "limiter";
-import { defineEventHandler, getRequestHeader, sendError, createError } from 'h3'
+import { defineEventHandler, getRequestHeader, createError } from 'h3'
 import { useRuntimeConfig } from '#imports'
 
 const securityConfig = useRuntimeConfig().security
@@ -19,8 +19,7 @@ export default defineEventHandler(async (event) => {
       cachedLimiter.removeTokens(1)
       await storage.setItem(ip, cachedLimiter)
     } else {
-      const error = createError({ statusCode: 429, statusMessage: 'Too Many Requests' })
-      sendError(event, error)
+      throw createError({ statusCode: 429, statusMessage: 'Too Many Requests' })
     }
   }
 })

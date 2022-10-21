@@ -1,4 +1,4 @@
-import { defineEventHandler, sendError, createError, getQuery, readBody } from 'h3'
+import { defineEventHandler, createError, getQuery, readBody } from 'h3'
 import { useRuntimeConfig } from '#imports'
 import { FilterXSS } from 'xss'
 
@@ -11,8 +11,7 @@ export default defineEventHandler(async (event) => {
     const stringifiedValue = JSON.stringify(valueToFilter)
     const processedValue = xssValidator.process(JSON.stringify(valueToFilter))
     if (processedValue !== stringifiedValue) {
-      const error = createError({ statusCode: 400, statusMessage: 'Bad Request' })
-      sendError(event, error)
+      throw createError({ statusCode: 400, statusMessage: 'Bad Request' })
     }
   }
 })
