@@ -1,62 +1,64 @@
 import { ModuleOptions } from "./types";
 
-const DEFAULT_GLOBAL_ROUTE = "";
-const defaultRoute = { route: DEFAULT_GLOBAL_ROUTE };
+const DEFAULT_GLOBAL_ROUTE = "/**";
+const DEFAULT_MIDDLEWARE_ROUTE = ''
+const defaultGlobalRoute = { route: DEFAULT_GLOBAL_ROUTE };
+const defaultMiddlewareRoute = { route: DEFAULT_MIDDLEWARE_ROUTE }
 
 export const defaultSecurityConfig: ModuleOptions = {
   headers: {
     crossOriginResourcePolicy: {
       value: "same-origin",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     crossOriginOpenerPolicy: {
       value: "same-origin",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     crossOriginEmbedderPolicy: {
       value: "require-corp",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     contentSecurityPolicy: {
       value:
         "base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     originAgentCluster: {
       value: "?1",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     referrerPolicy: {
       value: "no-referrer",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     strictTransportSecurity: {
       value: "max-age=15552000; includeSubDomains",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     xContentTypeOptions: {
       value: "nosniff",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     xDNSPrefetchControl: {
       value: "off",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     xDownloadOptions: {
       value: "noopen",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     xFrameOptions: {
       value: "SAMEORIGIN",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     xPermittedCrossDomainPolicies: {
       value: "none",
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
     xXSSProtection: {
       value: 0,
-      ...defaultRoute,
+      ...defaultGlobalRoute,
     },
   },
   requestSizeLimiter: {
@@ -64,7 +66,7 @@ export const defaultSecurityConfig: ModuleOptions = {
       maxRequestSizeInBytes: 2000000,
       maxUploadFileRequestInBytes: 8000000,
     },
-    ...defaultRoute,
+    ...defaultMiddlewareRoute,
   },
   rateLimiter: {
     // Twitter search rate limiting
@@ -73,11 +75,11 @@ export const defaultSecurityConfig: ModuleOptions = {
       interval: "hour",
       fireImmediately: true,
     },
-    ...defaultRoute,
+    ...defaultMiddlewareRoute,
   },
   xssValidator: {
     value: {},
-    ...defaultRoute,
+    ...defaultMiddlewareRoute,
   },
   corsHandler: {
     // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
@@ -88,6 +90,6 @@ export const defaultSecurityConfig: ModuleOptions = {
         statusCode: 204
       }
     },
-    ...defaultRoute,
+    ...defaultMiddlewareRoute,
   }
 };
