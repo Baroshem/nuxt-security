@@ -1,26 +1,25 @@
 import { RateLimiter } from "limiter";
-import { defineEventHandler, getRequestHeader, sendError, createError } from 'h3'
+import { defineEventHandler, getRequestHeader, createError } from 'h3'
 import { useRuntimeConfig } from '#imports'
+import cache from 'memory-cache'
 
 const securityConfig = useRuntimeConfig().security
-const storage = useStorage()
 
 export default defineEventHandler(async (event) => {
   const ip = getRequestHeader(event, 'x-forwarded-for')
 
   let cachedLimiter;
-  if (!storage.getItem(ip)) {
+  if (!cache.get(ip)) {
     // TODO: send rate limiting configuration from the module
     cachedLimiter = new RateLimiter(securityConfig.rateLimiter.value)
-    storage.setItem(ip, cachedLimiter)
+    cache.put(ip, cachedLimiter, 10000)
   } else {
-    cachedLimiter = storage.getItem(ip)
+    cachedLimiter = cache.get(ip)
     if (cachedLimiter.getTokensRemaining() > 1) {
       cachedLimiter.removeTokens(1)
-      storage.setItem(ip, cachedLimiter)
+      cache.put(ip, cachedLimiter, 10000)
     } else {
-      const error = createError({ statusCode: 429, statusMessage: 'Too Many Requests' })
-      sendError(event, error)
+      throw createError({ statusCode: 429, statusMessage: 'Too Many Requests' })
     }
   }
 })

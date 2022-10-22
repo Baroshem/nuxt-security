@@ -5,4 +5,19 @@ export default defineNuxtConfig({
   modules: [
     MyModule
   ],
+  // security: {
+  //   headers: {
+  //     crossOriginResourcePolicy: {
+  //       value: "test",
+  //       route: '/**',
+  //     },
+  //   },
+  //   requestSizeLimiter: {
+  //     value: {
+  //       maxRequestSizeInBytes: 3000000,
+  //       maxUploadFileRequestInBytes: 9000000,
+  //     },
+  //     route: '/upload-file'
+  //   }
+  // }
 })
