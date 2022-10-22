@@ -5,7 +5,7 @@ import defu from 'defu'
 import { MiddlewareConfiguration, ModuleOptions, RateLimiter, RequestSizeLimiter, SecurityHeaders, XssValidator } from './types'
 import { defaultSecurityConfig } from './defaultConfig'
 import { SECURITY_HEADER_NAMES } from './headers'
-import { Nuxt, NuxtOptions } from '@nuxt/schema'
+import { Nuxt, NuxtOptions, RuntimeConfig } from '@nuxt/schema'
 import { CorsOptions } from '@nozomuikuta/h3-cors'
 
 export default defineNuxtModule<ModuleOptions>({
@@ -22,7 +22,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     nuxt.options.runtimeConfig.security = defu(nuxt.options.runtimeConfig.security, {
-      ...nuxt.options.security
+      ...nuxt.options.security as RuntimeConfig['security']
     })
 
     // Register enabled middlewares to automatically set default values for security response headers.
