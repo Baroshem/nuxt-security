@@ -1,5 +1,5 @@
 import { RateLimiter } from "limiter";
-import { defineEventHandler, getRequestHeader, sendError, createError } from 'h3'
+import { defineEventHandler, getRequestHeader, createError } from 'h3'
 import { useRuntimeConfig } from '#imports'
 import cache from 'memory-cache'
 
