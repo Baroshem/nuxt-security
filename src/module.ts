@@ -21,6 +21,7 @@ export default defineNuxtModule<ModuleOptions>({
       ...options
     })
 
+    // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
     if (nuxt.options.security.hidePoweredBy) {
       nuxt.hook('nitro:config', (config) => {
         config.plugins = config.plugins || []
