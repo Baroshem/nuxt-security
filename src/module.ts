@@ -21,6 +21,13 @@ export default defineNuxtModule<ModuleOptions>({
       ...options
     })
 
+    if (nuxt.options.security.hidePoweredBy) {
+      nuxt.hook('nitro:config', (config) => {
+        config.plugins = config.plugins || []
+        config.plugins.push(fileURLToPath(new URL('./runtime/nitro', import.meta.url)))
+      })
+    }
+
     nuxt.options.runtimeConfig.security = defu(nuxt.options.runtimeConfig.security, {
       ...nuxt.options.security as RuntimeConfig['security']
     })
