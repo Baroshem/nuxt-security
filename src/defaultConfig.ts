@@ -92,5 +92,9 @@ export const defaultSecurityConfig: ModuleOptions = {
     },
     ...defaultMiddlewareRoute,
   },
+  allowedMethodsRestricter: {
+    value: '*',
+    ...defaultMiddlewareRoute,
+  },
   hidePoweredBy: true,
 };
