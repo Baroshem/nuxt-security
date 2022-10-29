@@ -45,4 +45,5 @@ export interface ModuleOptions {
   rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
   xssValidator: MiddlewareConfiguration<XssValidator> | boolean;
   corsHandler: MiddlewareConfiguration<CorsOptions> | boolean;
+  hidePoweredBy: boolean;
 }

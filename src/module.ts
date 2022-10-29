@@ -21,6 +21,14 @@ export default defineNuxtModule<ModuleOptions>({
       ...options
     })
 
+    // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
+    if (nuxt.options.security.hidePoweredBy) {
+      nuxt.hook('nitro:config', (config) => {
+        config.plugins = config.plugins || []
+        config.plugins.push(fileURLToPath(new URL('./runtime/nitro', import.meta.url)))
+      })
+    }
+
     nuxt.options.runtimeConfig.security = defu(nuxt.options.runtimeConfig.security, {
       ...nuxt.options.security as RuntimeConfig['security']
     })
@@ -38,7 +46,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Register requestSizeLimiter middleware with default values that will throw an error when the payload will be too big for methods like POST/PUT/DELETE.
-    // TODO: fix the conditions here. What if user passes '{}'? It will result true here and later will break
     const requestSizeLimiterConfig = nuxt.options.security.requestSizeLimiter
     if(requestSizeLimiterConfig) {
       addServerHandler({ route: (requestSizeLimiterConfig as MiddlewareConfiguration<RequestSizeLimiter>).route, handler: resolve(runtimeDir, 'server/middleware/requestSizeLimiter') })

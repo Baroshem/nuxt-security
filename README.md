@@ -17,6 +17,7 @@
 
 - Nuxt 3 ready
 - Same Security headers set as by popular Express.js middleware [helmet](https://helmetjs.github.io/)
+- Hidden 'X-Powered-By' header
 - Request Size Limiter
 - Rate Limiter
 - XSS Validator for both GET and POST requests
