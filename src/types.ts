@@ -18,6 +18,10 @@ export type XssValidator = {
   css: Record<string, any> | boolean;
 } | {};
 
+export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
+
+export type AllowedHTTPMethods = HTTPMethod[] | '*'
+
 export type MiddlewareConfiguration<MIDDLEWARE> = {
   value: MIDDLEWARE;
   route: string;
@@ -45,5 +49,6 @@ export interface ModuleOptions {
   rateLimiter: MiddlewareConfiguration<RateLimiter> | boolean;
   xssValidator: MiddlewareConfiguration<XssValidator> | boolean;
   corsHandler: MiddlewareConfiguration<CorsOptions> | boolean;
+  allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | boolean;
   hidePoweredBy: boolean;
 }

@@ -22,6 +22,7 @@
 - Rate Limiter
 - XSS Validator for both GET and POST requests
 - CORS Handler similar to popular Express.js middleware
+- Allowed HTTP Methods Restricter
 - TypeScript support
 
 [📖 &nbsp;Read the documentation](https://nuxt-security.vercel.app)

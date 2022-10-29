@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
-import { MiddlewareConfiguration, ModuleOptions, RateLimiter, RequestSizeLimiter, SecurityHeaders, XssValidator } from './types'
+import { AllowedHTTPMethods, MiddlewareConfiguration, ModuleOptions, RateLimiter, RequestSizeLimiter, SecurityHeaders, XssValidator } from './types'
 import { defaultSecurityConfig } from './defaultConfig'
 import { SECURITY_HEADER_NAMES } from './headers'
 import { Nuxt, NuxtOptions, RuntimeConfig } from '@nuxt/schema'
@@ -70,6 +70,12 @@ export default defineNuxtModule<ModuleOptions>({
     const corsHandlerConfig = nuxt.options.security.corsHandler
     if (corsHandlerConfig) {
       addServerHandler({ route: (corsHandlerConfig as MiddlewareConfiguration<CorsOptions>).route, handler: resolve(runtimeDir, 'server/middleware/corsHandler') })
+    }
+
+    // Register allowedMethodsRestricter middleware with that will by default allow all methods
+    const allowedMethodsRestricterConfig = nuxt.options.security.allowedMethodsRestricter as MiddlewareConfiguration<AllowedHTTPMethods>
+    if (allowedMethodsRestricterConfig && allowedMethodsRestricterConfig.value !== '*') {
+      addServerHandler({ route: allowedMethodsRestricterConfig.route, handler: resolve(runtimeDir, 'server/middleware/allowedMethodsRestricter') })
     }
   }
 })
