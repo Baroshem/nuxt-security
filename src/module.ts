@@ -1,6 +1,5 @@
-import { resolve } from 'pathe'
+import { resolve, normalize } from 'pathe'
 import { fileURLToPath } from 'node:url'
-import { normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
 import { AllowedHTTPMethods, MiddlewareConfiguration, ModuleOptions, RateLimiter, RequestSizeLimiter, SecurityHeaders, XssValidator } from './types'
