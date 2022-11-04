@@ -4,6 +4,9 @@
   "license": "MIT",
   "type": "module",
   "homepage": "https://nuxt-security.vercel.app",
+  "repository": {
+    "url": "https://github.com/Baroshem/nuxt-security"
+  },
   "exports": {
     ".": {
       "import": "./dist/module.mjs",
