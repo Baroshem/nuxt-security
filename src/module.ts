@@ -1,5 +1,6 @@
-import { resolve } from 'path'
-import { fileURLToPath } from 'url'
+import { resolve } from 'pathe'
+import { fileURLToPath } from 'node:url'
+import { normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
 import { AllowedHTTPMethods, MiddlewareConfiguration, ModuleOptions, RateLimiter, RequestSizeLimiter, SecurityHeaders, XssValidator } from './types'
@@ -25,7 +26,7 @@ export default defineNuxtModule<ModuleOptions>({
     if (nuxt.options.security.hidePoweredBy) {
       nuxt.hook('nitro:config', (config) => {
         config.plugins = config.plugins || []
-        config.plugins.push(fileURLToPath(new URL('./runtime/nitro', import.meta.url)))
+        config.plugins.push(normalize(fileURLToPath(new URL('./runtime/nitro', import.meta.url))))
       })
     }
 
