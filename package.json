@@ -7,6 +7,13 @@
   "repository": {
     "url": "https://github.com/Baroshem/nuxt-security"
   },
+  "keywords": [
+    "nuxt",
+    "vue",
+    "security",
+    "owasp",
+    "helmet"
+  ],
   "exports": {
     ".": {
       "import": "./dist/module.mjs",
@@ -28,16 +35,16 @@
   },
   "dependencies": {
     "@nozomuikuta/h3-cors": "^0.1.5",
-    "@nuxt/kit": "^3.0.0-rc.12",
+    "@nuxt/kit": "^3.0.0-rc.13",
     "limiter": "^2.1.0",
     "memory-cache": "^0.2.0",
     "xss": "^1.0.14"
   },
   "devDependencies": {
     "@nuxt/module-builder": "latest",
-    "@nuxt/schema": "^3.0.0-rc.12",
+    "@nuxt/schema": "^3.0.0-rc.13",
     "@nuxtjs/eslint-config-typescript": "latest",
     "eslint": "latest",
-    "nuxt": "^3.0.0-rc.12"
+    "nuxt": "^3.0.0-rc.13"
   }
 }

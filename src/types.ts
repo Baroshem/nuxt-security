@@ -43,6 +43,8 @@ export type SecurityHeaders = {
   xXSSProtection: MiddlewareConfiguration<number> | boolean;
 };
 
+export type SecurityHeader = Record<string, MiddlewareConfiguration<any>>
+
 export interface ModuleOptions {
   headers: SecurityHeaders | boolean;
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | boolean;
