@@ -1,4 +1,6 @@
-export const SECURITY_HEADER_NAMES = {
+type SecurityHeaderNames = Record<string, string>
+
+export const SECURITY_HEADER_NAMES: SecurityHeaderNames = {
   contentSecurityPolicy: 'Content-Security-Policy',
   crossOriginEmbedderPolicy: 'Cross-Origin-Embedder-Policy',
   crossOriginOpenerPolicy: 'Cross-Origin-Opener-Policy',
