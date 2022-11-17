@@ -36,6 +36,7 @@
   "dependencies": {
     "@nozomuikuta/h3-cors": "^0.1.5",
     "@nuxt/kit": "^3.0.0-rc.13",
+    "basic-auth": "^2.0.1",
     "limiter": "^2.1.0",
     "memory-cache": "^0.2.0",
     "xss": "^1.0.14"
