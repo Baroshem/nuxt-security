@@ -97,4 +97,5 @@ export const defaultSecurityConfig: ModuleOptions = {
     ...defaultMiddlewareRoute,
   },
   hidePoweredBy: true,
+  basicAuth: false,
 };

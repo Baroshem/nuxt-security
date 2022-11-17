@@ -18,6 +18,13 @@ export type XssValidator = {
   css: Record<string, any> | boolean;
 } | {};
 
+export type BasicAuth = {
+  name: string;
+  pass: string;
+  enabled: boolean;
+  message: string;
+}
+
 export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
 
 export type AllowedHTTPMethods = HTTPMethod[] | '*'
@@ -53,4 +60,5 @@ export interface ModuleOptions {
   corsHandler: MiddlewareConfiguration<CorsOptions> | boolean;
   allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | boolean;
   hidePoweredBy: boolean;
+  basicAuth: MiddlewareConfiguration<BasicAuth> | boolean;
 }
