@@ -2,7 +2,7 @@ import { resolve, normalize } from 'pathe'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
 import defu from 'defu'
-import { AllowedHTTPMethods, MiddlewareConfiguration, ModuleOptions, RateLimiter, RequestSizeLimiter, SecurityHeader, SecurityHeaders, XssValidator } from './types'
+import { AllowedHTTPMethods, BasicAuth, MiddlewareConfiguration, ModuleOptions, RateLimiter, RequestSizeLimiter, SecurityHeader, SecurityHeaders, XssValidator } from './types'
 import { defaultSecurityConfig } from './defaultConfig'
 import { SECURITY_HEADER_NAMES } from './headers'
 import { RuntimeConfig } from '@nuxt/schema'
@@ -82,6 +82,12 @@ export default defineNuxtModule<ModuleOptions>({
     const allowedMethodsRestricterConfig = nuxt.options.security.allowedMethodsRestricter as MiddlewareConfiguration<AllowedHTTPMethods>
     if (allowedMethodsRestricterConfig && allowedMethodsRestricterConfig.value !== '*') {
       addServerHandler({ route: allowedMethodsRestricterConfig.route, handler: normalize(resolve(runtimeDir, 'server/middleware/allowedMethodsRestricter')) })
+    }
+
+    // Register basicAuth middleware that is disabled by default
+    const basicAuthConfig = nuxt.options.security.basicAuth as MiddlewareConfiguration<BasicAuth>
+    if (basicAuthConfig && basicAuthConfig?.value?.enabled) {
+      addServerHandler({ route: basicAuthConfig.route, handler: normalize(resolve(runtimeDir, 'server/middleware/basicAuth')) })
     }
   }
 })

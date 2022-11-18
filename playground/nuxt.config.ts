@@ -6,6 +6,17 @@ export default defineNuxtConfig({
     MyModule
   ],
   // security: {
+  //   basicAuth: {
+  //     route: '',
+  //     value: {
+  //       name: 'test',
+  //       pass: 'test',
+  //       enabled: true,
+  //       message: 'test'
+  //     }
+  //   }
+  // }
+  // security: {
   //   headers: {
   //     crossOriginResourcePolicy: {
   //       value: "test",
