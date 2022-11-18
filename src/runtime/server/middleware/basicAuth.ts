@@ -17,7 +17,7 @@ export type BasicAuth = {
 const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler(async (event) => {
-  const credentials = getCredentials(event.req)
+  const credentials = getCredentials(event.node.req)
   const basicAuthConfig: BasicAuth = securityConfig.basicAuth.value
 
   if (!credentials && !validateCredentials(credentials, basicAuthConfig)) {

@@ -1,4 +1,4 @@
-import { defineEventHandler, getRequestHeader, sendError, createError } from 'h3'
+import { defineEventHandler, getRequestHeader, createError } from 'h3'
 import { useRuntimeConfig } from '#imports'
 
 const securityConfig = useRuntimeConfig().security
@@ -6,7 +6,7 @@ const securityConfig = useRuntimeConfig().security
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 
 export default defineEventHandler(async (event) => {
-  if (['POST', 'PUT', 'DELETE'].includes(event.req.method!!)) {
+  if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!!)) {
     const contentLengthValue = getRequestHeader(event, 'content-length')
     const contentTypeValue = getRequestHeader(event, 'content-type')
 
