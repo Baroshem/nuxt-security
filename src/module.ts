@@ -81,7 +81,13 @@ export default defineNuxtModule<ModuleOptions>({
     // Register allowedMethodsRestricter middleware with that will by default allow all methods
     const allowedMethodsRestricterConfig = nuxt.options.security.allowedMethodsRestricter as MiddlewareConfiguration<AllowedHTTPMethods>
     if (allowedMethodsRestricterConfig && allowedMethodsRestricterConfig.value !== '*') {
-      addServerHandler({ route: allowedMethodsRestricterConfig.route, handler: normalize(resolve(runtimeDir, 'server/middleware/allowedMethodsRestricter')) })
+      if (Array.isArray(allowedMethodsRestricterConfig.value) && Array.isArray(allowedMethodsRestricterConfig.route)) {
+        allowedMethodsRestricterConfig.route.forEach(route => {
+          addServerHandler({ route: route, handler: normalize(resolve(runtimeDir, 'server/middleware/allowedMethodsRestricter')) })
+        })
+      } else {
+        addServerHandler({ route: allowedMethodsRestricterConfig.route as string, handler: normalize(resolve(runtimeDir, 'server/middleware/allowedMethodsRestricter')) })
+      }
     }
 
     // Register basicAuth middleware that is disabled by default

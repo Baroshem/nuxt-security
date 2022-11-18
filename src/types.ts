@@ -30,8 +30,8 @@ export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
 export type AllowedHTTPMethods = HTTPMethod[] | '*'
 
 export type MiddlewareConfiguration<MIDDLEWARE> = {
-  value: MIDDLEWARE;
-  route: string;
+  value: MIDDLEWARE | MIDDLEWARE[];
+  route: string | string[];
 }
 
 export type SecurityHeaders = {

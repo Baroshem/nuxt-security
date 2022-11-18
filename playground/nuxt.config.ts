@@ -6,6 +6,18 @@ export default defineNuxtConfig({
     MyModule
   ],
   // security: {
+  //   allowedMethodsRestricter: {
+  //     value: [['GET'], ['POST']],
+  //     route: ['/about', '/test']
+  //   },
+  // }
+  security: {
+    allowedMethodsRestricter: {
+      value: ['GET'],
+      route: '/about'
+    },
+  }
+  // security: {
   //   basicAuth: {
   //     route: '',
   //     value: {
