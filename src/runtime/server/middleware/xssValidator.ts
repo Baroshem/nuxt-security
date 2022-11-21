@@ -1,6 +1,6 @@
 import { defineEventHandler, createError, getQuery, readBody } from 'h3'
-import { useRuntimeConfig } from '#imports'
 import { FilterXSS } from 'xss'
+import { useRuntimeConfig } from '#imports'
 
 const securityConfig = useRuntimeConfig().security
 const xssValidator = new FilterXSS(securityConfig.xssValidator.value)

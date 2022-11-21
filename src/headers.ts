@@ -13,5 +13,5 @@ export const SECURITY_HEADER_NAMES: SecurityHeaderNames = {
   xDownloadOptions: 'X-Download-Options',
   xFrameOptions: 'X-Frame-Options',
   xPermittedCrossDomainPolicies: 'X-Permitted-Cross-Domain-Policies',
-  xXSSProtection: 'X-XSS-Protection',
+  xXSSProtection: 'X-XSS-Protection'
 }

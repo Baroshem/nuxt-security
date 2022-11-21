@@ -1,14 +1,14 @@
-import { RateLimiter } from "limiter";
+import { RateLimiter } from 'limiter'
 import { defineEventHandler, getRequestHeader, createError } from 'h3'
-import { useRuntimeConfig } from '#imports'
 import cache from 'memory-cache'
+import { useRuntimeConfig } from '#imports'
 
 const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler(async (event) => {
   const ip = getRequestHeader(event, 'x-forwarded-for')
 
-  let cachedLimiter;
+  let cachedLimiter
   if (!cache.get(ip)) {
     // TODO: send rate limiting configuration from the module
     cachedLimiter = new RateLimiter(securityConfig.rateLimiter.value)
