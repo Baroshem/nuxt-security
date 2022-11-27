@@ -20,8 +20,17 @@ export const defaultSecurityConfig: ModuleOptions = {
       ...defaultGlobalRoute
     },
     contentSecurityPolicy: {
-      value:
-        "base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+      value: {
+        'base-uri': ["'self'"],
+        'font-src': ["'self'", 'https:', 'data:'],
+        'form-action': ["'self'"],
+        'frame-ancestors': ["'self'"],
+        'img-src': ["'self'", 'data:'],
+        'object-src': ["'none'"],
+        'script-src-attr': ["'none'"],
+        'style-src': ["'self'", 'https:', "'unsafe-inline'"],
+        'upgrade-insecure-requests': true
+      },
       ...defaultGlobalRoute
     },
     originAgentCluster: {
@@ -33,7 +42,10 @@ export const defaultSecurityConfig: ModuleOptions = {
       ...defaultGlobalRoute
     },
     strictTransportSecurity: {
-      value: 'max-age=15552000; includeSubDomains',
+      value: {
+        maxAge: 15552000,
+        includeSubdomains: true
+      },
       ...defaultGlobalRoute
     },
     xContentTypeOptions: {

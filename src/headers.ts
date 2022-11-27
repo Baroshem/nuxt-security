@@ -1,3 +1,10 @@
+import {
+  ContentSecurityPolicyValue,
+  MiddlewareConfiguration,
+  SecurityHeaders,
+  StrictTransportSecurityValue
+} from './types'
+
 type SecurityHeaderNames = Record<string, string>
 
 export const SECURITY_HEADER_NAMES: SecurityHeaderNames = {
@@ -14,4 +21,29 @@ export const SECURITY_HEADER_NAMES: SecurityHeaderNames = {
   xFrameOptions: 'X-Frame-Options',
   xPermittedCrossDomainPolicies: 'X-Permitted-Cross-Domain-Policies',
   xXSSProtection: 'X-XSS-Protection'
+}
+
+const headerValueMappers = {
+  strictTransportSecurity: (value: StrictTransportSecurityValue) =>
+    [
+      `max-age=${value.maxAge}`,
+      value.includeSubdomains && 'includeSubDomains',
+      value.preload && 'preload'
+    ].filter(Boolean).join('; '),
+  contentSecurityPolicy: (value: ContentSecurityPolicyValue) => {
+    return Object.entries(value).map(([directive, sources]) => {
+      if (directive === 'upgrade-insecure-requests') {
+        return sources ? 'upgrade-insecure-requests' : ''
+      }
+      return (sources as string[])?.length && `${directive} ${(sources as string[]).join(' ')}`
+    })
+      .filter(Boolean).join('; ')
+  }
+}
+
+export const getHeaderValueFromOptions = <T>(headerType: keyof SecurityHeaders, headerOptions: MiddlewareConfiguration<T>) => {
+  if (typeof headerOptions.value === 'string') {
+    return headerOptions.value
+  }
+  return headerValueMappers[headerType]?.(headerOptions.value) ?? headerOptions.value
 }
