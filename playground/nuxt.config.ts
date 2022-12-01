@@ -5,6 +5,22 @@ export default defineNuxtConfig({
   modules: [
     MyModule
   ],
+  security: {
+    // allowedMethodsRestricter: [
+    //   {
+    //     value: '*',
+    //     route: '',
+    //   },
+    //   {
+    //     value: 'POST',
+    //     route: '/about'
+    //   }
+    // ]
+    allowedMethodsRestricter:       {
+      value: 'POST',
+      route: '/about'
+    }
+  }
   // security: {
   //   basicAuth: {
   //     route: '',

@@ -32,7 +32,10 @@ export type AllowedHTTPMethods = HTTPMethod[] | '*'
 export type MiddlewareConfiguration<MIDDLEWARE> = {
   value: MIDDLEWARE;
   route: string;
-}
+} | {
+  value: MIDDLEWARE;
+  route: string;
+} []
 
 export type SecurityHeaders = {
   crossOriginResourcePolicy: MiddlewareConfiguration<string> | boolean;
