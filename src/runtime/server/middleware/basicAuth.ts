@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   const basicAuthConfig: BasicAuth = securityConfig.basicAuth.value
 
   if (!credentials && !validateCredentials(credentials, basicAuthConfig)) {
-    setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || "Please enter username and password"}`)
+    setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Please enter username and password'}`)
     sendError(event, createError({ statusCode: 401, statusMessage: 'Access denied' }))
   }
 })
