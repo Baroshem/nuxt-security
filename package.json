@@ -45,6 +45,7 @@
     "@nuxt/module-builder": "latest",
     "@nuxt/schema": "^3.0.0",
     "@nuxtjs/eslint-config-typescript": "latest",
+    "@types/memory-cache": "^0.2.2",
     "eslint": "latest",
     "nuxt": "^3.0.0"
   }
