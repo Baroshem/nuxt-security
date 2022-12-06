@@ -54,14 +54,14 @@ export default defineNuxtModule<ModuleOptions>({
     // Register enabled middlewares to automatically set default values for security response headers.
     if (securityOptions.headers) {
       for (const header in securityOptions.headers as SecurityHeaders) {
-        if (securityOptions.headers[header]) {
+        if (securityOptions.headers[header as keyof typeof securityOptions.headers]) {
           const nitroRouteRules = nuxt.options.nitro.routeRules
-          const headerOptions = securityOptions.headers[header]
-          nitroRouteRules[headerOptions.route] = {
-            ...nitroRouteRules[headerOptions.route],
+          const headerOptions = securityOptions.headers[header as keyof typeof securityOptions.headers]
+          nitroRouteRules!![(headerOptions as any).route] = {
+            ...nitroRouteRules!![(headerOptions as any).route],
             headers: {
-              ...nitroRouteRules[headerOptions.route]?.headers,
-              [SECURITY_HEADER_NAMES[header]]: getHeaderValueFromOptions(header as keyof SecurityHeaders, headerOptions)
+              ...nitroRouteRules!![(headerOptions as any).route]?.headers,
+              [SECURITY_HEADER_NAMES[header]]: getHeaderValueFromOptions(header as keyof SecurityHeaders, headerOptions as any)
             }
           }
         }
