@@ -142,7 +142,7 @@ export type SecurityHeaders = {
   xDownloadOptions: MiddlewareConfiguration<XDownloadOptionsValue> | false;
   xFrameOptions: MiddlewareConfiguration<XFrameOptionsValue> | false;
   xPermittedCrossDomainPolicies: MiddlewareConfiguration<XPermittedCrossDomainPoliciesValue> | false;
-  xXSSProtection: MiddlewareConfiguration<number> | false;
+  xXSSProtection: MiddlewareConfiguration<string> | false;
 };
 
 export type SecurityHeader = Record<string, MiddlewareConfiguration<any>>

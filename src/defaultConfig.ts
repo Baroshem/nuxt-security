@@ -69,7 +69,7 @@ export const defaultSecurityConfig: ModuleOptions = {
       ...defaultGlobalRoute
     },
     xXSSProtection: {
-      value: 0,
+      value: '0',
       ...defaultGlobalRoute
     }
   },
