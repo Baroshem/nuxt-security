@@ -4,6 +4,7 @@
   "license": "MIT",
   "type": "module",
   "homepage": "https://nuxt-security.vercel.app",
+  "description": "🛡 Security Module for Nuxt based on OWASP Top 10 and Helmet",
   "repository": {
     "url": "https://github.com/Baroshem/nuxt-security"
   },
@@ -12,7 +13,11 @@
     "vue",
     "security",
     "owasp",
-    "helmet"
+    "helmet",
+    "basic-auth",
+    "rate-limit",
+    "xss",
+    "cors"
   ],
   "exports": {
     ".": {
