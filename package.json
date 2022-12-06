@@ -37,8 +37,10 @@
     "@nozomuikuta/h3-cors": "^0.1.5",
     "@nuxt/kit": "^3.0.0",
     "basic-auth": "^2.0.1",
+    "defu": "^6.1.1",
     "limiter": "^2.1.0",
     "memory-cache": "^0.2.0",
+    "pathe": "^1.0.0",
     "xss": "^1.0.14"
   },
   "devDependencies": {
