@@ -60,7 +60,7 @@ export default defineNuxtModule<ModuleOptions>({
           nitroRouteRules[headerOptions.route] = {
             ...nitroRouteRules[headerOptions.route],
             headers: {
-              ...nitroRouteRules[headerOptions.route].headers,
+              ...nitroRouteRules[headerOptions.route]?.headers,
               [SECURITY_HEADER_NAMES[header]]: getHeaderValueFromOptions(header as keyof SecurityHeaders, headerOptions)
             }
           }

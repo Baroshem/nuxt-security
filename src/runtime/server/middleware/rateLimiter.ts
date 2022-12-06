@@ -1,6 +1,6 @@
 import { RateLimiter } from 'limiter'
 import { defineEventHandler, getRequestHeader, createError } from 'h3'
-import * as cache from 'memory-cache'
+import cache from 'memory-cache'
 import { useRuntimeConfig } from '#imports'
 
 const securityConfig = useRuntimeConfig().security
