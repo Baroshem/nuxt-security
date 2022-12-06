@@ -11,12 +11,11 @@ import {
   ModuleOptions,
   RateLimiter,
   RequestSizeLimiter,
-  SecurityHeader,
   SecurityHeaders,
   XssValidator
 } from './types'
 import { defaultSecurityConfig } from './defaultConfig'
-import { SECURITY_HEADER_NAMES } from './headers'
+import { SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './headers'
 
 declare module '@nuxt/schema' {
   interface NuxtOptions {
@@ -36,9 +35,10 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.security = defu(nuxt.options.security, {
       ...options
     })
+    const securityOptions = nuxt.options.security
 
     // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
-    if (nuxt.options.security.hidePoweredBy) {
+    if (securityOptions.hidePoweredBy) {
       nuxt.hook('nitro:config', (config) => {
         config.plugins = config.plugins || []
         config.plugins.push(
@@ -47,38 +47,23 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
-    nuxt.options.runtimeConfig.security = defu(
-      nuxt.options.runtimeConfig.security,
-      {
-        ...(nuxt.options.security as RuntimeConfig['security'])
-      }
-    )
+    nuxt.options.runtimeConfig.security = defu(nuxt.options.runtimeConfig.security, {
+      ...securityOptions as RuntimeConfig['security']
+    })
 
     // Register enabled middlewares to automatically set default values for security response headers.
-    if (nuxt.options.security.headers) {
-      for (const header in nuxt.options.security.headers as SecurityHeaders) {
-        if ((nuxt.options.security.headers as SecurityHeader)[header]) {
-          // Have to create this manually, otherwise the build will fail. Also, have to create empty object first or use the previous headers if they are for the same route
-          nuxt.options.nitro.routeRules!![
-            (nuxt.options.security.headers as SecurityHeader)[header].route
-          ] = {
-            headers: nuxt.options.nitro.routeRules!![
-              (nuxt.options.security.headers as SecurityHeader)[header].route
-            ]
-              ? {
-                  ...nuxt.options.nitro.routeRules!![
-                    (nuxt.options.security.headers as SecurityHeader)[header]
-                      .route
-                  ].headers
-                }
-              : {}
+    if (securityOptions.headers) {
+      for (const header in securityOptions.headers as SecurityHeaders) {
+        if (securityOptions.headers[header]) {
+          const nitroRouteRules = nuxt.options.nitro.routeRules
+          const headerOptions = securityOptions.headers[header]
+          nitroRouteRules[headerOptions.route] = {
+            ...nitroRouteRules[headerOptions.route],
+            headers: {
+              ...nitroRouteRules[headerOptions.route].headers,
+              [SECURITY_HEADER_NAMES[header]]: getHeaderValueFromOptions(header as keyof SecurityHeaders, headerOptions)
+            }
           }
-
-          nuxt.options.nitro.routeRules!![
-            (nuxt.options.security.headers as SecurityHeader)[header].route
-          ].headers!![SECURITY_HEADER_NAMES[header]] = (
-            nuxt.options.security.headers as SecurityHeader
-          )[header].value
         }
       }
     }
@@ -98,7 +83,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register rateLimiter middleware with default values that will throw an error when there will be too many requests from the same IP during certain interval.
     // Based on 'limiter' package and stored in 'unstorage' for each ip address.
-    const rateLimiterConfig = nuxt.options.security.rateLimiter
+    const rateLimiterConfig = securityOptions.rateLimiter
     if (rateLimiterConfig) {
       addServerHandler({
         route: (rateLimiterConfig as MiddlewareConfiguration<RateLimiter>)
