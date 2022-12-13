@@ -36,6 +36,8 @@ export default defineNuxtModule<ModuleOptions>({
       ...options
     })
     const securityOptions = nuxt.options.security
+    // Disabled module when `enabled` is set to `false`
+    if (!securityOptions.enabled) return
 
     // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
     if (securityOptions.hidePoweredBy) {

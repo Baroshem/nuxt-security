@@ -156,4 +156,5 @@ export interface ModuleOptions {
   allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | false;
   hidePoweredBy: boolean;
   basicAuth: MiddlewareConfiguration<BasicAuth> | boolean;
+  enabled: boolean;
 }
