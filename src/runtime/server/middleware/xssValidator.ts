@@ -11,7 +11,11 @@ export default defineEventHandler(async (event) => {
     const stringifiedValue = JSON.stringify(valueToFilter)
     const processedValue = xssValidator.process(JSON.stringify(valueToFilter))
     if (processedValue !== stringifiedValue) {
-      throw createError({ statusCode: 400, statusMessage: 'Bad Request' })
+      if (securityConfig.requestSizeLimiter.throwError) {
+        throw createError({ statusCode: 400, statusMessage: 'Bad Request' })
+      } else {
+        return { statusCode: 400, statusMessage: 'Bad Request' }
+      }
     }
   }
 })

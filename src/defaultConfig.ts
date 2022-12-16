@@ -4,6 +4,7 @@ const DEFAULT_GLOBAL_ROUTE = '/**'
 const DEFAULT_MIDDLEWARE_ROUTE = ''
 const defaultGlobalRoute = { route: DEFAULT_GLOBAL_ROUTE }
 const defaultMiddlewareRoute = { route: DEFAULT_MIDDLEWARE_ROUTE }
+const defaultThrowErrorValue = { throwError: true }
 
 export const defaultSecurityConfig: ModuleOptions = {
   headers: {
@@ -78,7 +79,8 @@ export const defaultSecurityConfig: ModuleOptions = {
       maxRequestSizeInBytes: 2000000,
       maxUploadFileRequestInBytes: 8000000
     },
-    ...defaultMiddlewareRoute
+    ...defaultMiddlewareRoute,
+    ...defaultThrowErrorValue
   },
   rateLimiter: {
     // Twitter search rate limiting
@@ -87,11 +89,13 @@ export const defaultSecurityConfig: ModuleOptions = {
       interval: 'hour',
       fireImmediately: true
     },
-    ...defaultMiddlewareRoute
+    ...defaultMiddlewareRoute,
+    ...defaultThrowErrorValue
   },
   xssValidator: {
     value: {},
-    ...defaultMiddlewareRoute
+    ...defaultMiddlewareRoute,
+    ...defaultThrowErrorValue,
   },
   corsHandler: {
     // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
@@ -102,11 +106,13 @@ export const defaultSecurityConfig: ModuleOptions = {
         statusCode: 204
       }
     },
-    ...defaultMiddlewareRoute
+    ...defaultMiddlewareRoute,
+    ...defaultThrowErrorValue
   },
   allowedMethodsRestricter: {
     value: '*',
-    ...defaultMiddlewareRoute
+    ...defaultMiddlewareRoute,
+    ...defaultThrowErrorValue
   },
   hidePoweredBy: true,
   basicAuth: false
