@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
-import defu from 'defu'
+import defu, { createDefu } from 'defu'
 import { RuntimeConfig } from '@nuxt/schema'
 import { CorsOptions } from '@nozomuikuta/h3-cors'
 import {
@@ -23,17 +23,23 @@ declare module '@nuxt/schema' {
   }
 }
 
+const defuReplaceArray = createDefu((obj, key, value) => {
+  if (Array.isArray(obj[key]) || Array.isArray(value)) {
+    obj[key] = value
+    return true
+  }
+})
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-security',
     configKey: 'security'
   },
-  defaults: defaultSecurityConfig,
   setup (options, nuxt) {
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     nuxt.options.build.transpile.push(runtimeDir)
-    nuxt.options.security = defu(nuxt.options.security, {
-      ...options
+    nuxt.options.security = defuReplaceArray(nuxt.options.security, {
+      ...defaultSecurityConfig
     })
     const securityOptions = nuxt.options.security
 

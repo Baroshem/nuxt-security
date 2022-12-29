@@ -31,4 +31,21 @@ export default defineNuxtConfig({
   //     route: '/upload-file'
   //   }
   // }
+  security: {
+    headers: {
+      contentSecurityPolicy: {
+        value: {
+          'img-src': ["'self'", 'data:', 'https://dummy.test']
+        },
+        route: '/**'
+      },
+      strictTransportSecurity: {
+        value: {
+          maxAge: 5552000,
+          includeSubdomains: true
+        },
+        route: '/**'
+      }
+    }
+  }
 })
