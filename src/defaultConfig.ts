@@ -115,5 +115,6 @@ export const defaultSecurityConfig: ModuleOptions = {
     ...defaultThrowErrorValue
   },
   hidePoweredBy: true,
-  basicAuth: false
+  basicAuth: false,
+  enabled: true
 }
