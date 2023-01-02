@@ -6,6 +6,17 @@ export default defineNuxtConfig({
     MyModule
   ],
   // security: {
+  //   rateLimiter: {
+  //     value: {
+  //       tokensPerInterval: 2,
+  //       interval: 'hour',
+  //       fireImmediately: true
+  //     },
+  //     route: '',
+  //     throwError: false
+  //   }
+  // }
+  // security: {
   //   basicAuth: {
   //     route: '',
   //     value: {

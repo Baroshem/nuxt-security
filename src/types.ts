@@ -32,6 +32,7 @@ export type AllowedHTTPMethods = HTTPMethod[] | '*'
 export type MiddlewareConfiguration<MIDDLEWARE> = {
   value: MIDDLEWARE;
   route: string;
+  throwError?: boolean;
 }
 
 export type CrossOriginResourcePolicyValue = 'same-site' | 'same-origin' | 'cross-origin';
