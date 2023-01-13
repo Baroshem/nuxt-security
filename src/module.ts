@@ -36,6 +36,7 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'security'
   },
   setup (options, nuxt) {
+    // TODO: Migrate to createResolver (from @nuxt/kit)
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     nuxt.options.build.transpile.push(runtimeDir)
     nuxt.options.security = defuReplaceArray(nuxt.options.security, {
@@ -49,6 +50,7 @@ export default defineNuxtModule<ModuleOptions>({
     if (securityOptions.hidePoweredBy) {
       nuxt.hook('nitro:config', (config) => {
         config.plugins = config.plugins || []
+        config.externals.inline.push(normalize(fileURLToPath(new URL('./runtime', import.meta.url))))
         config.plugins.push(
           normalize(fileURLToPath(new URL('./runtime/nitro', import.meta.url)))
         )
