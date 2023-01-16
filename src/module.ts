@@ -50,6 +50,8 @@ export default defineNuxtModule<ModuleOptions>({
     if (securityOptions.hidePoweredBy) {
       nuxt.hook('nitro:config', (config) => {
         config.plugins = config.plugins || []
+        config.externals = config.externals || {}
+        config.externals.inline = config.externals.inline || []
         config.externals.inline.push(normalize(fileURLToPath(new URL('./runtime', import.meta.url))))
         config.plugins.push(
           normalize(fileURLToPath(new URL('./runtime/nitro', import.meta.url)))
