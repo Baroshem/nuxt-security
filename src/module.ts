@@ -39,7 +39,7 @@ export default defineNuxtModule<ModuleOptions>({
     // TODO: Migrate to createResolver (from @nuxt/kit)
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     nuxt.options.build.transpile.push(runtimeDir)
-    nuxt.options.security = defuReplaceArray(nuxt.options.security, {
+    nuxt.options.security = defuReplaceArray({ ...options, ...nuxt.options.security }, {
       ...defaultSecurityConfig
     })
     const securityOptions = nuxt.options.security
