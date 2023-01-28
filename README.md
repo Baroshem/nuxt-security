@@ -77,6 +77,28 @@ If you wish to modify them you can do so from the configuration:
 }
 ```
 
+Or, you can pass options directly
+
+```js{}[nuxt.config.js]
+export default defineNuxtConfig({
+  modules: [
+  [
+    'nuxt-security',
+    {
+      requestSizeLimiter: {
+        value: {
+          maxRequestSizeInBytes: 3000000,
+          maxUploadFileRequestInBytes: 9000000,
+        },
+        route: '/upload-file'
+      }
+      // Other options
+    }
+  ]
+  ]
+})
+```
+
 For all available configuration options check out the [docs](https://nuxt-security.vercel.app)
 
 ## Development
