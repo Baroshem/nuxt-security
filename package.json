@@ -36,7 +36,8 @@
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "lint": "eslint --ext .js,.ts,.vue",
-    "docs": "cd docs && yarn dev"
+    "docs": "cd docs && yarn dev",
+    "stackblitz": "cd stackblitz && yarn && yarn dev"
   },
   "dependencies": {
     "@nozomuikuta/h3-cors": "^0.1.5",
@@ -55,5 +56,9 @@
     "@types/memory-cache": "^0.2.2",
     "eslint": "latest",
     "nuxt": "^3.0.0"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "yarn stackblitz"
   }
 }
