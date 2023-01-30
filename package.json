@@ -37,7 +37,8 @@
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "lint": "eslint --ext .js,.ts,.vue",
     "docs": "cd docs && yarn dev",
-    "stackblitz": "cd stackblitz && yarn && yarn dev"
+    "preview": "nuxi preview playground",
+    "stackblitz": "cd .stackblitz && yarn && yarn dev"
   },
   "dependencies": {
     "@nozomuikuta/h3-cors": "^0.1.5",
