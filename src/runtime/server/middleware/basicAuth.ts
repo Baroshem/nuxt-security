@@ -1,5 +1,5 @@
-import { defineEventHandler, setHeader, createError, sendError } from 'h3'
 import getCredentials from 'basic-auth'
+import { createError, defineEventHandler, sendError, setHeader } from 'h3'
 import { useRuntimeConfig } from '#imports'
 
 type Credentials = {
@@ -16,13 +16,18 @@ export type BasicAuth = {
 
 const securityConfig = useRuntimeConfig().security
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
   const basicAuthConfig: BasicAuth = securityConfig.basicAuth.value
 
-  if (!credentials && !validateCredentials(credentials, basicAuthConfig)) {
+  if (!credentials) {
     setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Please enter username and password'}`)
     sendError(event, createError({ statusCode: 401, statusMessage: 'Access denied' }))
+  }
+
+  if (!validateCredentials(credentials!, basicAuthConfig)) {
+    setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Invalid username and/or password'}`)
+    sendError(event, createError({ statusCode: 403, statusMessage: 'Access denied' }))
   }
 })
 
