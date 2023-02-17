@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@nozomuikuta/h3-cors": "^0.1.5",
-    "@nuxt/kit": "^3.0.0",
+    "@nuxt/kit": "^3.2.0",
     "basic-auth": "^2.0.1",
     "defu": "^6.1.1",
     "limiter": "^2.1.0",
@@ -52,11 +52,11 @@
   },
   "devDependencies": {
     "@nuxt/module-builder": "latest",
-    "@nuxt/schema": "^3.0.0",
+    "@nuxt/schema": "^3.2.0",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/memory-cache": "^0.2.2",
     "eslint": "latest",
-    "nuxt": "^3.0.0"
+    "nuxt": "^3.2.0"
   },
   "stackblitz": {
     "installDependencies": false,
