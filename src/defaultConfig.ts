@@ -116,5 +116,6 @@ export const defaultSecurityConfig: ModuleOptions = {
   },
   hidePoweredBy: true,
   basicAuth: false,
-  enabled: true
+  enabled: true,
+  csrf: false,
 }

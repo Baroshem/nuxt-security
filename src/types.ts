@@ -1,4 +1,5 @@
 import { CorsOptions } from '@nozomuikuta/h3-cors'
+import { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
 
 export type RequestSizeLimiter = {
   maxRequestSizeInBytes: number;
@@ -158,4 +159,5 @@ export interface ModuleOptions {
   hidePoweredBy: boolean;
   basicAuth: MiddlewareConfiguration<BasicAuth> | boolean;
   enabled: boolean;
+  csrf: CsrfOptions | boolean;
 }

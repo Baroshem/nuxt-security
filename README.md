@@ -25,6 +25,7 @@
 - Allowed HTTP Methods Restricter
 - Hidden 'X-Powered-By' header
 - `[Optional]` Basic Auth support
+- `[Optional]` CSRF support
 
 ## Usage
 
