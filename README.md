@@ -5,101 +5,59 @@
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![Github Actions CI][github-actions-ci-src]][github-actions-ci-href]
-[![Codecov][codecov-src]][codecov-href]
 [![License][license-src]][license-href]
+[![Nuxt][nuxt-src]][nuxt-href]
 
-> [OWASP Top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#nodejs-security-cheat-sheet) module that adds a few security improvements in form of a customizable server middlewares to your [Nuxt](https://v3.nuxtjs.org) application. All middlewares can be modified or disabled if needed. They can also be configured to work only on certain routes. By default all middlewares are configured to work globally.
+> Security module for Nuxt based on [OWASP Top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#nodejs-security-cheat-sheet) and [helmet](https://helmetjs.github.io/) that adds security browser headers, protection middlewares, CORS, and more.
 
-- [✨ &nbsp;Release Notes](https://github.com/Baroshem/nuxt-security/releases)
 - [📖 &nbsp;Read the documentation](https://nuxt-security.vercel.app)
+- [👾 &nbsp;Playground](https://stackblitz.com/github/baroshem/nuxt-security?file=.stackblitz%2Fnuxt.config.ts)
+- [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=8ac30Py8Ses)
 
 ## Features
 
 - Nuxt 3 ready
-- Same Security headers set as by popular Express.js middleware [helmet](https://helmetjs.github.io/)
-- Hidden 'X-Powered-By' header
+- Security browser headers
 - Request Size Limiter
 - Rate Limiter
-- XSS Validator for both GET and POST requests
+- XSS Validator for GET and POST requests
 - CORS Handler similar to popular Express.js middleware
 - Allowed HTTP Methods Restricter
-- Basic Auth support
-- TypeScript support
-
-[📖 &nbsp;Read the documentation](https://nuxt-security.vercel.app)
-
-## Preview
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/baroshem/nuxt-security?file=.stackblitz%2Fnuxt.config.ts)
-
-## Setup
-
-```sh
-yarn add nuxt-security # yarn
-npm i nuxt-security # npm
-```
+- Hidden 'X-Powered-By' header
+- `[Optional]` Basic Auth support
 
 ## Usage
 
-The only thing you need to do to use the module in the default configuration is to register the module in the `modules` array in `nuxt.config.ts`:
+Install the module:
 
-```javascript
-// nuxt.config.js
-
-{
-  modules: [
-    "nuxt-security",
-  ],
-  security: {} // optional
-}
+```sh
+npm i nuxt-security --save-dev # yarn or pnpm
 ```
 
-The module will configure for you several response headers with the values recommended by Helmet as well as custom middlewares for rate and request limiting, xss validation, and CORS handling. More to come soon!
+Add the module in the `modules` array in `nuxt.config.ts`:
 
-If you wish to modify them you can do so from the configuration:
-
-```javascript
-// nuxt.config.js
-
-{
-  modules: [
-    "nuxt-security",
-  ],
-  security: {
-    requestSizeLimiter: {
-      value: {
-        maxRequestSizeInBytes: 3000000,
-        maxUploadFileRequestInBytes: 9000000,
-      },
-      route: '/upload-file'
-    }
-  }
-}
-```
-
-Or, you can pass options directly
-
-```js{}[nuxt.config.js]
+```js
 export default defineNuxtConfig({
-  modules: [
-  [
-    'nuxt-security',
-    {
-      requestSizeLimiter: {
-        value: {
-          maxRequestSizeInBytes: 3000000,
-          maxUploadFileRequestInBytes: 9000000,
-        },
-        route: '/upload-file'
-      }
-      // Other options
-    }
-  ]
-  ]
+  modules: ["nuxt-security"],
 })
 ```
 
-For all available configuration options check out the [docs](https://nuxt-security.vercel.app)
+And that's it! The module will now register route roules and server middlewares globally so that your application will be more secured.
+
+## Configuration
+
+You can pass configuration to the module in the `nuxt.config.ts` like following:
+
+```ts
+export default defineNuxtConfig({
+  modules: ["nuxt-security"],
+  security: {
+    // options
+  }
+})
+```
+
+For all available configuration options check out the [docs](https://nuxt-security.vercel.app).
 
 ## Development
 
@@ -118,7 +76,7 @@ For all available configuration options check out the [docs](https://nuxt-securi
 [npm-downloads-href]: https://npmjs.com/package/nuxt-security
 [github-actions-ci-src]: https://github.com/baroshem/nuxt-security/actions/workflows/ci.yml/badge.svg
 [github-actions-ci-href]: https://github.com/baroshem/nuxt-security/actions?query=workflow%3Aci
-[codecov-src]: https://img.shields.io/codecov/c/github/baroshem/nuxt-security.svg
-[codecov-href]: https://codecov.io/gh/baroshem/nuxt-security
 [license-src]: https://img.shields.io/npm/l/nuxt-security.svg
 [license-href]: https://npmjs.com/package/nuxt-security
+[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
+[nuxt-href]: https://nuxt.com
