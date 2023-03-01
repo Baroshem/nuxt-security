@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
-import { defineNuxtModule, addServerHandler } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule } from '@nuxt/kit'
 import defu, { createDefu } from 'defu'
 import { RuntimeConfig } from '@nuxt/schema'
 import { CorsOptions } from '@nozomuikuta/h3-cors'
@@ -35,7 +35,7 @@ export default defineNuxtModule<ModuleOptions>({
     name: 'nuxt-security',
     configKey: 'security'
   },
-  setup (options, nuxt) {
+  async setup (options, nuxt) {
     // TODO: Migrate to createResolver (from @nuxt/kit)
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     nuxt.options.build.transpile.push(runtimeDir)
@@ -155,6 +155,14 @@ export default defineNuxtModule<ModuleOptions>({
         route: basicAuthConfig.route,
         handler: normalize(resolve(runtimeDir, 'server/middleware/basicAuth'))
       })
+    }
+
+    const csrfConfig = nuxt.options.security.csrf
+    if (csrfConfig) {
+      if (Object.keys(csrfConfig).length) {
+        await installModule('nuxt-csurf', csrfConfig)
+      }
+      await installModule('nuxt-csurf')
     }
   }
 })
