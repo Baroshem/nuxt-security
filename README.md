@@ -18,12 +18,11 @@
 
 - Nuxt 3 ready
 - Security browser headers
-- Request Size Limiter
-- Rate Limiter
-- XSS Validator for GET and POST requests
-- CORS Handler similar to popular Express.js middleware
+- Content Security Policy (CSP) for SSG apps
+- Request Size & Rate Limiters
+- Cross Site Scripting (XSS) Validation
+- Cross Origin Resource Sharing (CORS) support
 - Allowed HTTP Methods Restricter
-- Hidden 'X-Powered-By' header
 - `[Optional]` Basic Auth support
 - `[Optional]` CSRF support
 
@@ -44,6 +43,10 @@ export default defineNuxtConfig({
 ```
 
 And that's it! The module will now register route roules and server middlewares globally so that your application will be more secured.
+
+## Static site generation (SSG)
+
+This module is meant to work with SSR apps but you can also use this module in SSG apps where you will get a Content Security Policy (CSP) support via `<meta http-equiv>` tag. You can find more about configuring Content Security Policy (CSP) [here](https://nuxt-security.vercel.app/security/headers#content-security-policy).
 
 ## Configuration
 

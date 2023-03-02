@@ -8,7 +8,8 @@ import type {
   ContentSecurityPolicyValue,
   SecurityHeaders,
   MiddlewareConfiguration
-} from '../types'
+} from '../../../types'
+import defu from 'defu'
 
 interface NuxtRenderHTMLContext {
   island?: boolean
@@ -53,7 +54,7 @@ export default <NitroAppPlugin> function (nitro) {
       sandbox: true
     }
 
-    const tagPolicies = structuredClone(policies) as ContentSecurityPolicyValue
+    const tagPolicies = defu(policies) as ContentSecurityPolicyValue
     if (scriptHashes.length > 0) {
       // Remove '""'
       tagPolicies['script-src'] = (tagPolicies['script-src'] ?? []).concat(scriptHashes)

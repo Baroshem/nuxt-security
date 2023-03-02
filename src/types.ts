@@ -1,3 +1,4 @@
+// TODO: remove when migrating to native H3 cors functionality
 import { CorsOptions } from '@nozomuikuta/h3-cors'
 import { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
 
@@ -154,6 +155,10 @@ export interface ModuleOptions {
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | false;
   rateLimiter: MiddlewareConfiguration<RateLimiter> | false;
   xssValidator: MiddlewareConfiguration<XssValidator> | false;
+  /**
+   * @deprecated `h3-cors` package was merged to core H3. Migrate to a new interface and functionality and change the name to `cors`.
+   * This works for now, but will be changed with the next major release.
+   */
   corsHandler: MiddlewareConfiguration<CorsOptions> | false;
   allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | false;
   hidePoweredBy: boolean;

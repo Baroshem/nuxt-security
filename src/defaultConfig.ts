@@ -97,6 +97,7 @@ export const defaultSecurityConfig: ModuleOptions = {
     ...defaultMiddlewareRoute,
     ...defaultThrowErrorValue,
   },
+  // TODO: migrate to native H3 CORS and rename this to `cors`
   corsHandler: {
     // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
     value: {
