@@ -19,7 +19,8 @@
     "xss",
     "cors",
     "request-size-limit",
-    "allowed-http-methods"
+    "allowed-http-methods",
+    "csrf"
   ],
   "exports": {
     ".": {
@@ -59,6 +60,7 @@
     "@nuxt/schema": "^3.2.2",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/memory-cache": "^0.2.2",
+    "@types/node": "^18.14.4",
     "eslint": "latest",
     "nuxt": "^3.2.2"
   },
