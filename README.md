@@ -21,7 +21,7 @@
 - Content Security Policy (CSP) for SSG apps
 - Request Size & Rate Limiters
 - Cross Site Scripting (XSS) Validation
-- Cross Origin Resource Sharing (CORS) support
+- Cross-Origin Resource Sharing (CORS) support
 - Allowed HTTP Methods Restricter
 - `[Optional]` Basic Auth support
 - `[Optional]` CSRF support
