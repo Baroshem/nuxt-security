@@ -46,18 +46,26 @@ export default defineNuxtModule<ModuleOptions>({
     // Disabled module when `enabled` is set to `false`
     if (!securityOptions.enabled) return
 
-    // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
-    if (securityOptions.hidePoweredBy) {
-      nuxt.hook('nitro:config', (config) => {
-        config.plugins = config.plugins || []
+    nuxt.hook('nitro:config', (config) => {
+      config.plugins = config.plugins || []
+
+      // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
+      if (securityOptions.hidePoweredBy) {
         config.externals = config.externals || {}
         config.externals.inline = config.externals.inline || []
         config.externals.inline.push(normalize(fileURLToPath(new URL('./runtime', import.meta.url))))
         config.plugins.push(
-          normalize(fileURLToPath(new URL('./runtime/nitro', import.meta.url)))
+          normalize(fileURLToPath(new URL('./runtime/nitro/plugins/hidePoweredBy', import.meta.url)))
         )
-      })
-    }
+      }
+
+      // Register nitro plugin to enable CSP for SSG
+      if (typeof securityOptions.headers === 'object' && securityOptions.headers.contentSecurityPolicy) {
+        config.plugins.push(
+          normalize(fileURLToPath(new URL('./runtime/nitro/plugins/cspSsg', import.meta.url)))
+        )
+      }
+    })
 
     nuxt.options.runtimeConfig.security = defu(nuxt.options.runtimeConfig.security, {
       ...securityOptions as RuntimeConfig['security']
