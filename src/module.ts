@@ -127,6 +127,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
+    // TODO: refactor when migrating to H3 native cors support
     // Register corsHandler middleware with default config that will add CORS setup
     // Based on '@nozomuikuta/h3-cors' package
     const corsHandlerConfig = nuxt.options.security.corsHandler

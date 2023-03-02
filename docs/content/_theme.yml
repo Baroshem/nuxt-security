@@ -12,7 +12,7 @@ github:
   releases: true
 cover:
   src: /preview.png
-  alt: "Content made easy for Vue developers"
+  alt: "Security Module for Nuxt based on OWASP Top 10 and Helmet"
 header:
   title: false
   logo: true
