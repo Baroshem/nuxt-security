@@ -3,7 +3,7 @@ import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule } from '@nuxt/kit'
 import defu, { createDefu } from 'defu'
 import { RuntimeConfig } from '@nuxt/schema'
-import { CorsOptions } from '@nozomuikuta/h3-cors'
+import { H3CorsOptions } from 'h3'
 import {
   AllowedHTTPMethods,
   BasicAuth,
@@ -127,13 +127,11 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
-    // TODO: refactor when migrating to H3 native cors support
     // Register corsHandler middleware with default config that will add CORS setup
-    // Based on '@nozomuikuta/h3-cors' package
     const corsHandlerConfig = nuxt.options.security.corsHandler
     if (corsHandlerConfig) {
       addServerHandler({
-        route: (corsHandlerConfig as MiddlewareConfiguration<CorsOptions>)
+        route: (corsHandlerConfig as MiddlewareConfiguration<H3CorsOptions>)
           .route,
         handler: normalize(
           resolve(runtimeDir, 'server/middleware/corsHandler')
