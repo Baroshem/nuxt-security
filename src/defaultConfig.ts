@@ -6,7 +6,7 @@ const defaultGlobalRoute = { route: DEFAULT_GLOBAL_ROUTE }
 const defaultMiddlewareRoute = { route: DEFAULT_MIDDLEWARE_ROUTE }
 const defaultThrowErrorValue = { throwError: true }
 
-export const defaultSecurityConfig: ModuleOptions = {
+export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   headers: {
     crossOriginResourcePolicy: {
       value: 'same-origin',
@@ -101,7 +101,7 @@ export const defaultSecurityConfig: ModuleOptions = {
   corsHandler: {
     // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
     value: {
-      origin: '*',
+      origin: serverlUrl as any,
       methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
       preflight: {
         statusCode: 204
@@ -119,4 +119,4 @@ export const defaultSecurityConfig: ModuleOptions = {
   basicAuth: false,
   enabled: true,
   csrf: false,
-}
+})

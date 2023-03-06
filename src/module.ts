@@ -40,7 +40,7 @@ export default defineNuxtModule<ModuleOptions>({
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     nuxt.options.build.transpile.push(runtimeDir)
     nuxt.options.security = defuReplaceArray({ ...options, ...nuxt.options.security }, {
-      ...defaultSecurityConfig
+      ...defaultSecurityConfig(nuxt.options.devServer.url)
     })
     const securityOptions = nuxt.options.security
     // Disabled module when `enabled` is set to `false`
