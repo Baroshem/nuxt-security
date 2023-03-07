@@ -8,7 +8,7 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-> Security module for Nuxt based on [OWASP Top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#nodejs-security-cheat-sheet) and [helmet](https://helmetjs.github.io/) that adds security browser headers, protection middlewares, CORS, and more.
+> Security module for Nuxt based on [OWASP Top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#nodejs-security-cheat-sheet) and [helmet](https://helmetjs.github.io/) that adds security response headers, protection middlewares, CORS, and more.
 
 - [📖 &nbsp;Read the documentation](https://nuxt-security.vercel.app)
 - [👾 &nbsp;Playground](https://stackblitz.com/github/baroshem/nuxt-security?file=.stackblitz%2Fnuxt.config.ts)
@@ -17,7 +17,7 @@
 ## Features
 
 - Nuxt 3 ready
-- Security browser headers
+- Security response headers
 - Content Security Policy (CSP) for SSG apps
 - Request Size & Rate Limiters
 - Cross Site Scripting (XSS) Validation
