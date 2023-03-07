@@ -132,6 +132,107 @@ export type StrictTransportSecurityValue = {
   preload?: boolean;
 };
 
+export type PermissionsPolicyValue = {
+  'camera'?: string[];
+  'display-capture'?: string[];
+  'fullscreen'?: string[];
+  'geolocation'?: string[];
+  'microphone'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'accelerometer'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'ambient-light-sensor'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'autoplay'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'battery'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'document-domain'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'encrypted-media'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'execution-while-not-rendered'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'execution-while-out-of-viewport'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'gamepad'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'gyroscope'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'hid'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'idle-detection'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'local-fonts'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'magnetometer'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'midi'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'payment'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'picture-in-picture'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'publickey-credentials-get'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'screen-wake-lock'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'serial'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'speaker-selection'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'usb'?: string[];
+  'web-share'?: string[];
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'xr-spatial-tracking'?: string[];
+}
+
 export type SecurityHeaders = {
   crossOriginResourcePolicy?: MiddlewareConfiguration<CrossOriginResourcePolicyValue> | false;
   crossOriginOpenerPolicy?: MiddlewareConfiguration<CrossOriginOpenerPolicyValue> | false;
@@ -146,6 +247,7 @@ export type SecurityHeaders = {
   xFrameOptions?: MiddlewareConfiguration<XFrameOptionsValue> | false;
   xPermittedCrossDomainPolicies?: MiddlewareConfiguration<XPermittedCrossDomainPoliciesValue> | false;
   xXSSProtection?: MiddlewareConfiguration<string> | false;
+  permissionsPolicy?: MiddlewareConfiguration<PermissionsPolicyValue | string> | false;
 };
 
 export type SecurityHeader = Record<string, MiddlewareConfiguration<any>>

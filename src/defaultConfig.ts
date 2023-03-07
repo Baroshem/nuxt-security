@@ -72,6 +72,16 @@ export const defaultSecurityConfig: ModuleOptions = {
     xXSSProtection: {
       value: '0',
       ...defaultGlobalRoute
+    },
+    permissionsPolicy: {
+      value: {
+        'camera': ['()'],
+        'display-capture': ['()'],
+        'fullscreen': ['()'],
+        'geolocation': ['()'],
+        'microphone': ['()'],
+      },
+      ...defaultGlobalRoute
     }
   },
   requestSizeLimiter: {

@@ -1,6 +1,7 @@
 import {
   ContentSecurityPolicyValue,
   MiddlewareConfiguration,
+  PermissionsPolicyValue,
   SecurityHeaders,
   StrictTransportSecurityValue
 } from './types'
@@ -20,7 +21,8 @@ export const SECURITY_HEADER_NAMES: SecurityHeaderNames = {
   xDownloadOptions: 'X-Download-Options',
   xFrameOptions: 'X-Frame-Options',
   xPermittedCrossDomainPolicies: 'X-Permitted-Cross-Domain-Policies',
-  xXSSProtection: 'X-XSS-Protection'
+  xXSSProtection: 'X-XSS-Protection',
+  permissionsPolicy: 'Permissions-Policy'
 }
 
 const headerValueMappers = {
@@ -38,7 +40,8 @@ const headerValueMappers = {
       return (sources as string[])?.length && `${directive} ${(sources as string[]).join(' ')}`
     })
       .filter(Boolean).join('; ')
-  }
+  },
+  permissionsPolicy: (value: PermissionsPolicyValue) => Object.entries(value).map(([directive, sources]) => (sources as string[])?.length && `${directive}=${(sources as string[]).join(' ')}`).filter(Boolean).join(', ')
 }
 
 export const getHeaderValueFromOptions = <T>(headerType: keyof SecurityHeaders, headerOptions: MiddlewareConfiguration<T>) => {
