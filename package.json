@@ -45,7 +45,6 @@
     "stackblitz": "cd .stackblitz && yarn && yarn dev"
   },
   "dependencies": {
-    "@nozomuikuta/h3-cors": "^0.1.5",
     "@nuxt/kit": "^3.2.2",
     "basic-auth": "^2.0.1",
     "defu": "^6.1.1",

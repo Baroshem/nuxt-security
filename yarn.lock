@@ -761,11 +761,6 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nozomuikuta/h3-cors@^0.1.5":
-  version "0.1.8"
-  resolved "https://registry.npmjs.org/@nozomuikuta/h3-cors/-/h3-cors-0.1.8.tgz"
-  integrity sha512-qWe2mUfnjxaBwTYKNM/9GrGK0nciyynn5Lk/sv8wYpKbloaoJFB98onBWMTotV5e/l8CCoelsr1oz4qYb7FdHg==
-
 "@nuxt/devalue@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npmjs.org/@nuxt/devalue/-/devalue-2.0.0.tgz"
