@@ -1,4 +1,3 @@
-import { H3CorsOptions } from 'h3'
 import { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
 
 export type RequestSizeLimiter = {
@@ -24,6 +23,19 @@ export type BasicAuth = {
   pass: string;
   enabled: boolean;
   message: string;
+}
+
+// Cannot use the H3CorsOptions from `h3` as it breaks the build process for some reason :(
+export type CorsOptions = {
+  origin?: "*" | "null" | string | (string | RegExp)[] | ((origin: string) => boolean);
+  methods?: "*" | HTTPMethod[];
+  allowHeaders?: "*" | string[];
+  exposeHeaders?: "*" | string[];
+  credentials?: boolean;
+  maxAge?: string | false;
+  preflight?: {
+      statusCode?: number;
+  };
 }
 
 export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
@@ -256,7 +268,7 @@ export interface ModuleOptions {
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | false;
   rateLimiter: MiddlewareConfiguration<RateLimiter> | false;
   xssValidator: MiddlewareConfiguration<XssValidator> | false;
-  corsHandler: MiddlewareConfiguration<H3CorsOptions> | false;
+  corsHandler: MiddlewareConfiguration<CorsOptions> | false;
   allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | false;
   hidePoweredBy: boolean;
   basicAuth: MiddlewareConfiguration<BasicAuth> | boolean;

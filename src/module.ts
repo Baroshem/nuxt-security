@@ -3,10 +3,10 @@ import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule } from '@nuxt/kit'
 import defu, { createDefu } from 'defu'
 import { RuntimeConfig } from '@nuxt/schema'
-import { H3CorsOptions } from 'h3'
 import {
   AllowedHTTPMethods,
   BasicAuth,
+  CorsOptions,
   MiddlewareConfiguration,
   ModuleOptions,
   RateLimiter,
@@ -131,7 +131,7 @@ export default defineNuxtModule<ModuleOptions>({
     const corsHandlerConfig = nuxt.options.security.corsHandler
     if (corsHandlerConfig) {
       addServerHandler({
-        route: (corsHandlerConfig as MiddlewareConfiguration<H3CorsOptions>)
+        route: (corsHandlerConfig as MiddlewareConfiguration<CorsOptions>)
           .route,
         handler: normalize(
           resolve(runtimeDir, 'server/middleware/corsHandler')
