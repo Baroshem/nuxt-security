@@ -67,8 +67,14 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
+    nuxt.options.runtimeConfig.private = defu(nuxt.options.runtimeConfig.private, {
+      basicAuth: securityOptions.basicAuth as MiddlewareConfiguration<BasicAuth>
+    })
+
+    delete (securityOptions as any).basicAuth
+
     nuxt.options.runtimeConfig.security = defu(nuxt.options.runtimeConfig.security, {
-      ...securityOptions as RuntimeConfig['security']
+      ...securityOptions as RuntimeConfig['security'],
     })
 
     // Register enabled middlewares to automatically set default values for security response headers.
@@ -155,7 +161,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Register basicAuth middleware that is disabled by default
-    const basicAuthConfig = nuxt.options.security
+    const basicAuthConfig = nuxt.options.runtimeConfig.private
       .basicAuth as MiddlewareConfiguration<BasicAuth>
     if (basicAuthConfig && basicAuthConfig?.value?.enabled) {
       addServerHandler({
