@@ -14,20 +14,15 @@ export type BasicAuth = {
   message: string;
 }
 
-const securityConfig = useRuntimeConfig().security
+const securityConfig = useRuntimeConfig().private
 
 export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
   const basicAuthConfig: BasicAuth = securityConfig.basicAuth.value
 
-  if (!credentials) {
+  if (!credentials || !validateCredentials(credentials!, basicAuthConfig)) {
     setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Please enter username and password'}`)
     sendError(event, createError({ statusCode: 401, statusMessage: 'Access denied' }))
-  }
-
-  if (!validateCredentials(credentials!, basicAuthConfig)) {
-    setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Invalid username and/or password'}`)
-    sendError(event, createError({ statusCode: 403, statusMessage: 'Access denied' }))
   }
 })
 
