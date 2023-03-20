@@ -18,7 +18,7 @@ const securityConfig = useRuntimeConfig().private
 
 export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
-  const basicAuthConfig: BasicAuth = securityConfig.basicAuth.value
+  const basicAuthConfig: BasicAuth = securityConfig.basicAuth
 
   if (!credentials || !validateCredentials(credentials!, basicAuthConfig)) {
     setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Please enter username and password'}`)
