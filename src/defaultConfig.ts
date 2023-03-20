@@ -1,9 +1,5 @@
 import { ModuleOptions } from './types'
 
-const DEFAULT_GLOBAL_ROUTE = '/**'
-const DEFAULT_MIDDLEWARE_ROUTE = ''
-const defaultGlobalRoute = { route: DEFAULT_GLOBAL_ROUTE }
-const defaultMiddlewareRoute = { route: DEFAULT_MIDDLEWARE_ROUTE }
 const defaultThrowErrorValue = { throwError: true }
 
 type SecurityMiddlewareNames = Record<string, string>
@@ -20,122 +16,65 @@ export const SECURITY_MIDDLEWARE_NAMES: SecurityMiddlewareNames = {
 
 export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   headers: {
-    crossOriginResourcePolicy: {
-      value: 'same-origin',
-      ...defaultGlobalRoute
-    },
-    crossOriginOpenerPolicy: {
-      value: 'same-origin',
-      ...defaultGlobalRoute
-    },
-    crossOriginEmbedderPolicy: {
-      value: 'require-corp',
-      ...defaultGlobalRoute
-    },
+    crossOriginResourcePolicy: 'same-origin',
+    crossOriginOpenerPolicy: 'same-origin',
+    crossOriginEmbedderPolicy: 'require-corp',
     contentSecurityPolicy: {
-      value: {
-        'base-uri': ["'self'"],
-        'font-src': ["'self'", 'https:', 'data:'],
-        'form-action': ["'self'"],
-        'frame-ancestors': ["'self'"],
-        'img-src': ["'self'", 'data:'],
-        'object-src': ["'none'"],
-        'script-src-attr': ["'none'"],
-        'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-        'upgrade-insecure-requests': true
-      },
-      ...defaultGlobalRoute
+      'base-uri': ["'self'"],
+      'font-src': ["'self'", 'https:', 'data:'],
+      'form-action': ["'self'"],
+      'frame-ancestors': ["'self'"],
+      'img-src': ["'self'", 'data:'],
+      'object-src': ["'none'"],
+      'script-src-attr': ["'none'"],
+      'style-src': ["'self'", 'https:', "'unsafe-inline'"],
+      'upgrade-insecure-requests': true
     },
-    originAgentCluster: {
-      value: '?1',
-      ...defaultGlobalRoute
-    },
-    referrerPolicy: {
-      value: 'no-referrer',
-      ...defaultGlobalRoute
-    },
+    originAgentCluster: '?1',
+    referrerPolicy: 'no-referrer',
     strictTransportSecurity: {
-      value: {
-        maxAge: 15552000,
-        includeSubdomains: true
-      },
-      ...defaultGlobalRoute
+      maxAge: 15552000,
+      includeSubdomains: true
     },
-    xContentTypeOptions: {
-      value: 'nosniff',
-      ...defaultGlobalRoute
-    },
-    xDNSPrefetchControl: {
-      value: 'off',
-      ...defaultGlobalRoute
-    },
-    xDownloadOptions: {
-      value: 'noopen',
-      ...defaultGlobalRoute
-    },
-    xFrameOptions: {
-      value: 'SAMEORIGIN',
-      ...defaultGlobalRoute
-    },
-    xPermittedCrossDomainPolicies: {
-      value: 'none',
-      ...defaultGlobalRoute
-    },
-    xXSSProtection: {
-      value: '0',
-      ...defaultGlobalRoute
-    },
+    xContentTypeOptions: 'nosniff',
+    xDNSPrefetchControl: 'off',
+    xDownloadOptions: 'noopen',
+    xFrameOptions: 'SAMEORIGIN',
+    xPermittedCrossDomainPolicies: 'none',
+    xXSSProtection: '0',
     permissionsPolicy: {
-      value: {
-        'camera': ['()'],
-        'display-capture': ['()'],
-        'fullscreen': ['()'],
-        'geolocation': ['()'],
-        'microphone': ['()'],
-      },
-      ...defaultGlobalRoute
+      'camera': ['()'],
+      'display-capture': ['()'],
+      'fullscreen': ['()'],
+      'geolocation': ['()'],
+      'microphone': ['()'],
     }
   },
   requestSizeLimiter: {
-    value: {
-      maxRequestSizeInBytes: 2000000,
-      maxUploadFileRequestInBytes: 8000000
-    },
-    ...defaultMiddlewareRoute,
+    maxRequestSizeInBytes: 2000000,
+    maxUploadFileRequestInBytes: 8000000,
     ...defaultThrowErrorValue
   },
   rateLimiter: {
     // Twitter search rate limiting
-    value: {
-      tokensPerInterval: 150,
-      interval: 'hour',
-      fireImmediately: true
-    },
-    ...defaultMiddlewareRoute,
+    tokensPerInterval: 150,
+    interval: 'hour',
+    fireImmediately: true,
     ...defaultThrowErrorValue
   },
   xssValidator: {
-    value: {},
-    ...defaultMiddlewareRoute,
     ...defaultThrowErrorValue,
   },
   corsHandler: {
     // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
-    value: {
-      origin: serverlUrl as any,
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-      preflight: {
-        statusCode: 204
-      }
+    origin: serverlUrl,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    preflight: {
+      statusCode: 204
     },
-    ...defaultMiddlewareRoute,
     ...defaultThrowErrorValue
   },
-  allowedMethodsRestricter: {
-    value: '*',
-    ...defaultMiddlewareRoute,
-    ...defaultThrowErrorValue
-  },
+  allowedMethodsRestricter: '*',
   hidePoweredBy: true,
   basicAuth: false,
   enabled: true,

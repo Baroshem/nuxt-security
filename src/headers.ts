@@ -48,5 +48,5 @@ export const getHeaderValueFromOptions = <T>(headerType: keyof SecurityHeaders, 
   if (typeof headerOptions.value === 'string') {
     return headerOptions.value
   }
-  return headerValueMappers[headerType]?.(headerOptions.value) ?? headerOptions.value
+  return headerValueMappers[headerType]?.(headerOptions) ?? headerOptions
 }
