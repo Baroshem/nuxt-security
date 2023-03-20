@@ -23,10 +23,7 @@ export default defineEventHandler(async (event) => {
       if (routeRules.security.requestSizeLimiter.throwError === false) {
         return payloadTooLargeError;
       }
-      throw createError({
-        statusCode: 413,
-        statusMessage: "Payload Too Large",
-      });
+      throw createError(payloadTooLargeError);
     }
   }
 });

@@ -245,20 +245,20 @@ export type PermissionsPolicyValue = {
 }
 
 export type SecurityHeaders = {
-  crossOriginResourcePolicy?: MiddlewareConfiguration<CrossOriginResourcePolicyValue> | false;
-  crossOriginOpenerPolicy?: MiddlewareConfiguration<CrossOriginOpenerPolicyValue> | false;
-  crossOriginEmbedderPolicy?: MiddlewareConfiguration<CrossOriginEmbedderPolicyValue> | false;
-  contentSecurityPolicy?: MiddlewareConfiguration<ContentSecurityPolicyValue | string> | false;
-  originAgentCluster?: MiddlewareConfiguration<'?1'> | false;
-  referrerPolicy?: MiddlewareConfiguration<ReferrerPolicyValue> | false;
-  strictTransportSecurity?: MiddlewareConfiguration<StrictTransportSecurityValue | string> | false;
-  xContentTypeOptions?: MiddlewareConfiguration<XContentTypeOptionsValue> | false;
-  xDNSPrefetchControl?: MiddlewareConfiguration<XDnsPrefetchControlValue> | false;
-  xDownloadOptions?: MiddlewareConfiguration<XDownloadOptionsValue> | false;
-  xFrameOptions?: MiddlewareConfiguration<XFrameOptionsValue> | false;
-  xPermittedCrossDomainPolicies?: MiddlewareConfiguration<XPermittedCrossDomainPoliciesValue> | false;
-  xXSSProtection?: MiddlewareConfiguration<string> | false;
-  permissionsPolicy?: MiddlewareConfiguration<PermissionsPolicyValue | string> | false;
+  crossOriginResourcePolicy?: MiddlewareConfiguration<CrossOriginResourcePolicyValue> | CrossOriginResourcePolicyValue | false;
+  crossOriginOpenerPolicy?: MiddlewareConfiguration<CrossOriginOpenerPolicyValue> | CrossOriginOpenerPolicyValue | false;
+  crossOriginEmbedderPolicy?: MiddlewareConfiguration<CrossOriginEmbedderPolicyValue> | CrossOriginEmbedderPolicyValue | false;
+  contentSecurityPolicy?: MiddlewareConfiguration<ContentSecurityPolicyValue | string> | ContentSecurityPolicyValue | string | false;
+  originAgentCluster?: MiddlewareConfiguration<'?1'> | '?1' | false;
+  referrerPolicy?: MiddlewareConfiguration<ReferrerPolicyValue> | ReferrerPolicyValue | false;
+  strictTransportSecurity?: MiddlewareConfiguration<StrictTransportSecurityValue | string> | StrictTransportSecurityValue | string | false;
+  xContentTypeOptions?: MiddlewareConfiguration<XContentTypeOptionsValue> | XContentTypeOptionsValue | false;
+  xDNSPrefetchControl?: MiddlewareConfiguration<XDnsPrefetchControlValue> | XDnsPrefetchControlValue | false;
+  xDownloadOptions?: MiddlewareConfiguration<XDownloadOptionsValue> | XDownloadOptionsValue | false;
+  xFrameOptions?: MiddlewareConfiguration<XFrameOptionsValue> | XFrameOptionsValue | false;
+  xPermittedCrossDomainPolicies?: MiddlewareConfiguration<XPermittedCrossDomainPoliciesValue> | XPermittedCrossDomainPoliciesValue | false;
+  xXSSProtection?: MiddlewareConfiguration<string> | string | false;
+  permissionsPolicy?: MiddlewareConfiguration<PermissionsPolicyValue | string> | PermissionsPolicyValue | string | false;
 };
 
 export type SecurityHeader = Record<string, MiddlewareConfiguration<any>>

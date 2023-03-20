@@ -4,7 +4,7 @@ import { getRouteRules } from "#imports";
 export default defineEventHandler((event) => {
   const routeRules = getRouteRules(event);
   const allowedMethods: string[] = routeRules.security.allowedMethodsRestricter;
-  if (!allowedMethods.includes(event.node.req.method!!)) {
+  if (!Object.values(allowedMethods).includes(event.node.req.method!!)) {
     const methodNotAllowedError = {
       statusCode: 405,
       statusMessage: "Method not allowed",

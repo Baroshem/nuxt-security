@@ -44,7 +44,7 @@ export default defineNuxtModule<ModuleOptions>({
       { ...options, ...nuxt.options.security },
       {
         ...defaultSecurityConfig(nuxt.options.devServer.url),
-      }
+      },
     );
     const securityOptions = nuxt.options.security;
     // Disabled module when `enabled` is set to `false`
@@ -67,7 +67,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.security = defu(
       nuxt.options.runtimeConfig.security,
       {
-        ...(securityOptions as RuntimeConfig["security"]),
+        ...(securityOptions as unknown as RuntimeConfig["security"]),
       }
     );
 
@@ -110,10 +110,10 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     const allowedMethodsRestricterConfig = nuxt.options.security
-      .allowedMethodsRestricter as MiddlewareConfiguration<AllowedHTTPMethods>;
+      .allowedMethodsRestricter;
     if (
       allowedMethodsRestricterConfig &&
-      allowedMethodsRestricterConfig.value !== "*"
+      !Object.values(allowedMethodsRestricterConfig).includes("*")
     ) {
       addServerHandler({
         handler: normalize(
@@ -154,15 +154,12 @@ const setSecurityResponseHeaders = (nuxt: Nuxt, headers: SecurityHeaders) => {
     if (headers[header as keyof typeof headers]) {
       const nitroRouteRules = nuxt.options.nitro.routeRules;
       const headerOptions = headers[header as keyof typeof headers];
-      // TODO: remove with the next version
-      // In previous approach middlewares were looking like {  value: { config }, route: '' }, while in the new they are just { config }
-      const headerValue = (headerOptions as any).route && (headerOptions as any).value ? getHeaderValueFromOptions(header as keyof SecurityHeaders, headerOptions as any) : headerOptions
       const headerRoute = (headerOptions as any).route || '/**'
       nitroRouteRules!![headerRoute] = {
         ...nitroRouteRules!![headerRoute],
         headers: {
           ...nitroRouteRules!![headerRoute]?.headers,
-          [SECURITY_HEADER_NAMES[header]]: headerValue
+          [SECURITY_HEADER_NAMES[header]]: getHeaderValueFromOptions(header as keyof SecurityHeaders, headerOptions as any)
         },
       };
     }
@@ -189,10 +186,11 @@ const setSecurityRouteRules = (nuxt: Nuxt, securityOptions: ModuleOptions) => {
         middlewareConfig.value && middlewareConfig.route
           ? { ...middlewareConfig.value }
           : { ...middlewareConfig };
-      nitroRouteRules!![(middlewareConfig as any).route] = {
-        ...nitroRouteRules!![(middlewareConfig as any).route],
+      const middlewareRoute = (middlewareConfig as any).route || '/**'
+      nitroRouteRules!![middlewareRoute] = {
+        ...nitroRouteRules!![middlewareRoute],
         security: {
-          ...nitroRouteRules!![(middlewareConfig as any).route]?.security,
+          ...nitroRouteRules!![middlewareRoute]?.security,
           [SECURITY_MIDDLEWARE_NAMES[middleware]]: {
             ...middlewareValue,
             throwError: middlewareConfig.throwError,
