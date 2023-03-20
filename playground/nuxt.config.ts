@@ -1,62 +1,32 @@
 import { defineNuxtConfig } from 'nuxt/config'
-import MyModule from '../src/module'
+import NuxtSecurity from '../src/module'
 
 export default defineNuxtConfig({
-  modules: [
-    MyModule
-  ],
-  // security: {
-  //   rateLimiter: {
-  //     value: {
-  //       tokensPerInterval: 2,
-  //       interval: 'hour',
-  //       fireImmediately: true
-  //     },
-  //     route: '',
-  //     throwError: false
-  //   }
-  // }
-  // security: {
-  //   basicAuth: {
-  //     route: '',
-  //     value: {
-  //       name: 'test',
-  //       pass: 'test',
-  //       enabled: true,
-  //       message: 'test'
-  //     }
-  //   }
-  // }
-  // security: {
-  //   headers: {
-  //     crossOriginResourcePolicy: {
-  //       value: "test",
-  //       route: '/**',
-  //     },
-  //   },
-  //   requestSizeLimiter: {
-  //     value: {
-  //       maxRequestSizeInBytes: 3000000,
-  //       maxUploadFileRequestInBytes: 9000000,
-  //     },
-  //     route: '/upload-file'
-  //   }
-  // }
-  // security: {
-  //   headers: {
-  //     contentSecurityPolicy: {
-  //       value: {
-  //         'img-src': ["'self'", 'data:', 'https://dummy.test']
-  //       },
-  //       route: '/**'
-  //     },
-  //     strictTransportSecurity: {
-  //       value: {
-  //         maxAge: 5552000,
-  //         includeSubdomains: true
-  //       },
-  //       route: '/**'
-  //     }
-  //   }
-  // }
+  modules: [NuxtSecurity],
+
+  // Per route configuration
+  routeRules: {
+    'secret': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 2,
+          interval: 'hour',
+        }
+      },
+      headers: {
+        xXSSProtection: '1'
+      },
+    },
+  },
+
+  // Global configuration
+  security: {
+    headers: {
+      xXSSProtection: '0'
+    },
+    rateLimiter: {
+      tokensPerInterval: 3,
+      interval: 'day'
+    }
+  },
 })

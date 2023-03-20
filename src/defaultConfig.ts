@@ -6,6 +6,18 @@ const defaultGlobalRoute = { route: DEFAULT_GLOBAL_ROUTE }
 const defaultMiddlewareRoute = { route: DEFAULT_MIDDLEWARE_ROUTE }
 const defaultThrowErrorValue = { throwError: true }
 
+type SecurityMiddlewareNames = Record<string, string>
+
+export const SECURITY_MIDDLEWARE_NAMES: SecurityMiddlewareNames = {
+  requestSizeLimiter: 'requestSizeLimiter',
+  rateLimiter: 'rateLimiter',
+  xssValidator: 'xssValidator',
+  corsHandler: 'corsHandler',
+  allowedMethodsRestricter: 'allowedMethodsRestricter',
+  basicAuth: 'basicAuth',
+  csrf: 'csrf'
+}
+
 export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   headers: {
     crossOriginResourcePolicy: {

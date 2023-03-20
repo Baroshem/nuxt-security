@@ -1,8 +1,7 @@
 import { defineEventHandler, handleCors } from 'h3'
-import { useRuntimeConfig } from '#imports'
-
-const securityConfig = useRuntimeConfig().security
+import { getRouteRules } from '#imports'
 
 export default defineEventHandler((event) => {
-  handleCors(event, securityConfig.corsHandler.value)
+  const routeRules = getRouteRules(event)
+  handleCors(event, routeRules.security.corsHandler)
 })

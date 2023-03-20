@@ -265,13 +265,21 @@ export type SecurityHeader = Record<string, MiddlewareConfiguration<any>>
 
 export interface ModuleOptions {
   headers: SecurityHeaders | false;
-  requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | false;
-  rateLimiter: MiddlewareConfiguration<RateLimiter> | false;
-  xssValidator: MiddlewareConfiguration<XssValidator> | false;
-  corsHandler: MiddlewareConfiguration<CorsOptions> | false;
-  allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | false;
+  requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | RequestSizeLimiter | false;
+  rateLimiter: MiddlewareConfiguration<RateLimiter> | RateLimiter | false;
+  xssValidator: MiddlewareConfiguration<XssValidator> | XssValidator | false;
+  corsHandler: MiddlewareConfiguration<CorsOptions> | CorsOptions | false;
+  allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | AllowedHTTPMethods | false;
   hidePoweredBy: boolean;
-  basicAuth: MiddlewareConfiguration<BasicAuth> | boolean;
+  basicAuth: MiddlewareConfiguration<BasicAuth> | BasicAuth | boolean;
   enabled: boolean;
   csrf: CsrfOptions | boolean;
+}
+
+export interface NuxtSecurityRouteRules {
+  requestSizeLimiter?: RequestSizeLimiter;
+  rateLimiter?: RateLimiter;
+  xssValidator?: XssValidator;
+  corsHandler?: CorsOptions;
+  allowedMethodsRestricter: AllowedHTTPMethods;
 }
