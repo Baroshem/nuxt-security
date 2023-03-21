@@ -14,7 +14,7 @@ export default defineNuxtConfig({
         }
       },
       headers: {
-        xXSSProtection: '1'
+        'X-XSS-Protection': '1'
       },
     },
   },
