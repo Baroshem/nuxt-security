@@ -22,9 +22,7 @@
 - Request Size & Rate Limiters
 - Cross Site Scripting (XSS) Validation
 - Cross-Origin Resource Sharing (CORS) support
-- Allowed HTTP Methods Restricter
-- `[Optional]` Basic Auth support
-- `[Optional]` CSRF support
+- `[Optional]` Allowed HTTP Methods, Basic Auth, CSRF
 
 ## Usage
 

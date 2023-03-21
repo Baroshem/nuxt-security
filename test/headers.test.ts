@@ -15,6 +15,16 @@ describe('[nuxt-security] Headers', async () => {
     expect(res).toBeTruthy()
   })
 
+  it('has `x-xss-protection` header set with correct default value for certain route', async () => {
+    const { headers } = await fetch('/test')
+
+    expect(headers.has('x-xss-protection')).toBeTruthy()
+
+    const xxpHeaderValue = headers.get('x-xss-protection')
+
+    expect(xxpHeaderValue).toBeTruthy()
+    expect(xxpHeaderValue).toBe('1')
+  })
 
   it('has `content-security-policy` header set with correct default value', async () => {
     const { headers } = res

@@ -9,7 +9,6 @@ describe('[nuxt-security] Basic Auth', async () => {
 
   it ('should return 401 Access denied when not passing credentials', async () => {
     const res = await fetch('/')
-    console.log(res)
 
     expect(res.status).toBe(401)
     expect(res.statusText).toBe('Access denied')

@@ -8,10 +8,7 @@ export default defineNuxtConfig({
   routeRules: {
     'secret': {
       security: {
-        rateLimiter: {
-          tokensPerInterval: 2,
-          interval: 'hour',
-        }
+        rateLimiter: false
       },
       headers: {
         'X-XSS-Protection': '1'

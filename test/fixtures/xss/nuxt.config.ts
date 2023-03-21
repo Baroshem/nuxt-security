@@ -4,4 +4,11 @@ export default defineNuxtConfig({
   modules: [
     MyModule
   ],
+  routeRules: {
+    'test': {
+      security: {
+        xssValidator: false
+      }
+    }
+  }
 })

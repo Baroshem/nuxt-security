@@ -41,7 +41,7 @@
     "dev:generate": "nuxi generate playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "lint": "eslint --ext .js,.ts,.vue",
-    "test": "vitest run",
+    "test": "vitest run --silent",
     "test:watch": "vitest watch",
     "docs": "cd docs && yarn dev",
     "preview": "nuxi preview playground",
