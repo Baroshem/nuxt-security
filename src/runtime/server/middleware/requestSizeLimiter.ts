@@ -1,25 +1,31 @@
-import { defineEventHandler, getRequestHeader, createError } from 'h3'
-import { useRuntimeConfig } from '#imports'
+import { defineEventHandler, getRequestHeader, createError } from "h3";
+import { getRouteRules } from "#imports";
 
-const securityConfig = useRuntimeConfig().security
-
-const FILE_UPLOAD_HEADER = 'multipart/form-data'
+const FILE_UPLOAD_HEADER = "multipart/form-data";
 
 export default defineEventHandler(async (event) => {
-  if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!!)) {
-    const contentLengthValue = getRequestHeader(event, 'content-length')
-    const contentTypeValue = getRequestHeader(event, 'content-type')
+  const routeRules = getRouteRules(event);
+  if (routeRules.security.requestSizeLimiter !== false) {
+    if (["POST", "PUT", "DELETE"].includes(event.node.req.method!!)) {
+      const contentLengthValue = getRequestHeader(event, "content-length");
+      const contentTypeValue = getRequestHeader(event, "content-type");
 
-    const isFileUpload = contentTypeValue?.includes(FILE_UPLOAD_HEADER)
+      const isFileUpload = contentTypeValue?.includes(FILE_UPLOAD_HEADER);
 
-    const requestLimit = isFileUpload ? securityConfig.requestSizeLimiter.value.maxUploadFileRequestInBytes : securityConfig.requestSizeLimiter.value.maxRequestSizeInBytes
+      const requestLimit = isFileUpload
+        ? routeRules.security.requestSizeLimiter.maxUploadFileRequestInBytes
+        : routeRules.security.requestSizeLimiter.maxRequestSizeInBytes;
 
-    if (parseInt(contentLengthValue as string) >= requestLimit) {
-      if (securityConfig.requestSizeLimiter.throwError) {
-        throw createError({ statusCode: 413, statusMessage: 'Payload Too Large' })
-      } else {
-        return { statusCode: 413, statusMessage: 'Payload Too Large' }
+      if (parseInt(contentLengthValue as string) >= requestLimit) {
+        const payloadTooLargeError = {
+          statusCode: 413,
+          statusMessage: "Payload Too Large",
+        };
+        if (routeRules.security.requestSizeLimiter.throwError === false) {
+          return payloadTooLargeError;
+        }
+        throw createError(payloadTooLargeError);
       }
     }
   }
-})
+});

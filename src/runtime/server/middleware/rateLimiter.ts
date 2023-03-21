@@ -1,29 +1,34 @@
-import { RateLimiter } from 'limiter'
-import { defineEventHandler, getRequestHeader, createError } from 'h3'
-import cache from 'memory-cache'
-import { useRuntimeConfig } from '#imports'
-
-const securityConfig = useRuntimeConfig().security
+import { RateLimiter } from "limiter";
+import { defineEventHandler, getRequestHeader, createError } from "h3";
+import cache from "memory-cache";
+import { getRouteRules } from "#imports";
 
 export default defineEventHandler(async (event) => {
-  const ip = getRequestHeader(event, 'x-forwarded-for')
+  const ip = getRequestHeader(event, "x-forwarded-for");
 
-  if (!cache.get(ip)) {
-    // TODO: send rate limiting configuration from the module
-    const cachedLimiter = new RateLimiter(securityConfig.rateLimiter.value)
-    cache.put(ip, cachedLimiter, 10000)
-  } else {
-    const cachedLimiter = cache.get(ip) as RateLimiter
+  const routeRules = getRouteRules(event);
 
-    if (cachedLimiter.getTokensRemaining() > 1) {
-      await cachedLimiter.removeTokens(1)
-      cache.put(ip, cachedLimiter, 10000)
+  if (routeRules.security.rateLimiter !== false) {
+    if (!cache.get(ip)) {
+      const cachedLimiter = new RateLimiter(routeRules.security.rateLimiter);
+      cache.put(ip, cachedLimiter, 10000);
     } else {
-      if (securityConfig.rateLimiter.throwError) {
-        throw createError({ statusCode: 429, statusMessage: 'Too Many Requests' })
+      const cachedLimiter = cache.get(ip) as RateLimiter;
+
+      if (cachedLimiter.getTokensRemaining() > 1) {
+        await cachedLimiter.removeTokens(1);
+        cache.put(ip, cachedLimiter, 10000);
       } else {
-        return { statusCode: 429, statusMessage: 'Too Many Requests' }
+        const tooManyRequestsError = {
+          statusCode: 429,
+          statusMessage: "Too Many Requests",
+        };
+
+        if (routeRules.security.rateLimiter.throwError === false) {
+          return tooManyRequestsError;
+        }
+        throw createError(tooManyRequestsError);
       }
     }
   }
-})
+});
