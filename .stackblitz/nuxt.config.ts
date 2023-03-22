@@ -5,10 +5,7 @@ export default defineNuxtConfig({
   // For local projects, you do not need any configuration to try it out.
   security: {
     headers: {
-      crossOriginResourcePolicy: {
-        value: 'cross-origin',
-        route: '/**',
-      },
+      crossOriginResourcePolicy: 'cross-origin',
       contentSecurityPolicy: false,
       xFrameOptions: false,
     },

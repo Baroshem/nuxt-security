@@ -3038,10 +3038,10 @@ nuxt-csurf@^1.1.0:
     "@nuxt/kit" "^3.1.0"
     defu "^6.1.1"
 
-nuxt-security@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-0.12.0.tgz#4bfd011a0e2f4e8c3b03aea40890b096d55e5078"
-  integrity sha512-Ed4CbkPBa7DzkvCwbOhJoXN+mg/Htj1agd1hfHqjf1KA5CDAwR8dgxaN5z7uC76RpHQ9tGP1niHNSmcs3D8D0Q==
+nuxt-security@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-0.13.0.tgz#471108143f2a038e377ac1831b163125ae20c3a5"
+  integrity sha512-D2u6ggMA2PVRQIVT/y8jXJ0D+7pxi0f627DlzVTFb6MOhZdazQYZGE54zI2g8fAvZciLHqZ8r+bbt3QlRLzIVg==
   dependencies:
     "@nuxt/kit" "^3.2.2"
     basic-auth "^2.0.1"
