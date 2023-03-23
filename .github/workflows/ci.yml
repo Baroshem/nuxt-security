@@ -38,6 +38,9 @@ jobs:
       - name: Lint
         run: yarn lint
 
+      - name: Prepare
+        run: yarn dev:prepare
+
       - name: Test
         run: yarn test
 
