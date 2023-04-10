@@ -100,15 +100,6 @@ export default defineNuxtModule<ModuleOptions>({
         ),
       });
     }
-
-    if (nuxt.options.security.corsHandler) {
-      addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, "server/middleware/corsHandler")
-        ),
-      });
-    }
-
     const allowedMethodsRestricterConfig = nuxt.options.security
       .allowedMethodsRestricter;
     if (

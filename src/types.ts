@@ -26,17 +26,7 @@ export type BasicAuth = {
 }
 
 // Cannot use the H3CorsOptions from `h3` as it breaks the build process for some reason :(
-export type CorsOptions = {
-  origin?: "*" | "null" | string | (string | RegExp)[] | ((origin: string) => boolean);
-  methods?: "*" | HTTPMethod[];
-  allowHeaders?: "*" | string[];
-  exposeHeaders?: "*" | string[];
-  credentials?: boolean;
-  maxAge?: string | false;
-  preflight?: {
-      statusCode?: number;
-  };
-}
+//MORE LIKE CANNOT USE CORS AT ALL HAHA 
 
 export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
 
@@ -93,21 +83,21 @@ export type CSPSourceValue =
   | string;
 
 export type CSPSandboxValue =
-| 'allow-downloads'
-| 'allow-downloads-without-user-activation'
-| 'allow-forms'
-| 'allow-modals'
-| 'allow-orientation-lock'
-| 'allow-pointer-lock'
-| 'allow-popups'
-| 'allow-popups-to-escape-sandbox'
-| 'allow-presentation'
-| 'allow-same-origin'
-| 'allow-scripts'
-| 'allow-storage-access-by-user-activation'
-| 'allow-top-navigation'
-| 'allow-top-navigation-by-user-activation'
-| 'allow-top-navigation-to-custom-protocols';
+  | 'allow-downloads'
+  | 'allow-downloads-without-user-activation'
+  | 'allow-forms'
+  | 'allow-modals'
+  | 'allow-orientation-lock'
+  | 'allow-pointer-lock'
+  | 'allow-popups'
+  | 'allow-popups-to-escape-sandbox'
+  | 'allow-presentation'
+  | 'allow-same-origin'
+  | 'allow-scripts'
+  | 'allow-storage-access-by-user-activation'
+  | 'allow-top-navigation'
+  | 'allow-top-navigation-by-user-activation'
+  | 'allow-top-navigation-to-custom-protocols';
 
 export type ContentSecurityPolicyValue = {
   'child-src'?: CSPSourceValue[];
@@ -268,7 +258,6 @@ export interface ModuleOptions {
   requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | RequestSizeLimiter | false;
   rateLimiter: MiddlewareConfiguration<RateLimiter> | RateLimiter | false;
   xssValidator: MiddlewareConfiguration<XssValidator> | XssValidator | false;
-  corsHandler: MiddlewareConfiguration<CorsOptions> | CorsOptions | false;
   allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | AllowedHTTPMethods | false;
   hidePoweredBy: boolean;
   basicAuth: MiddlewareConfiguration<BasicAuth> | BasicAuth | boolean;
@@ -280,6 +269,5 @@ export interface NuxtSecurityRouteRules {
   requestSizeLimiter?: RequestSizeLimiter | false;
   rateLimiter?: RateLimiter | false;
   xssValidator?: XssValidator | false;
-  corsHandler?: CorsOptions | false;
   allowedMethodsRestricter: AllowedHTTPMethods | false;
 }

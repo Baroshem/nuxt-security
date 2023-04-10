@@ -8,7 +8,6 @@ export const SECURITY_MIDDLEWARE_NAMES: SecurityMiddlewareNames = {
   requestSizeLimiter: 'requestSizeLimiter',
   rateLimiter: 'rateLimiter',
   xssValidator: 'xssValidator',
-  corsHandler: 'corsHandler',
   allowedMethodsRestricter: 'allowedMethodsRestricter',
   basicAuth: 'basicAuth',
   csrf: 'csrf'
@@ -64,15 +63,6 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   },
   xssValidator: {
     ...defaultThrowErrorValue,
-  },
-  corsHandler: {
-    // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
-    origin: serverlUrl,
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-    preflight: {
-      statusCode: 204
-    },
-    ...defaultThrowErrorValue
   },
   allowedMethodsRestricter: '*',
   hidePoweredBy: true,

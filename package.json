@@ -6,7 +6,7 @@
   "homepage": "https://nuxt-security.vercel.app",
   "description": "🛡 Security Module for Nuxt based on OWASP Top 10 and Helmet",
   "repository": {
-    "url": "https://github.com/Baroshem/nuxt-security"
+    "url": "https://github.com/insomnia-creator/nuxt-security"
   },
   "keywords": [
     "nuxt",
