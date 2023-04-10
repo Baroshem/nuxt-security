@@ -1,12 +1,12 @@
 {
-  "name": "nuxt-security",
+  "name": "nuxt-security-NO-CORS",
   "version": "0.13.0",
   "license": "MIT",
   "type": "module",
   "homepage": "https://nuxt-security.vercel.app",
   "description": "🛡 Security Module for Nuxt based on OWASP Top 10 and Helmet",
   "repository": {
-    "url": "https://github.com/insomnia-creator/nuxt-security"
+    "url": "https://github.com/insomnia-creator/nuxt-security-NO-CORS"
   },
   "keywords": [
     "nuxt",
