@@ -34,7 +34,7 @@ declare module "nitropack" {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: "nuxt-security",
+    name: "nuxt-security-no-cors",
     configKey: "security",
   },
   async setup(options, nuxt) {
