@@ -29,7 +29,9 @@
 Install the module:
 
 ```sh
-npm i nuxt-security --save-dev # yarn or pnpm
+npm i nuxt-security --save-dev
+yarn add -D nuxt-security
+pnpm install -D nuxt-security
 ```
 
 Add the module in the `modules` array in `nuxt.config.ts`:
