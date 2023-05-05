@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   ],
   security: {
     basicAuth: {
+      exclude: ['/api'],
       name: 'test',
       pass: 'test',
       enabled: true,

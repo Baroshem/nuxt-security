@@ -19,6 +19,7 @@ export type XssValidator = {
 } | {};
 
 export type BasicAuth = {
+  exclude?: string[];
   name: string;
   pass: string;
   enabled: boolean;

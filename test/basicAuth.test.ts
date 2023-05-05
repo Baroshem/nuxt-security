@@ -13,4 +13,10 @@ describe('[nuxt-security] Basic Auth', async () => {
     expect(res.status).toBe(401)
     expect(res.statusText).toBe('Access denied')
   })
+
+  it ('should return 200 status code for excluded route', async () => {
+    const res = await fetch('/api/hello')
+
+    expect(res.status).toBe(200)
+  })
 })

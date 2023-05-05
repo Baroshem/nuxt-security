@@ -8,6 +8,7 @@ type Credentials = {
 };
 
 export type BasicAuth = {
+  exclude?: string[];
   name: string;
   pass: string;
   enabled: boolean;
@@ -19,6 +20,8 @@ const securityConfig = useRuntimeConfig().private
 export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
   const basicAuthConfig: BasicAuth = securityConfig.basicAuth
+
+  if (basicAuthConfig?.exclude?.some(el => event.path?.startsWith(el))) { return }
 
   if (!credentials || !validateCredentials(credentials!, basicAuthConfig)) {
     setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Please enter username and password'}`)
