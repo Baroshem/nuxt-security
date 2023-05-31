@@ -278,6 +278,7 @@ export interface ModuleOptions {
 }
 
 export interface NuxtSecurityRouteRules {
+  headers: SecurityHeaders | false;
   requestSizeLimiter?: RequestSizeLimiter | false;
   rateLimiter?: RateLimiter | false;
   xssValidator?: XssValidator | false;
