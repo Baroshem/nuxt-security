@@ -135,9 +135,9 @@ export default defineNuxtModule<ModuleOptions>({
     const csrfConfig = nuxt.options.security.csrf;
     if (csrfConfig) {
       if (Object.keys(csrfConfig).length) {
-        await installModule("nuxt-csurf", csrfConfig);
+        await installModule("nuxt3-csurf", csrfConfig);
       }
-      await installModule("nuxt-csurf");
+      await installModule("nuxt3-csurf");
     }
   },
 });

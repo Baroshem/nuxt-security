@@ -22,8 +22,13 @@ export default defineNuxtConfig({
       xXSSProtection: '0'
     },
     rateLimiter: {
-      tokensPerInterval: 3,
+      tokensPerInterval: 100,
       interval: 'day'
-    }
+    },
+    csrf: {
+      methodsToProtect: ['POST'],
+      https: false,
+      excludedUrls: [['/no.*', 'i'], '/test-without-csrf']
+    },
   },
 })

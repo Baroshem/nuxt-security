@@ -1,4 +1,4 @@
-import { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
+import { ModuleOptions as CsrfOptions } from 'nuxt3-csurf'
 
 export type RequestSizeLimiter = {
   maxRequestSizeInBytes: number;
