@@ -4682,13 +4682,14 @@ nuxi@3.2.3:
   optionalDependencies:
     fsevents "~2.3.2"
 
-nuxt-csurf@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/nuxt-csurf/-/nuxt-csurf-1.1.0.tgz"
-  integrity sha512-7WC89nsZzceMwtZkq1qYf4Mq7Ytw86OaMG5stZ4rqNBsqhhn9VT72LCgsMlnwwLbj933xcaGXsOZ8aEKsQw9qg==
+nuxt-csurf@^1.3.0-beta.1:
+  version "1.3.0-beta.1"
+  resolved "https://registry.yarnpkg.com/nuxt-csurf/-/nuxt-csurf-1.3.0-beta.1.tgz#4cc7310546bf60781dc0113932bc57607dc950ee"
+  integrity sha512-1b/+u3J9mmpGbm5K2mH2OpqECb/D/oneJf1hPv31TcV63jzYULoQLzIFCBRoOahh1CDK8CLJlpr9eJjlXhb9vA==
   dependencies:
     "@nuxt/kit" "^3.1.0"
     defu "^6.1.1"
+    uncsrf "^1.1.0"
 
 nuxt@^3.2.2:
   version "3.2.3"
@@ -6219,6 +6220,11 @@ uncrypto@^0.1.2:
   version "0.1.2"
   resolved "https://registry.npmjs.org/uncrypto/-/uncrypto-0.1.2.tgz"
   integrity sha512-kuZwRKV615lEw/Xx3Iz56FKk3nOeOVGaVmw0eg+x4Mne28lCotNFbBhDW7dEBCBKyKbRQiCadEZeNAFPVC5cgw==
+
+uncsrf@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/uncsrf/-/uncsrf-1.1.0.tgz#d69b571328ce748c18ab5d8b3643321bcf5c4753"
+  integrity sha512-cRSMro81x4pbX20Ggd0SPAYsofOmOvd3Lqn706c6vSEtUEBDDb6CH+GLXStpo+Zbesn2IShDbdf2ijZ11U5JHw==
 
 unctx@^2.1.1, unctx@^2.1.2:
   version "2.1.2"
