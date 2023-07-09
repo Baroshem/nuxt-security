@@ -224,6 +224,15 @@ const registerSecurityNitroPlugins = (
       );
     }
 
+    // Nitro plugin to enable nonce for CSP
+    config.plugins.push(
+      normalize(
+        fileURLToPath(
+          new URL("./runtime/nitro/plugins/cspNonce", import.meta.url)
+        )
+      )
+    );
+
     // Register nitro plugin to enable CSP for SSG
     if (
       typeof securityOptions.headers === "object" &&

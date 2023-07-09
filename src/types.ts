@@ -275,6 +275,7 @@ export interface ModuleOptions {
   basicAuth: MiddlewareConfiguration<BasicAuth> | BasicAuth | boolean;
   enabled: boolean;
   csrf: CsrfOptions | boolean;
+  nonce: boolean;
 }
 
 export interface NuxtSecurityRouteRules {
