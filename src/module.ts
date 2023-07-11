@@ -109,6 +109,14 @@ export default defineNuxtModule<ModuleOptions>({
       });
     }
 
+    if (nuxt.options.security.nonce) {
+      addServerHandler({
+        handler: normalize(
+          resolve(runtimeDir, "server/middleware/cspNonceHandler")
+        ),
+      });
+    }
+
     const allowedMethodsRestricterConfig = nuxt.options.security
       .allowedMethodsRestricter;
     if (
