@@ -11,7 +11,8 @@ export const SECURITY_MIDDLEWARE_NAMES: SecurityMiddlewareNames = {
   corsHandler: 'corsHandler',
   allowedMethodsRestricter: 'allowedMethodsRestricter',
   basicAuth: 'basicAuth',
-  csrf: 'csrf'
+  csrf: 'csrf',
+  nonce: 'nonce'
 }
 
 export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
