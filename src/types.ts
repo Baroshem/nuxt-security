@@ -26,6 +26,12 @@ export type BasicAuth = {
   message: string;
 }
 
+export type NonceOptions = {
+  enabled: boolean;
+  mode?: "renew" | "check";
+  value?: (() => string);
+}
+
 // Cannot use the H3CorsOptions from `h3` as it breaks the build process for some reason :(
 export type CorsOptions = {
   origin?: "*" | "null" | string | (string | RegExp)[] | ((origin: string) => boolean);
@@ -90,6 +96,7 @@ export type CSPSourceValue =
   | "'none'"
   | "'strict-dynamic'"
   | "'report-sample'"
+  | "'nonce=<base64-value>'"
   // for convenient use of any hosts, protocols, hashes and binaries
   | string;
 
@@ -275,7 +282,7 @@ export interface ModuleOptions {
   basicAuth: MiddlewareConfiguration<BasicAuth> | BasicAuth | boolean;
   enabled: boolean;
   csrf: CsrfOptions | boolean;
-  nonce: boolean;
+  nonce: MiddlewareConfiguration<NonceOptions> | NonceOptions | boolean;
 }
 
 export interface NuxtSecurityRouteRules {
@@ -284,4 +291,5 @@ export interface NuxtSecurityRouteRules {
   xssValidator?: XssValidator | false;
   corsHandler?: CorsOptions | false;
   allowedMethodsRestricter: AllowedHTTPMethods | false;
+  nonce?: NonceOptions | false;
 }
