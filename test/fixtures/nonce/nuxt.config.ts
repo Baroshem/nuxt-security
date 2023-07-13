@@ -3,7 +3,11 @@ import MyModule from '../../../src/module'
 export default defineNuxtConfig({
   app: {
     head: {
-      script: [{ src: '/loader.js' }, { src: '/api/generated-script' }]
+      script: [
+        { src: '/loader.js' },
+        { src: '/api/generated-script' },
+        { innerHTML: 'var inlineLiteral = \'<script>console.log("example")</script>\'' }
+      ]
     }
   },
 

@@ -19,7 +19,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(nonce).toBeDefined()
-    expect(elementsWithNonce).toBe(8)
+    expect(elementsWithNonce).toBe(9)
   })
 
   it('does not renew nonce if mode is `check`', async () => {
@@ -49,7 +49,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(nonce).toBeDefined()
-    expect(elementsWithNonce).toBe(10)
+    expect(elementsWithNonce).toBe(11)
   })
 
   it('removes the nonce from the CSP header when nonce is disabled', async () => {
@@ -60,5 +60,14 @@ describe('[nuxt-security] Nonce', async () => {
 
     expect(noncesInCsp).toBe(0)
     expect(cspHeaderValue).toBe("base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'self'  'strict-dynamic'; style-src 'self' https: 'unsafe-inline'; upgrade-insecure-requests; script-src 'self'  'strict-dynamic'")
+  })
+
+  it('does not add nonce to literal strings', async () => {
+    const res = await fetch('/')
+
+    const text = await res.text()
+    const untouchedLiteral = text.includes('var inlineLiteral = \'<script>console.log("example")</script>\'')
+
+    expect(untouchedLiteral).toBe(true)
   })
 })

@@ -15,6 +15,12 @@ interface NuxtRenderHTMLContext {
   bodyAppend: string[]
 }
 
+// To prevent the nonce attribute from being added to literal strings,
+// we need to make sure that the tag is not preceded by a single or double quote.
+// This is done by using a negative lookbehind assertion. See https://www.regular-expressions.info/lookaround.html
+// See https://regex101.com/r/DBE57j/1 for some examples.
+const tagNotPrecededByQuotes = (tag: string) => new RegExp(`(?<!['|"])<${tag}`, 'g')
+
 export default <NitroAppPlugin> function (nitro) {
   nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
     const nonce = parseNonce(`${event.node.res.getHeader('Content-Security-Policy')}`)
@@ -22,12 +28,12 @@ export default <NitroAppPlugin> function (nitro) {
     if (!nonce) { return }
 
     // Add nonce attribute to all link tags
-    html.head = html.head.map(link => link.replaceAll(/<link/g, `<link nonce="${nonce}"`))
-    html.bodyAppend = html.bodyAppend.map(link => link.replaceAll(/<link/g, `<link nonce="${nonce}"`))
+    html.head = html.head.map(link => link.replaceAll(tagNotPrecededByQuotes('link'), `<link nonce="${nonce}"`))
+    html.bodyAppend = html.bodyAppend.map(link => link.replaceAll(tagNotPrecededByQuotes('link'), `<link nonce="${nonce}"`))
 
     // Add nonce attribute to all script tags
-    html.head = html.head.map(script => script.replaceAll(/<script/g, `<script nonce="${nonce}"`))
-    html.bodyAppend = html.bodyAppend.map(script => script.replaceAll(/<script/g, `<script nonce="${nonce}"`))
+    html.head = html.head.map(script => script.replaceAll(tagNotPrecededByQuotes('script'), `<script nonce="${nonce}"`))
+    html.bodyAppend = html.bodyAppend.map(script => script.replaceAll(tagNotPrecededByQuotes('script'), `<script nonce="${nonce}"`))
   })
 
   function parseNonce (content: string) {
