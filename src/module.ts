@@ -109,6 +109,14 @@ export default defineNuxtModule<ModuleOptions>({
       });
     }
 
+    if (nuxt.options.security.nonce) {
+      addServerHandler({
+        handler: normalize(
+          resolve(runtimeDir, "server/middleware/cspNonceHandler")
+        ),
+      });
+    }
+
     const allowedMethodsRestricterConfig = nuxt.options.security
       .allowedMethodsRestricter;
     if (
@@ -223,6 +231,15 @@ const registerSecurityNitroPlugins = (
         )
       );
     }
+
+    // Nitro plugin to enable nonce for CSP
+    config.plugins.push(
+      normalize(
+        fileURLToPath(
+          new URL("./runtime/nitro/plugins/cspNonce", import.meta.url)
+        )
+      )
+    );
 
     // Register nitro plugin to enable CSP for SSG
     if (
