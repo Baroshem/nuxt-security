@@ -1,20 +1,6 @@
 import MyModule from '../../../src/module'
 
 export default defineNuxtConfig({
-  app: {
-    // workaround for double loads in ssr when using nonce
-    // see: https://github.com/unjs/unhead/issues/136
-    head: () => (process.server
-      ? {
-          script: [
-            { src: '/loader.js' },
-            { src: '/api/generated-script' },
-            { innerHTML: 'var inlineLiteral = \'<script>console.log("example")</script>\'' }
-          ]
-        }
-      : {})
-  },
-
   modules: [
     MyModule
   ],

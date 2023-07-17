@@ -7,13 +7,13 @@ describe('[nuxt-security] Nonce', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/nonce', import.meta.url))
   })
 
-  const expectedNonceElements = 9 // 3 head scripts + 3 styles + 3 script attributes
+  const expectedNonceElements = 7 // 1 from app.vue/useHead, 6 for nuxt
 
   it('injects `nonce` attribute in response', async () => {
     const res = await fetch('/')
 
     const cspHeaderValue = res.headers.get('content-security-policy')
-    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)[1]
+    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)![1]
 
     const text = await res.text()
     const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
@@ -43,7 +43,7 @@ describe('[nuxt-security] Nonce', async () => {
     const res = await fetch('/use-head')
 
     const cspHeaderValue = res.headers.get('content-security-policy')
-    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)[1]
+    const nonce = cspHeaderValue!.match(/'nonce-(.*?)'/)![1]
 
     const text = await res.text()
     const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
@@ -51,7 +51,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(nonce).toBeDefined()
-    expect(elementsWithNonce).toBe(11)
+    expect(elementsWithNonce).toBe(expectedNonceElements + 1) // 1 extra for loader.js in useHead
   })
 
   it('removes the nonce from the CSP header when nonce is disabled', async () => {
@@ -65,11 +65,26 @@ describe('[nuxt-security] Nonce', async () => {
   })
 
   it('does not add nonce to literal strings', async () => {
-    const res = await fetch('/')
+    const res = await fetch('/with-inline-script')
 
     const text = await res.text()
-    const untouchedLiteral = text.includes('var inlineLiteral = \'<script>console.log("example")</script>\'')
+    const untouchedLiteral = text.includes('var inlineLiteral = \'<script>console.log("example")\'')
 
     expect(untouchedLiteral).toBe(true)
+  })
+
+  it('injects `nonce` attribute in style tags', async () => {
+    const res = await fetch('/with-styling')
+
+    const cspHeaderValue = res.headers.get('content-security-policy')
+    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)![1]
+
+    const text = await res.text()
+    const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(nonce).toBeDefined()
+    expect(elementsWithNonce).toBe(expectedNonceElements + 1) // one extra for the style tag
   })
 })
