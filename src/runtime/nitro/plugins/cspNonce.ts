@@ -34,6 +34,10 @@ export default <NitroAppPlugin> function (nitro) {
     // Add nonce attribute to all script tags
     html.head = html.head.map(script => script.replaceAll(tagNotPrecededByQuotes('script'), `<script nonce="${nonce}"`))
     html.bodyAppend = html.bodyAppend.map(script => script.replaceAll(tagNotPrecededByQuotes('script'), `<script nonce="${nonce}"`))
+
+    // Add nonce attribute to all style tags
+    html.head = html.head.map(style => style.replaceAll(tagNotPrecededByQuotes('style'), `<style nonce="${nonce}"`))
+    html.bodyAppend = html.bodyAppend.map(style => style.replaceAll(tagNotPrecededByQuotes('style'), `<style nonce="${nonce}"`))
   })
 
   function parseNonce (content: string) {
