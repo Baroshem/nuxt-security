@@ -19,7 +19,7 @@ export default defineEventHandler((event) => {
     let nonce: string | undefined
     switch (nonceConfig?.mode) {
       case 'check': {
-        nonce = getCookie(event, 'nonce')
+        nonce = event.context.nonce ?? getCookie(event, 'nonce')
 
         if (!nonce) {
           return sendError(event, createError({ statusCode: 401, statusMessage: 'Nonce is not set' }))
@@ -31,6 +31,7 @@ export default defineEventHandler((event) => {
       default: {
         nonce = nonceConfig?.value ? nonceConfig.value() : Buffer.from(crypto.randomUUID()).toString('base64')
         setCookie(event, 'nonce', nonce, { sameSite: true, secure: true })
+        event.context.nonce = nonce
         break
       }
     }

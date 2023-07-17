@@ -3,11 +3,12 @@
 </template>
 
 <script lang="ts" setup>
-const nonce = useCookie('nonce')
+const nonce = useNonce()
+
 useHead({
   script: () => ({
-    src: '/loader.js',
-    nonce: nonce.value
+    src: 'loader.js',
+    nonce
   })
 })
 </script>
