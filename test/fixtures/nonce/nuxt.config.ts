@@ -2,13 +2,17 @@ import MyModule from '../../../src/module'
 
 export default defineNuxtConfig({
   app: {
-    head: {
-      script: [
-        { src: '/loader.js' },
-        { src: '/api/generated-script' },
-        { innerHTML: 'var inlineLiteral = \'<script>console.log("example")</script>\'' }
-      ]
-    }
+    // workaround for double loads in ssr when using nonce
+    // see: https://github.com/unjs/unhead/issues/136
+    head: () => (process.server
+      ? {
+          script: [
+            { src: '/loader.js' },
+            { src: '/api/generated-script' },
+            { innerHTML: 'var inlineLiteral = \'<script>console.log("example")</script>\'' }
+          ]
+        }
+      : {})
   },
 
   modules: [
@@ -31,6 +35,7 @@ export default defineNuxtConfig({
     nonce: true,
     headers: {
       contentSecurityPolicy: {
+        'style-src': ["'self'", "'nonce-{{nonce}}'"],
         'script-src': [
           "'self'", // backwards compatibility for older browsers that don't support strict-dynamic
           "'nonce-{{nonce}}'",

@@ -7,6 +7,8 @@ describe('[nuxt-security] Nonce', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/nonce', import.meta.url))
   })
 
+  const expectedNonceElements = 9 // 3 head scripts + 3 styles + 3 script attributes
+
   it('injects `nonce` attribute in response', async () => {
     const res = await fetch('/')
 
@@ -19,7 +21,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(nonce).toBeDefined()
-    expect(elementsWithNonce).toBe(9)
+    expect(elementsWithNonce).toBe(expectedNonceElements)
   })
 
   it('does not renew nonce if mode is `check`', async () => {
@@ -59,7 +61,7 @@ describe('[nuxt-security] Nonce', async () => {
     const noncesInCsp = cspHeaderValue?.match(/'nonce-(.*?)'/)?.length ?? 0
 
     expect(noncesInCsp).toBe(0)
-    expect(cspHeaderValue).toBe("base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'self'  'strict-dynamic'; style-src 'self' https: 'unsafe-inline'; upgrade-insecure-requests; script-src 'self'  'strict-dynamic'")
+    expect(cspHeaderValue).toBe("base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'self'  'strict-dynamic'; style-src 'self' ; upgrade-insecure-requests; script-src 'self'  'strict-dynamic'")
   })
 
   it('does not add nonce to literal strings', async () => {

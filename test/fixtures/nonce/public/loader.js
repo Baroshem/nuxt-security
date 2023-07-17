@@ -3,7 +3,7 @@ function loader() {
   script.src = 'external.js';
 
   // add to the DOM
-  document.body.appendChild(script);
+  document.head.appendChild(script);
 }
 
 loader();
