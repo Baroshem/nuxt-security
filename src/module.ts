@@ -140,6 +140,10 @@ export default defineNuxtModule<ModuleOptions>({
       });
     }
 
+    nuxt.hook('imports:dirs', (dirs) => {
+      dirs.push(normalize(resolve(runtimeDir, 'composables')))
+    });
+
     const csrfConfig = nuxt.options.security.csrf;
     if (csrfConfig) {
       if (Object.keys(csrfConfig).length) {
