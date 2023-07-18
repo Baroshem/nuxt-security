@@ -1,16 +1,6 @@
 import MyModule from '../../../src/module'
 
 export default defineNuxtConfig({
-  app: {
-    head: {
-      script: [
-        { src: '/loader.js' },
-        { src: '/api/generated-script' },
-        { innerHTML: 'var inlineLiteral = \'<script>console.log("example")</script>\'' }
-      ]
-    }
-  },
-
   modules: [
     MyModule
   ],
@@ -31,6 +21,7 @@ export default defineNuxtConfig({
     nonce: true,
     headers: {
       contentSecurityPolicy: {
+        'style-src': ["'self'", "'nonce-{{nonce}}'"],
         'script-src': [
           "'self'", // backwards compatibility for older browsers that don't support strict-dynamic
           "'nonce-{{nonce}}'",

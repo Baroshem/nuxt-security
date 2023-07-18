@@ -3,11 +3,12 @@
 </template>
 
 <script lang="ts" setup>
-const nonce = useCookie('nonce')
 useHead({
-  script: () => ({
-    src: '/loader.js',
-    nonce: nonce.value
-  })
-})
+  script: () => {
+    return {
+      key: 'loader',
+      src: 'loader.js'
+    }
+  }
+}, { mode: 'server' }) // workaround double load on ssr, see https://github.com/unjs/unhead/issues/136
 </script>
