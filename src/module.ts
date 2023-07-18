@@ -230,18 +230,7 @@ const registerSecurityNitroPlugins = (
       config.plugins.push(
         normalize(
           fileURLToPath(
-            new URL("./runtime/nitro/plugins/hidePoweredBy", import.meta.url)
-          )
-        )
-      );
-    }
-
-    // Nitro plugin to enable nonce for CSP
-    if (nuxt.options.security.nonce) {
-      config.plugins.push(
-        normalize(
-          fileURLToPath(
-            new URL("./runtime/nitro/plugins/cspNonce", import.meta.url)
+            new URL("./runtime/nitro/plugins/01-hidePoweredBy", import.meta.url)
           )
         )
       );
@@ -255,7 +244,18 @@ const registerSecurityNitroPlugins = (
       config.plugins.push(
         normalize(
           fileURLToPath(
-            new URL("./runtime/nitro/plugins/cspSsg", import.meta.url)
+            new URL("./runtime/nitro/plugins/02-cspSsg", import.meta.url)
+          )
+        )
+      );
+    }
+
+    // Nitro plugin to enable nonce for CSP
+    if (nuxt.options.security.nonce) {
+      config.plugins.push(
+        normalize(
+          fileURLToPath(
+            new URL("./runtime/nitro/plugins/99-cspNonce", import.meta.url)
           )
         )
       );
