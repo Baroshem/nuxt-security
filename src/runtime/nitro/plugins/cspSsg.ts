@@ -42,7 +42,7 @@ export default <NitroAppPlugin> function (nitro) {
     }
 
     const securityHeaders = moduleOptions.headers as SecurityHeaders
-    const contentSecurityPolicies: ContentSecurityPolicyValue = (securityHeaders.contentSecurityPolicy as MiddlewareConfiguration<ContentSecurityPolicyValue>).value
+    const contentSecurityPolicies: ContentSecurityPolicyValue = (securityHeaders.contentSecurityPolicy as MiddlewareConfiguration<ContentSecurityPolicyValue>).value || securityHeaders.contentSecurityPolicy
 
     html.head.push(generateCspMetaTag(contentSecurityPolicies, scriptHashes))
   })

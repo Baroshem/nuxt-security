@@ -180,8 +180,8 @@ const setSecurityResponseHeaders = (nuxt: Nuxt, headers: SecurityHeaders) => {
 
 const setSecurityRouteRules = (nuxt: Nuxt, securityOptions: ModuleOptions) => {
   const nitroRouteRules = nuxt.options.nitro.routeRules;
-  delete (securityOptions as any).headers;
-  for (const middleware in securityOptions) {
+  const { headers, ...rest } = securityOptions
+  for (const middleware in rest) {
     if (securityOptions[middleware as keyof typeof securityOptions]) {
       const middlewareConfig = securityOptions[
         middleware as keyof typeof securityOptions
@@ -237,13 +237,15 @@ const registerSecurityNitroPlugins = (
     }
 
     // Nitro plugin to enable nonce for CSP
-    config.plugins.push(
-      normalize(
-        fileURLToPath(
-          new URL("./runtime/nitro/plugins/cspNonce", import.meta.url)
+    if (nuxt.options.security.nonce) {
+      config.plugins.push(
+        normalize(
+          fileURLToPath(
+            new URL("./runtime/nitro/plugins/cspNonce", import.meta.url)
+          )
         )
-      )
-    );
+      );
+    }
 
     // Register nitro plugin to enable CSP for SSG
     if (
