@@ -27,6 +27,12 @@ export default <NitroAppPlugin> function (nitro) {
 
     if (!nonce) { return }
 
+    // Replace nonce attribute in http-equiv meta tag
+    html.head = html.head.map((meta) => {
+      if (!meta.startsWith('<meta http-equiv="Content-Security-Policy"')) { return meta }
+      return meta.replaceAll('{{nonce}}', nonce)
+    })
+
     // Add nonce attribute to all link tags
     html.head = html.head.map(link => link.replaceAll(tagNotPrecededByQuotes('link'), `<link nonce="${nonce}"`))
     html.bodyAppend = html.bodyAppend.map(link => link.replaceAll(tagNotPrecededByQuotes('link'), `<link nonce="${nonce}"`))
