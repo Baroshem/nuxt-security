@@ -3,12 +3,14 @@ import { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
 export type RequestSizeLimiter = {
   maxRequestSizeInBytes: number;
   maxUploadFileRequestInBytes: number;
+  throwError?: boolean;
 };
 
 export type RateLimiter = {
   tokensPerInterval: number;
   interval: string | number;
   fireImmediately?: boolean;
+  throwError?: boolean;
 };
 
 export type XssValidator = {
@@ -16,6 +18,7 @@ export type XssValidator = {
   stripIgnoreTag: boolean;
   stripIgnoreTagBody: boolean;
   css: Record<string, any> | boolean;
+  throwError?: boolean;
 } | {};
 
 export type BasicAuth = {
