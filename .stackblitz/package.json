@@ -11,6 +11,6 @@
     "nuxt": "3.2.3"
   },
   "dependencies": {
-    "nuxt-security": "^0.14.3"
+    "nuxt-security": "^0.14.4"
   }
 }
