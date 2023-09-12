@@ -1,63 +1,3 @@
-import { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
-
-export type RequestSizeLimiter = {
-  maxRequestSizeInBytes: number;
-  maxUploadFileRequestInBytes: number;
-  throwError?: boolean;
-};
-
-export type RateLimiter = {
-  tokensPerInterval: number;
-  interval: string | number;
-  fireImmediately?: boolean;
-  throwError?: boolean;
-};
-
-export type XssValidator = {
-  whiteList: Record<string, any>;
-  stripIgnoreTag: boolean;
-  stripIgnoreTagBody: boolean;
-  css: Record<string, any> | boolean;
-  throwError?: boolean;
-} | {};
-
-export type BasicAuth = {
-  exclude?: string[];
-  name: string;
-  pass: string;
-  enabled: boolean;
-  message: string;
-}
-
-export type NonceOptions = {
-  enabled: boolean;
-  mode?: "renew" | "check";
-  value?: (() => string);
-}
-
-// Cannot use the H3CorsOptions from `h3` as it breaks the build process for some reason :(
-export type CorsOptions = {
-  origin?: "*" | "null" | string | (string | RegExp)[] | ((origin: string) => boolean);
-  methods?: "*" | HTTPMethod[];
-  allowHeaders?: "*" | string[];
-  exposeHeaders?: "*" | string[];
-  credentials?: boolean;
-  maxAge?: string | false;
-  preflight?: {
-      statusCode?: number;
-  };
-}
-
-export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
-
-export type AllowedHTTPMethods = HTTPMethod[] | '*'
-
-export type MiddlewareConfiguration<MIDDLEWARE> = {
-  value: MIDDLEWARE;
-  route: string;
-  throwError?: boolean;
-}
-
 export type CrossOriginResourcePolicyValue = 'same-site' | 'same-origin' | 'cross-origin';
 
 export type CrossOriginOpenerPolicyValue = 'unsafe-none' | 'same-origin-allow-popups' | 'same-origin';
@@ -256,43 +196,18 @@ export type PermissionsPolicyValue = {
 }
 
 export type SecurityHeaders = {
-  crossOriginResourcePolicy?: MiddlewareConfiguration<CrossOriginResourcePolicyValue> | CrossOriginResourcePolicyValue | false;
-  crossOriginOpenerPolicy?: MiddlewareConfiguration<CrossOriginOpenerPolicyValue> | CrossOriginOpenerPolicyValue | false;
-  crossOriginEmbedderPolicy?: MiddlewareConfiguration<CrossOriginEmbedderPolicyValue> | CrossOriginEmbedderPolicyValue | false;
-  contentSecurityPolicy?: MiddlewareConfiguration<ContentSecurityPolicyValue | string> | ContentSecurityPolicyValue | string | false;
-  originAgentCluster?: MiddlewareConfiguration<'?1'> | '?1' | false;
-  referrerPolicy?: MiddlewareConfiguration<ReferrerPolicyValue> | ReferrerPolicyValue | false;
-  strictTransportSecurity?: MiddlewareConfiguration<StrictTransportSecurityValue | string> | StrictTransportSecurityValue | string | false;
-  xContentTypeOptions?: MiddlewareConfiguration<XContentTypeOptionsValue> | XContentTypeOptionsValue | false;
-  xDNSPrefetchControl?: MiddlewareConfiguration<XDnsPrefetchControlValue> | XDnsPrefetchControlValue | false;
-  xDownloadOptions?: MiddlewareConfiguration<XDownloadOptionsValue> | XDownloadOptionsValue | false;
-  xFrameOptions?: MiddlewareConfiguration<XFrameOptionsValue> | XFrameOptionsValue | false;
-  xPermittedCrossDomainPolicies?: MiddlewareConfiguration<XPermittedCrossDomainPoliciesValue> | XPermittedCrossDomainPoliciesValue | false;
-  xXSSProtection?: MiddlewareConfiguration<string> | string | false;
-  permissionsPolicy?: MiddlewareConfiguration<PermissionsPolicyValue | string> | PermissionsPolicyValue | string | false;
+  crossOriginResourcePolicy?: CrossOriginResourcePolicyValue | false;
+  crossOriginOpenerPolicy?: CrossOriginOpenerPolicyValue | false;
+  crossOriginEmbedderPolicy?: CrossOriginEmbedderPolicyValue | false;
+  contentSecurityPolicy?: ContentSecurityPolicyValue | string | false;
+  originAgentCluster?: '?1' | false;
+  referrerPolicy?: ReferrerPolicyValue | false;
+  strictTransportSecurity?: StrictTransportSecurityValue | string | false;
+  xContentTypeOptions?: XContentTypeOptionsValue | false;
+  xDNSPrefetchControl?: XDnsPrefetchControlValue | false;
+  xDownloadOptions?: XDownloadOptionsValue | false;
+  xFrameOptions?: XFrameOptionsValue | false;
+  xPermittedCrossDomainPolicies?: XPermittedCrossDomainPoliciesValue | false;
+  xXSSProtection?: string | false;
+  permissionsPolicy?: PermissionsPolicyValue | string | false;
 };
-
-export type SecurityHeader = Record<string, MiddlewareConfiguration<any>>
-
-export interface ModuleOptions {
-  headers: SecurityHeaders | false;
-  requestSizeLimiter: MiddlewareConfiguration<RequestSizeLimiter> | RequestSizeLimiter | false;
-  rateLimiter: MiddlewareConfiguration<RateLimiter> | RateLimiter | false;
-  xssValidator: MiddlewareConfiguration<XssValidator> | XssValidator | false;
-  corsHandler: MiddlewareConfiguration<CorsOptions> | CorsOptions | false;
-  allowedMethodsRestricter: MiddlewareConfiguration<AllowedHTTPMethods> | AllowedHTTPMethods | false;
-  hidePoweredBy: boolean;
-  basicAuth: MiddlewareConfiguration<BasicAuth> | BasicAuth | boolean;
-  enabled: boolean;
-  csrf: CsrfOptions | boolean;
-  nonce: MiddlewareConfiguration<NonceOptions> | NonceOptions | boolean;
-}
-
-export interface NuxtSecurityRouteRules {
-  requestSizeLimiter?: RequestSizeLimiter | false;
-  rateLimiter?: RateLimiter | false;
-  xssValidator?: XssValidator | false;
-  corsHandler?: CorsOptions | false;
-  allowedMethodsRestricter: AllowedHTTPMethods | false;
-  nonce?: NonceOptions | false;
-}

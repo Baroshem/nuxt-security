@@ -2,19 +2,6 @@ import { ModuleOptions } from './types'
 
 const defaultThrowErrorValue = { throwError: true }
 
-type SecurityMiddlewareNames = Record<string, string>
-
-export const SECURITY_MIDDLEWARE_NAMES: SecurityMiddlewareNames = {
-  requestSizeLimiter: 'requestSizeLimiter',
-  rateLimiter: 'rateLimiter',
-  xssValidator: 'xssValidator',
-  corsHandler: 'corsHandler',
-  allowedMethodsRestricter: 'allowedMethodsRestricter',
-  basicAuth: 'basicAuth',
-  csrf: 'csrf',
-  nonce: 'nonce'
-}
-
 export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   headers: {
     crossOriginResourcePolicy: 'same-origin',
@@ -44,11 +31,11 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     xPermittedCrossDomainPolicies: 'none',
     xXSSProtection: '0',
     permissionsPolicy: {
-      'camera': ['()'],
+      camera: ['()'],
       'display-capture': ['()'],
-      'fullscreen': ['()'],
-      'geolocation': ['()'],
-      'microphone': ['()'],
+      fullscreen: ['()'],
+      geolocation: ['()'],
+      microphone: ['()']
     }
   },
   requestSizeLimiter: {
@@ -64,7 +51,7 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     ...defaultThrowErrorValue
   },
   xssValidator: {
-    ...defaultThrowErrorValue,
+    ...defaultThrowErrorValue
   },
   corsHandler: {
     // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
