@@ -1,4 +1,5 @@
 import { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
+import type { Options as RemoveOptions } from 'unplugin-remove/types'
 
 import { SecurityHeaders } from './headers'
 import { AllowedHTTPMethods, BasicAuth, CorsOptions, NonceOptions, RateLimiter, RequestSizeLimiter, XssValidator } from './middlewares'
@@ -15,6 +16,7 @@ export interface ModuleOptions {
   enabled: boolean;
   csrf: CsrfOptions | false;
   nonce: NonceOptions | false;
+  removeLoggers?: RemoveOptions | false;
 }
 
 export interface NuxtSecurityRouteRules {

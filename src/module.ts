@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
-import { defineNuxtModule, addServerHandler, installModule } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
 import defu from 'defu'
 import { Nuxt, RuntimeConfig } from '@nuxt/schema'
 import { defuReplaceArray } from './utils'
@@ -12,8 +12,7 @@ import {
   SecurityHeaders
 } from './types/headers'
 import {
-  BasicAuth,
-  MiddlewareConfiguration
+  BasicAuth
 } from './types/middlewares'
 import {
   defaultSecurityConfig
@@ -53,6 +52,12 @@ export default defineNuxtModule<ModuleOptions>({
     const securityOptions = nuxt.options.security
     // Disabled module when `enabled` is set to `false`
     if (!securityOptions.enabled) { return }
+
+    if (securityOptions.removeLoggers) {
+      // ViteRemove does not come with a proper TS declaration
+      const viteRemove = await import('unplugin-remove/vite') as unknown as (options: any) => any
+      addVitePlugin(viteRemove(securityOptions.removeLoggers))
+    }
 
     registerSecurityNitroPlugins(nuxt, securityOptions)
 

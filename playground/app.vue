@@ -3,6 +3,7 @@
 </template>
 
 <script setup>
+console.log("dupa");
 // Permissions Policy Example
 onMounted(async () => {
   navigator.geolocation.getCurrentPosition(
