@@ -1,4 +1,5 @@
 import { defineEventHandler, handleCors } from 'h3'
+// @ts-ignore
 import { getRouteRules } from '#imports'
 
 export default defineEventHandler((event) => {

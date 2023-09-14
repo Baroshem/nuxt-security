@@ -1,9 +1,10 @@
 import { defineEventHandler, getRequestHeader, createError } from 'h3'
+// @ts-ignore
 import { getRouteRules } from '#imports'
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
   const routeRules = getRouteRules(event)
   if (routeRules.security.requestSizeLimiter !== false) {
     if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {

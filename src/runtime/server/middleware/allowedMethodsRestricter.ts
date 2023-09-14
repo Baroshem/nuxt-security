@@ -1,4 +1,5 @@
 import { defineEventHandler, createError } from 'h3'
+// @ts-ignore
 import { getRouteRules } from '#imports'
 
 export default defineEventHandler((event) => {

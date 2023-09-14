@@ -46,8 +46,11 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   rateLimiter: {
     // Twitter search rate limiting
     tokensPerInterval: 150,
-    interval: 'hour',
-    fireImmediately: true,
+    interval: 300000,
+    headers: false,
+    driver: {
+      name: 'lruCache'
+    },
     ...defaultThrowErrorValue
   },
   xssValidator: {

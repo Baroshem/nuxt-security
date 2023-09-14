@@ -1,5 +1,6 @@
 import { defineEventHandler, createError, getQuery, readBody } from 'h3'
 import { FilterXSS } from 'xss'
+// @ts-ignore
 import { getRouteRules } from '#imports'
 
 export default defineEventHandler(async (event) => {

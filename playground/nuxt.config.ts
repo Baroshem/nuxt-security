@@ -22,8 +22,7 @@ export default defineNuxtConfig({
       xXSSProtection: '0'
     },
     rateLimiter: {
-      tokensPerInterval: 3,
-      interval: 'day'
+      tokensPerInterval: 3
     }
   }
 })

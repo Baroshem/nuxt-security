@@ -1,5 +1,6 @@
 import getCredentials from 'basic-auth'
 import { createError, defineEventHandler, sendError, setHeader } from 'h3'
+// @ts-ignore
 import { useRuntimeConfig } from '#imports'
 
 type Credentials = {

@@ -3,6 +3,7 @@ import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
 import defu from 'defu'
 import { Nuxt, RuntimeConfig } from '@nuxt/schema'
+import { builtinDrivers } from 'unstorage'
 import { defuReplaceArray } from './utils'
 import {
   ModuleOptions,
@@ -12,7 +13,7 @@ import {
   SecurityHeaders
 } from './types/headers'
 import {
-  BasicAuth
+  BasicAuth, RateLimiter
 } from './types/middlewares'
 import {
   defaultSecurityConfig
@@ -92,6 +93,16 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (nuxt.options.security.rateLimiter) {
+    // setup unstorage
+      const driverName = (securityOptions.rateLimiter as RateLimiter).driver?.name
+      if (driverName) {
+        nuxt.options.nitro.virtual = defu(nuxt.options.nitro.virtual, {
+          '#storage-driver': `export { default } from '${
+          builtinDrivers[driverName as keyof typeof builtinDrivers]
+        }'`
+        })
+      }
+
       addServerHandler({
         handler: normalize(
           resolve(runtimeDir, 'server/middleware/rateLimiter')
