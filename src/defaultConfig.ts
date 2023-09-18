@@ -62,8 +62,7 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     preflight: {
       statusCode: 204
-    },
-    ...defaultThrowErrorValue
+    }
   },
   allowedMethodsRestricter: '*',
   hidePoweredBy: true,

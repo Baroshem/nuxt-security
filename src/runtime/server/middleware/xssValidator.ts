@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
               statusCode: 400,
               statusMessage: 'Bad Request'
             }
-            if (routeRules.security.requestSizeLimiter.throwError === false) {
+            if (routeRules.security.xssValidator.throwError === false) {
               return badRequestError
             }
 

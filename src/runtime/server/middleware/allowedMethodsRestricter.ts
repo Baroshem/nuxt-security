@@ -12,6 +12,7 @@ export default defineEventHandler((event) => {
         statusMessage: 'Method not allowed'
       }
 
+      // TODO: fix this as it does not work currently
       if (routeRules.security.allowedMethodsRestricter.throwError === false) {
         return methodNotAllowedError
       }
