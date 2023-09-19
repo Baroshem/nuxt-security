@@ -12,18 +12,7 @@ type StorageItem = {
 
 const driverConfig = useRuntimeConfig().security.rateLimiter.driver
 
-let additionalOptions = {}
-
-// For `lruCache` sizeCalculation does not work for some reason
-// "invalid size value (must be positive integer). When maxSize or maxEntrySize is used, sizeCalculation or size must be set.""
-if (driverConfig.name === 'lruCache') {
-  additionalOptions = {
-    sizeCalculation: (n: string) => n.length,
-    ttl: 1000 * 60 * 5
-  }
-}
-
-const driver = storageDriver({ ...driverConfig.options, ...additionalOptions })
+const driver = storageDriver(driverConfig.options)
 const storage = createStorage({ driver }).mount('', driver)
 
 export default defineEventHandler(async (event) => {
