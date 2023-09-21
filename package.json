@@ -1,10 +1,10 @@
 {
   "name": "nuxt-security",
-  "version": "0.14.4",
+  "version": "1.0.0-rc.1",
   "license": "MIT",
   "type": "module",
   "homepage": "https://nuxt-security.vercel.app",
-  "description": "🛡 Security Module for Nuxt based on OWASP Top 10 and Helmet",
+  "description": "🛡️ Security Module for Nuxt based on HTTP Headers and Middleware",
   "repository": {
     "url": "https://github.com/Baroshem/nuxt-security"
   },
