@@ -82,7 +82,9 @@ export default <NitroAppPlugin> function (nitro) {
         policyValue = value
       }
 
-      contentArray.push(`${key} ${policyValue}`)
+      if (value !== false) {
+        contentArray.push(`${key} ${policyValue}`)
+      }
     }
     const content = contentArray.join('; ')
 
