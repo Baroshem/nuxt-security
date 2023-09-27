@@ -9,10 +9,6 @@ node_modules
 .tmp
 .cache
 
-# Yarn
-**/.yarn/cache
-**/.yarn/*state*
-
 # Generated dirs
 dist
 
