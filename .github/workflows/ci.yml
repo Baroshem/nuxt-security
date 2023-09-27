@@ -3,10 +3,11 @@ name: ci
 on:
   push:
     branches:
+      - alpha
+      - beta
       - main
+      - renovate/**
   pull_request:
-    branches:
-      - main
 
 jobs:
   ci:
