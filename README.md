@@ -63,8 +63,8 @@ For all available configuration options check out the [docs](https://nuxt-securi
 
 ## Development
 
-- Run `yarn dev:prepare` to generate type stubs.
-- Use `yarn dev` to start playground in development mode.
+- Run `pnpm run dev:prepare` to generate type stubs.
+- Use `pnpm run dev` to start playground in development mode.
 
 ## License
 

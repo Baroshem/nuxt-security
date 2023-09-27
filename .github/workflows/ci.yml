@@ -29,22 +29,22 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ matrix.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/pnpm-lock.yaml')) }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn
+        run: pnpm install
 
       - name: Lint
-        run: yarn lint
+        run: pnpm run lint
 
       - name: Prepare
-        run: yarn dev:prepare
+        run: pnpm run dev:prepare
 
       - name: Test
-        run: yarn test
+        run: pnpm run test
 
       # - name: Coverage
-      #   run: yarn codecov
+      #   run: pnpm run codecov
       #   env:
       #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

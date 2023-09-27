@@ -45,8 +45,8 @@
     "lint": "eslint --ext .js,.ts,.vue",
     "test": "vitest run --silent",
     "test:watch": "vitest watch",
-    "docs": "cd docs && yarn dev",
-    "stackblitz": "cd .stackblitz && yarn && yarn dev"
+    "docs": "cd docs && pnpm run dev",
+    "stackblitz": "cd .stackblitz && pnpm install && pnpm run dev"
   },
   "packageManager": "pnpm@8.7.6",
   "dependencies": {
@@ -71,6 +71,6 @@
   },
   "stackblitz": {
     "installDependencies": false,
-    "startCommand": "yarn stackblitz"
+    "startCommand": "pnpm run stackblitz"
   }
 }
