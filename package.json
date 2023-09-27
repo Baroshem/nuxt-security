@@ -59,15 +59,15 @@
     "xss": "^1.0.14"
   },
   "devDependencies": {
-    "@nuxt/module-builder": "latest",
-    "@nuxt/schema": "^3.7.3",
-    "@nuxt/test-utils": "^3.7.3",
-    "@nuxtjs/eslint-config-typescript": "latest",
-    "@types/node": "^18.14.4",
-    "eslint": "latest",
-    "nuxt": "^3.7.3",
+    "@nuxt/module-builder": "0.5.1",
+    "@nuxt/schema": "3.7.3",
+    "@nuxt/test-utils": "3.7.3",
+    "@nuxtjs/eslint-config-typescript": "12.1.0",
+    "@types/node": "18.14.4",
+    "eslint": "8.50.0",
+    "nuxt": "3.7.3",
     "typescript": "5.2.2",
-    "vitest": "^0.28.5"
+    "vitest": "0.28.5"
   },
   "stackblitz": {
     "installDependencies": false,
