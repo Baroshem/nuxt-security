@@ -24,6 +24,6 @@ export interface NuxtSecurityRouteRules {
   rateLimiter?: RateLimiter | false;
   xssValidator?: XssValidator | false;
   corsHandler?: CorsOptions | false;
-  allowedMethodsRestricter: AllowedHTTPMethods | false;
+  allowedMethodsRestricter?: AllowedHTTPMethods | false;
   nonce?: NonceOptions | false;
 }

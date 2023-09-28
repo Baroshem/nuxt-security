@@ -7,8 +7,7 @@ import type {
   ModuleOptions
 } from '../../../types'
 import type {
-  ContentSecurityPolicyValue,
-  SecurityHeaders
+  ContentSecurityPolicyValue
 } from '../../../types/headers'
 import { useRuntimeConfig } from '#imports'
 
