@@ -42,10 +42,10 @@
     "dev:generate": "nuxi generate playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "dev:preview": "nuxi preview playground",
+    "dev:docs": "cd docs && yarn dev",
     "lint": "eslint --ext .js,.ts,.vue",
     "test": "vitest run --silent",
     "test:watch": "vitest watch",
-    "docs": "cd docs && yarn dev",
     "stackblitz": "cd .stackblitz && yarn && yarn dev"
   },
   "dependencies": {
