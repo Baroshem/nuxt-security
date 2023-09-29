@@ -48,6 +48,7 @@
     "test:watch": "vitest watch",
     "stackblitz": "cd .stackblitz && yarn && yarn dev"
   },
+  "packageManager": "yarn@1.22.19",
   "dependencies": {
     "@nuxt/kit": "^3.7.3",
     "basic-auth": "^2.0.1",
