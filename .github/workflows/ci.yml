@@ -3,10 +3,9 @@ name: ci
 on:
   push:
     branches:
-      - alpha
-      - beta
-      - main
-      - renovate/**
+      - 'main'
+      - '**-rc.**'
+      - 'renovate/**'
   pull_request:
 
 jobs:
