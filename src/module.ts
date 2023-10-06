@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
-import defu from 'defu'
+import { defu } from 'defu'
 import { Nuxt, RuntimeConfig } from '@nuxt/schema'
 import { builtinDrivers } from 'unstorage'
 import { defuReplaceArray } from './utils'
