@@ -84,6 +84,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     setSecurityRouteRules(nuxt, securityOptions)
 
+    addServerHandler({
+      handler: normalize(
+        resolve(runtimeDir, 'server/middleware/routeRules')
+      )
+    })
+
     if (nuxt.options.security.requestSizeLimiter) {
       addServerHandler({
         handler: normalize(
