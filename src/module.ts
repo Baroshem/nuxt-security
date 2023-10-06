@@ -82,7 +82,7 @@ export default defineNuxtModule<ModuleOptions>({
       setSecurityResponseHeaders(nuxt, securityOptions.headers)
     }
 
-    setSecurityRouteRules(nuxt, securityOptions)
+    // setSecurityRouteRules(nuxt, securityOptions)
 
     addServerHandler({
       handler: normalize(
@@ -194,26 +194,26 @@ const setSecurityResponseHeaders = (nuxt: Nuxt, headers: SecurityHeaders) => {
   }
 }
 
-const setSecurityRouteRules = (nuxt: Nuxt, securityOptions: ModuleOptions) => {
-  const nitroRouteRules = nuxt.options.nitro.routeRules
-  const { headers, enabled, hidePoweredBy, ...rest } = securityOptions
-  for (const middleware in rest) {
-    const middlewareConfig = securityOptions[middleware as keyof typeof securityOptions] as any
-    if (typeof middlewareConfig !== 'boolean') {
-      const middlewareRoute = '/**'
-      nitroRouteRules![middlewareRoute] = {
-        ...nitroRouteRules![middlewareRoute],
-        security: {
-          ...nitroRouteRules![middlewareRoute]?.security,
-          [SECURITY_MIDDLEWARE_NAMES[middleware]]: {
-            ...middlewareConfig,
-            throwError: middlewareConfig.throwError
-          }
-        }
-      }
-    }
-  }
-}
+// const setSecurityRouteRules = (nuxt: Nuxt, securityOptions: ModuleOptions) => {
+//   const nitroRouteRules = nuxt.options.nitro.routeRules
+//   const { headers, enabled, hidePoweredBy, ...rest } = securityOptions
+//   for (const middleware in rest) {
+//     const middlewareConfig = securityOptions[middleware as keyof typeof securityOptions] as any
+//     if (typeof middlewareConfig !== 'boolean') {
+//       const middlewareRoute = '/**'
+//       nitroRouteRules![middlewareRoute] = {
+//         ...nitroRouteRules![middlewareRoute],
+//         security: {
+//           ...nitroRouteRules![middlewareRoute]?.security,
+//           [SECURITY_MIDDLEWARE_NAMES[middleware]]: {
+//             ...middlewareConfig,
+//             throwError: middlewareConfig.throwError
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 
 const registerSecurityNitroPlugins = (
   nuxt: Nuxt,
