@@ -13,8 +13,7 @@ export default defineNuxtConfig({
       headers: {
         'X-XSS-Protection': '1'
       }
-    },
-    '/api/test': { security: { corsHandler: { origin: '*' } } }
+    }
   },
 
   // Global configuration
