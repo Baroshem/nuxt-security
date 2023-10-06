@@ -1,5 +1,5 @@
 import { SECURITY_MIDDLEWARE_NAMES } from '../../../middlewares'
-import { defineEventHandler, useRuntimeConfig } from '#imports'
+import { defineEventHandler, useRuntimeConfig, getRouteRules } from '#imports'
 
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig()
@@ -8,11 +8,13 @@ export default defineEventHandler((event) => {
 
   setSecurityRouteRules(nitroRouteRules, securityOptions)
 
-  console.log(nitroRouteRules['/**'])
+  event.context._nitro ||= {}
+  event.context._nitro.routeRules = {
+    security: nitroRouteRules['/**']
+  }
 })
 
 const setSecurityRouteRules = (nitroRouteRules: any, securityOptions: any) => {
-  // const nitroRouteRules = nuxt.options.nitro.routeRules
   const { headers, enabled, hidePoweredBy, ...rest } = securityOptions
   for (const middleware in rest) {
     const middlewareConfig = securityOptions[middleware as keyof typeof securityOptions] as any

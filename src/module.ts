@@ -90,39 +90,39 @@ export default defineNuxtModule<ModuleOptions>({
       )
     })
 
-    if (nuxt.options.security.requestSizeLimiter) {
-      addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/requestSizeLimiter')
-        )
-      })
-    }
+    // if (nuxt.options.security.requestSizeLimiter) {
+    //   addServerHandler({
+    //     handler: normalize(
+    //       resolve(runtimeDir, 'server/middleware/requestSizeLimiter')
+    //     )
+    //   })
+    // }
 
-    if (nuxt.options.security.rateLimiter) {
-    // setup unstorage
-      const driverName = (securityOptions.rateLimiter as RateLimiter).driver?.name
-      if (driverName) {
-        nuxt.options.nitro.virtual = defu(nuxt.options.nitro.virtual, {
-          '#storage-driver': `export { default } from '${
-          builtinDrivers[driverName as keyof typeof builtinDrivers]
-        }'`
-        })
-      }
+    // if (nuxt.options.security.rateLimiter) {
+    // // setup unstorage
+    //   const driverName = (securityOptions.rateLimiter as RateLimiter).driver?.name
+    //   if (driverName) {
+    //     nuxt.options.nitro.virtual = defu(nuxt.options.nitro.virtual, {
+    //       '#storage-driver': `export { default } from '${
+    //       builtinDrivers[driverName as keyof typeof builtinDrivers]
+    //     }'`
+    //     })
+    //   }
 
-      addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/rateLimiter')
-        )
-      })
-    }
+    //   addServerHandler({
+    //     handler: normalize(
+    //       resolve(runtimeDir, 'server/middleware/rateLimiter')
+    //     )
+    //   })
+    // }
 
-    if (nuxt.options.security.xssValidator) {
-      addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/xssValidator')
-        )
-      })
-    }
+    // if (nuxt.options.security.xssValidator) {
+    //   addServerHandler({
+    //     handler: normalize(
+    //       resolve(runtimeDir, 'server/middleware/xssValidator')
+    //     )
+    //   })
+    // }
 
     if (nuxt.options.security.corsHandler) {
       addServerHandler({
@@ -132,36 +132,36 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
-    if (nuxt.options.security.nonce) {
-      addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/cspNonceHandler')
-        )
-      })
-    }
+    // if (nuxt.options.security.nonce) {
+    //   addServerHandler({
+    //     handler: normalize(
+    //       resolve(runtimeDir, 'server/middleware/cspNonceHandler')
+    //     )
+    //   })
+    // }
 
-    const allowedMethodsRestricterConfig = nuxt.options.security
-      .allowedMethodsRestricter
-    if (
-      allowedMethodsRestricterConfig &&
-      !Object.values(allowedMethodsRestricterConfig).includes('*')
-    ) {
-      addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/allowedMethodsRestricter')
-        )
-      })
-    }
+    // const allowedMethodsRestricterConfig = nuxt.options.security
+    //   .allowedMethodsRestricter
+    // if (
+    //   allowedMethodsRestricterConfig &&
+    //   !Object.values(allowedMethodsRestricterConfig).includes('*')
+    // ) {
+    //   addServerHandler({
+    //     handler: normalize(
+    //       resolve(runtimeDir, 'server/middleware/allowedMethodsRestricter')
+    //     )
+    //   })
+    // }
 
-    // Register basicAuth middleware that is disabled by default
-    const basicAuthConfig = nuxt.options.runtimeConfig.private
-      .basicAuth as unknown as BasicAuth
-    if (basicAuthConfig && ((basicAuthConfig as any)?.enabled || (basicAuthConfig as any)?.value?.enabled)) {
-      addServerHandler({
-        route: (basicAuthConfig as any).route || '',
-        handler: normalize(resolve(runtimeDir, 'server/middleware/basicAuth'))
-      })
-    }
+    // // Register basicAuth middleware that is disabled by default
+    // const basicAuthConfig = nuxt.options.runtimeConfig.private
+    //   .basicAuth as unknown as BasicAuth
+    // if (basicAuthConfig && ((basicAuthConfig as any)?.enabled || (basicAuthConfig as any)?.value?.enabled)) {
+    //   addServerHandler({
+    //     route: (basicAuthConfig as any).route || '',
+    //     handler: normalize(resolve(runtimeDir, 'server/middleware/basicAuth'))
+    //   })
+    // }
 
     nuxt.hook('imports:dirs', (dirs) => {
       dirs.push(normalize(resolve(runtimeDir, 'composables')))
