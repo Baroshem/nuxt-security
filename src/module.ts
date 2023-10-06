@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin } from '@nuxt/kit'
 import { defu } from 'defu'
 import { Nuxt, RuntimeConfig } from '@nuxt/schema'
 import { builtinDrivers } from 'unstorage'
@@ -82,11 +82,7 @@ export default defineNuxtModule<ModuleOptions>({
       setSecurityResponseHeaders(nuxt, securityOptions.headers)
     }
 
-    addServerHandler({
-      handler: normalize(
-        resolve(runtimeDir, 'server/middleware/routeRules')
-      )
-    })
+    addServerPlugin(resolve(runtimeDir, 'nitro/plugins/routeRules'))
 
     if (nuxt.options.security.requestSizeLimiter) {
       addServerHandler({
