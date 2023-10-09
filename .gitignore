@@ -14,7 +14,8 @@ node_modules
 **/.yarn/*state*
 
 # Generated dirs
-dist
+# Temp upload to github
+*/dist
 
 # Nuxt
 .nuxt
