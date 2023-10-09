@@ -250,6 +250,17 @@ const registerSecurityNitroPlugins = (
       );
     }
 
+    // Register nitro plugin to enable subresource integrity and 'strict-dynamic' CSP for SSG
+    if (securityOptions.sri) {
+      config.plugins.push(
+        normalize(
+          fileURLToPath(
+            new URL('./runtime/nitro/plugins/03-sriSsg', import.meta.url)
+          )
+        )
+      )
+    }
+
     // Nitro plugin to enable nonce for CSP
     if (nuxt.options.security.nonce) {
       config.plugins.push(

@@ -286,6 +286,7 @@ export interface ModuleOptions {
   enabled: boolean;
   csrf: CsrfOptions | boolean;
   nonce: MiddlewareConfiguration<NonceOptions> | NonceOptions | boolean;
+  sri: boolean;
 }
 
 export interface NuxtSecurityRouteRules {
