@@ -13,5 +13,8 @@
     "@nuxtlabs/github-module": "^1.6.3",
     "@nuxtjs/plausible": "^0.2.1",
     "nuxt": "^3.5.3"
-  }
+  },
+  "resolutions": {
+    "string-width": "4.2.3"
+ }
 }

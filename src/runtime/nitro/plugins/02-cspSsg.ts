@@ -21,10 +21,11 @@ interface NuxtRenderHTMLContext {
   bodyAppend: string[]
 }
 
+const moduleOptions = useRuntimeConfig().security as ModuleOptions
+
 export default <NitroAppPlugin> function (nitro) {
   nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
     // Content Security Policy
-    const moduleOptions = useRuntimeConfig().security as ModuleOptions
 
     if (!isContentSecurityPolicyEnabled(event, moduleOptions)) {
       return
@@ -60,7 +61,7 @@ export default <NitroAppPlugin> function (nitro) {
     }
 
     const tagPolicies = defu(policies) as ContentSecurityPolicyValue
-    if (scriptHashes.length > 0) {
+    if (scriptHashes.length > 0 && moduleOptions.ssg?.hashScripts) {
       // Remove '""'
       tagPolicies['script-src'] = (tagPolicies['script-src'] ?? []).concat(scriptHashes)
     }

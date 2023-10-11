@@ -76,5 +76,8 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     consoleType: ['log', 'debug'],
     include: [/\.[jt]sx?$/, /\.vue\??/],
     exclude: [/node_modules/, /\.git/]
+  },
+  ssg: {
+    hashScripts: true
   }
 })

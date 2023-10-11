@@ -4,6 +4,10 @@ import type { Options as RemoveOptions } from 'unplugin-remove/types'
 import { SecurityHeaders } from './headers'
 import { AllowedHTTPMethods, BasicAuth, CorsOptions, NonceOptions, RateLimiter, RequestSizeLimiter, XssValidator } from './middlewares'
 
+export type Ssg = {
+  hashScripts?: boolean;
+};
+
 export interface ModuleOptions {
   headers: SecurityHeaders | false;
   requestSizeLimiter: RequestSizeLimiter | false;
@@ -17,6 +21,7 @@ export interface ModuleOptions {
   csrf: CsrfOptions | false;
   nonce: NonceOptions | false;
   removeLoggers?: RemoveOptions | false;
+  ssg?: Ssg;
 }
 
 export interface NuxtSecurityRouteRules {
