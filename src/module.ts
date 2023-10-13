@@ -3,6 +3,7 @@ import { resolve, normalize } from "pathe";
 import { defineNuxtModule, addServerHandler, installModule } from "@nuxt/kit";
 import defu, { createDefu } from "defu";
 import { Nuxt, RuntimeConfig } from "@nuxt/schema";
+
 import {
   AllowedHTTPMethods,
   BasicAuth,
@@ -16,6 +17,7 @@ import {
   SECURITY_MIDDLEWARE_NAMES,
 } from "./defaultConfig";
 import { SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from "./headers";
+import sriHashes from './runtime/utils/sriHashes'
 
 declare module "@nuxt/schema" {
   interface NuxtOptions {
@@ -140,6 +142,13 @@ export default defineNuxtModule<ModuleOptions>({
       });
     }
 
+    // Calculates SRI hashes at build time
+    if (nuxt.options.security.sri) {
+      // At server build time, we calculate sri hashes
+      nuxt.hook('nitro:build:public-assets', sriHashes)
+
+    }
+
     nuxt.hook('imports:dirs', (dirs) => {
       dirs.push(normalize(resolve(runtimeDir, 'composables')))
     });
@@ -255,7 +264,7 @@ const registerSecurityNitroPlugins = (
       config.plugins.push(
         normalize(
           fileURLToPath(
-            new URL('./runtime/nitro/plugins/03-sriSsg', import.meta.url)
+            new URL('./runtime/nitro/plugins/03-subresourceIntegrity', import.meta.url)
           )
         )
       )

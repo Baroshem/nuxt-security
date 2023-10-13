@@ -80,6 +80,9 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   basicAuth: false,
   enabled: true,
   csrf: false,
-  nonce: false,
-  sri: true
+  nonce: true,
+  sri: {
+    cdnURLOnly: false,
+    includeInCSP: true
+  }
 })

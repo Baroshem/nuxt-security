@@ -48,6 +48,11 @@ export type CorsOptions = {
   };
 }
 
+export type SriOptions = {
+  cdnURLOnly?: boolean;
+  includeInCSP?: boolean;
+}
+
 export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
 
 export type AllowedHTTPMethods = HTTPMethod[] | '*'
@@ -286,7 +291,7 @@ export interface ModuleOptions {
   enabled: boolean;
   csrf: CsrfOptions | boolean;
   nonce: MiddlewareConfiguration<NonceOptions> | NonceOptions | boolean;
-  sri: boolean;
+  sri: SriOptions | boolean;
 }
 
 export interface NuxtSecurityRouteRules {
