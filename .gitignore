@@ -15,7 +15,7 @@ node_modules
 
 # Generated dirs
 # Temp upload to github
-*/dist
+dist
 
 # Nuxt
 .nuxt

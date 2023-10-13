@@ -22,6 +22,7 @@
 - Request Size & Rate Limiters
 - Cross Site Scripting (XSS) Validation
 - Cross-Origin Resource Sharing (CORS) support
+- Subresource Integrity (SRI) support
 - `[Optional]` Allowed HTTP Methods, Basic Auth, CSRF
 
 ## Usage

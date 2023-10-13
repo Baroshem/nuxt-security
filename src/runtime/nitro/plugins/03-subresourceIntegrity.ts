@@ -1,7 +1,7 @@
 import type { NitroAppPlugin, NitroApp } from 'nitropack'
 import type { H3Event } from 'h3'
 import { extname } from 'pathe'
-import { loadNuxtConfig } from '@nuxt/kit'
+import { useNitro } from '@nuxt/kit'
 import type {
   SriOptions
 } from '../../../types'
@@ -19,8 +19,8 @@ interface NuxtRenderHTMLContext {
 
 export default <NitroAppPlugin> async function (nitroApp: NitroApp) {
   nitroApp.hooks.hook('render:html', async (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
-    const sriOptions = useRuntimeConfig().security.sri as SriOptions
-    console.log(sriOptions)
+    const sriOptions = useRuntimeConfig().security.sri
+    console.log(nitroApp)
     const prerendering = isPrerendering(event)
 
     // Retrieve the sriHases that we computed at build time
@@ -35,6 +35,7 @@ export default <NitroAppPlugin> async function (nitroApp: NitroApp) {
 
     const storageBase = prerendering ? 'build' : 'assets'
     const sriHashes = await useStorage(storageBase).getItem('integrity:sriHashes.json')
+    console.log(sriHashes)
     const hashesForSsgCSP:Set<string> = new Set()
     
     // Inject SRI hashes in <head> in both SSR and SSG modes
