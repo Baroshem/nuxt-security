@@ -3,7 +3,9 @@ import type { NitroRouteRules } from 'nitropack'
 import { defu } from 'defu'
 import { withoutBase } from 'ufo'
 import type { ModuleOptions } from '../../../types'
+import type { SecurityHeaders } from '../../../types/headers.ts'
 import { SECURITY_MIDDLEWARE_NAMES } from '../../../middlewares'
+import { HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from '../../../headers'
 import { defineNitroPlugin, useRuntimeConfig } from '#imports'
 
 export default defineNitroPlugin((nitroApp) => {
@@ -29,6 +31,26 @@ export default defineNitroPlugin((nitroApp) => {
       }
       }
     }
+  }
+
+  const setSecurityResponseHeaders = (nitroRouteRules: NitroRouteRules, headers: SecurityHeaders) => {
+    for (const header in headers as SecurityHeaders) {
+      if (headers[header as keyof typeof headers]) {
+        const headerOptions = headers[header as keyof typeof headers]
+        const headerRoute = (headerOptions as any).route || '/**'
+      nitroRouteRules![headerRoute] = {
+        ...nitroRouteRules![headerRoute],
+        headers: {
+          ...nitroRouteRules![headerRoute]?.headers,
+          [SECURITY_HEADER_NAMES[header]]: getHeaderValueFromOptions(header as HeaderMapper, headerOptions as any)
+        }
+      }
+      }
+    }
+  }
+
+  if (securityOptions.headers) {
+    setSecurityResponseHeaders(nitroRouteRules, securityOptions.headers)
   }
 
   setSecurityRouteRules(nitroRouteRules, securityOptions)

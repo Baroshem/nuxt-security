@@ -5,21 +5,9 @@ import { defu } from 'defu'
 import { Nuxt, RuntimeConfig } from '@nuxt/schema'
 import { builtinDrivers } from 'unstorage'
 import { defuReplaceArray } from './utils'
-import {
-  ModuleOptions,
-  NuxtSecurityRouteRules
-} from './types/index'
-import {
-  SecurityHeaders
-} from './types/headers'
-import {
-  BasicAuth, RateLimiter
-} from './types/middlewares'
-import {
-  defaultSecurityConfig
-} from './defaultConfig'
-import { SECURITY_MIDDLEWARE_NAMES } from './middlewares'
-import { HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './headers'
+import { ModuleOptions, NuxtSecurityRouteRules } from './types/index'
+import { BasicAuth, RateLimiter } from './types/middlewares'
+import { defaultSecurityConfig } from './defaultConfig'
 
 declare module '@nuxt/schema' {
   interface NuxtOptions {
@@ -77,10 +65,6 @@ export default defineNuxtModule<ModuleOptions>({
         ...(securityOptions as unknown as RuntimeConfig['security'])
       }
     )
-
-    if (securityOptions.headers) {
-      setSecurityResponseHeaders(nuxt, securityOptions.headers)
-    }
 
     addServerPlugin(resolve(runtimeDir, 'nitro/plugins/routeRules'))
 
@@ -170,23 +154,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
   }
 })
-
-const setSecurityResponseHeaders = (nuxt: Nuxt, headers: SecurityHeaders) => {
-  for (const header in headers as SecurityHeaders) {
-    if (headers[header as keyof typeof headers]) {
-      const nitroRouteRules = nuxt.options.nitro.routeRules
-      const headerOptions = headers[header as keyof typeof headers]
-      const headerRoute = (headerOptions as any).route || '/**'
-      nitroRouteRules![headerRoute] = {
-        ...nitroRouteRules![headerRoute],
-        headers: {
-          ...nitroRouteRules![headerRoute]?.headers,
-          [SECURITY_HEADER_NAMES[header]]: getHeaderValueFromOptions(header as HeaderMapper, headerOptions as any)
-        }
-      }
-    }
-  }
-}
 
 const registerSecurityNitroPlugins = (
   nuxt: Nuxt,
