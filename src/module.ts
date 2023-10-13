@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
 import { defu } from 'defu'
 import { Nuxt, RuntimeConfig } from '@nuxt/schema'
 import { builtinDrivers } from 'unstorage'
@@ -65,8 +65,6 @@ export default defineNuxtModule<ModuleOptions>({
         ...(securityOptions as unknown as RuntimeConfig['security'])
       }
     )
-
-    addServerPlugin(resolve(runtimeDir, 'nitro/plugins/routeRules'))
 
     if (nuxt.options.security.requestSizeLimiter) {
       addServerHandler({
@@ -161,6 +159,14 @@ const registerSecurityNitroPlugins = (
 ) => {
   nuxt.hook('nitro:config', (config) => {
     config.plugins = config.plugins || []
+
+    config.plugins.push(
+      normalize(
+        fileURLToPath(
+          new URL('./runtime/nitro/plugins/00-routeRules', import.meta.url)
+        )
+      )
+    )
 
     // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
     if (securityOptions.hidePoweredBy) {
