@@ -1,26 +1,10 @@
 import type { NitroAppPlugin, NitroApp } from 'nitropack'
 import type { H3Event } from 'h3'
 import { extname } from 'pathe'
-import { useNitro } from '@nuxt/kit'
-import type {
-  SriOptions
-} from '../../../types'
-import { useRuntimeConfig, useStorage } from '#imports'
-
-interface NuxtRenderHTMLContext {
-  island?: boolean
-  htmlAttrs: string[]
-  head: string[]
-  bodyAttrs: string[]
-  bodyPrepend: string[]
-  body: string[]
-  bodyAppend: string[]
-}
+import { useStorage } from '#imports'
 
 export default <NitroAppPlugin> async function (nitroApp: NitroApp) {
-  nitroApp.hooks.hook('render:html', async (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
-    const sriOptions = useRuntimeConfig().security.sri
-    console.log(nitroApp)
+  nitroApp.hooks.hook('render:html', async (html, { event }) => {
     const prerendering = isPrerendering(event)
 
     // Retrieve the sriHases that we computed at build time
@@ -34,8 +18,7 @@ export default <NitroAppPlugin> async function (nitroApp: NitroApp) {
     //   But we did save the /integrity directory into the server assets
 
     const storageBase = prerendering ? 'build' : 'assets'
-    const sriHashes = await useStorage(storageBase).getItem('integrity:sriHashes.json')
-    console.log(sriHashes)
+    const sriHashes: Record<string, string> = await useStorage(storageBase).getItem('integrity:sriHashes.json') || {}
     const hashesForSsgCSP:Set<string> = new Set()
     
     // Inject SRI hashes in <head> in both SSR and SSG modes

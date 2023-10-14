@@ -1,7 +1,4 @@
 {
   "root": true,
-  "extends": ["@nuxt/eslint-config"],
-  "rules": {
-    "@typescript-eslint/no-unused-vars": ["off"]
-  }
+  "extends": ["@nuxt/eslint-config"]
 }

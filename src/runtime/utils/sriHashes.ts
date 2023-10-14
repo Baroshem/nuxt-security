@@ -46,7 +46,7 @@ export default async function (nitro: Nitro) {
 
 }
 
-function generateHash (content: any, hashAlgorithm: string) {
+function generateHash (content: Buffer, hashAlgorithm: string) {
   const hash = createHash(hashAlgorithm)
   hash.update(content)
   return `${hashAlgorithm}-${hash.digest('base64')}`
