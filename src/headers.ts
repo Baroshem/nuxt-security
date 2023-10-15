@@ -41,7 +41,7 @@ const headerValueMappers = {
     })
       .filter(Boolean).join('; ')
   },
-  permissionsPolicy: (value: PermissionsPolicyValue) => Object.entries(value).map(([directive, sources]) => (sources as string[])?.length && `${directive}=${(sources as string[]).join(' ')}`).filter(Boolean).join(', ')
+  permissionsPolicy: (value: PermissionsPolicyValue) => Object.entries(value).map(([directive, sources]) => `${directive}=(${(sources as string[]).join(' ')})`).filter(Boolean).join(', ')
 }
 
 export const getHeaderValueFromOptions = <T>(headerType: HeaderMapper, headerOptions: any) => {

@@ -31,11 +31,11 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     xPermittedCrossDomainPolicies: 'none',
     xXSSProtection: '0',
     permissionsPolicy: {
-      camera: ['()'],
-      'display-capture': ['()'],
-      fullscreen: ['()'],
-      geolocation: ['()'],
-      microphone: ['()']
+      camera: [],
+      'display-capture': [],
+      fullscreen: [],
+      geolocation: [],
+      microphone: []
     }
   },
   requestSizeLimiter: {
