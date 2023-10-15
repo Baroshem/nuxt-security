@@ -53,10 +53,7 @@ export type CorsOptions = {
   };
 }
 
-export type AllowedHTTPMethods = HTTPMethod[] | '*'
-
-export type MiddlewareConfiguration<MIDDLEWARE> = {
-  value: MIDDLEWARE;
-  route: string;
+export type AllowedHTTPMethods = {
+  methods: HTTPMethod[] | '*';
   throwError?: boolean;
 }

@@ -64,7 +64,10 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
       statusCode: 204
     }
   },
-  allowedMethodsRestricter: '*',
+  allowedMethodsRestricter: {
+    methods: '*',
+    ...defaultThrowErrorValue
+  },
   hidePoweredBy: true,
   basicAuth: false,
   enabled: true,

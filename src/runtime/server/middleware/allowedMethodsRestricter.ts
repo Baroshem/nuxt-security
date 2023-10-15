@@ -4,15 +4,15 @@ import { getRouteRules } from '#imports'
 
 export default defineEventHandler((event) => {
   const routeRules = getRouteRules(event)
-  const allowedMethods: string[] = routeRules.security.allowedMethodsRestricter
-  if (routeRules.security.allowedMethodsRestricter !== false) {
-    if (!Object.values(allowedMethods).includes(event.node.req.method!)) {
+  const allowedMethodsRestricter = routeRules.security.allowedMethodsRestricter
+  if (allowedMethodsRestricter !== false) {
+    const allowedMethods: string[] = allowedMethodsRestricter.methods
+    if (!allowedMethods.includes(event.node.req.method!)) {
       const methodNotAllowedError = {
         statusCode: 405,
         statusMessage: 'Method not allowed'
       }
 
-      // TODO: fix this as it does not work currently
       if (routeRules.security.allowedMethodsRestricter.throwError === false) {
         return methodNotAllowedError
       }
