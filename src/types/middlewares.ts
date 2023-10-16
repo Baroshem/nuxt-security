@@ -8,17 +8,10 @@ export type RateLimiter = {
   tokensPerInterval?: number;
   interval?: number;
   driver?: {
-    /**
-     * @default 'lruCache'
-     */
     name: string,
     options?: Record<string, any>
   }
   headers?: boolean;
-  /**
-   * Whether to throw on error
-   * @default true
-   */
   throwError?: boolean;
 };
 

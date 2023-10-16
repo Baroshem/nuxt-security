@@ -43,8 +43,8 @@
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "dev:preview": "nuxi preview playground",
     "dev:docs": "cd docs && yarn dev",
-    "lint": "eslint --ext .js,.ts,.vue",
-    "test": "vitest run --silent",
+    "lint": "eslint .",
+    "test": "vitest run",
     "test:watch": "vitest watch",
     "stackblitz": "cd .stackblitz && yarn && yarn dev"
   },
@@ -59,12 +59,12 @@
     "xss": "^1.0.14"
   },
   "devDependencies": {
-    "@nuxt/module-builder": "latest",
+    "@nuxt/module-builder": "^0.5.2",
     "@nuxt/schema": "^3.7.4",
     "@nuxt/test-utils": "^3.7.4",
-    "@nuxt/eslint-config": "latest",
-    "@types/node": "^18.14.4",
-    "eslint": "latest",
+    "@nuxt/eslint-config": "^0.2.0",
+    "@types/node": "^18.18.1",
+    "eslint": "^8.50.0",
     "nuxt": "^3.7.4",
     "typescript": "5.2.2",
     "vitest": "^0.33.0"

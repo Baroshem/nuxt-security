@@ -3,10 +3,12 @@ import { createError, defineEventHandler, getCookie, sendError, setCookie, getRo
 
 export default defineEventHandler((event) => {
   let csp = `${event.node.res.getHeader('Content-Security-Policy')}`
+  console.log('initial csp: ', csp)
   const routeRules = getRouteRules(event)
   const nonceConfig = routeRules.security.nonce
+  console.log(nonceConfig)
 
-  if (nonceConfig !== false) {
+  if (nonceConfig) {
 
     // See if we are checking the nonce against the current value, or if we are renewing the nonce value
     let nonce: string | undefined
@@ -33,7 +35,9 @@ export default defineEventHandler((event) => {
     csp = csp.replaceAll('{{nonce}}', nonce)
   } else {
     // Nonce is disabled, so make sure it's also not set in the csp header
+    console.log('nonce disabled, csp: ', csp)
     csp = csp.replaceAll('\'nonce-{{nonce}}\'', '')
+    console.log('after replace', csp)
   }
 
   event.node.res.setHeader('Content-Security-Policy', csp)

@@ -1,8 +1,6 @@
-import MyModule from '../../../src/module'
-
 export default defineNuxtConfig({
   modules: [
-    MyModule
+    '../../../src/module.ts'
   ],
 
   routeRules: {
@@ -18,7 +16,9 @@ export default defineNuxtConfig({
     }
   },
   security: {
-    nonce: true,
+    nonce: {
+      enabled: true
+    },
     headers: {
       contentSecurityPolicy: {
         'style-src': ["'self'", "'nonce-{{nonce}}'"],
