@@ -1,49 +1,37 @@
-import { defineEventHandler, getRequestHeader, createError, H3Event, setHeader } from 'h3'
-import { createStorage } from 'unstorage'
-// @ts-ignore
-import { getRouteRules, useRuntimeConfig, useStorage } from '#imports'
-//import { builtinDrivers } from 'unstorage'
-// @ts-ignore
-// import storageDriver from '#storage-driver'
-import { lruCache } from 'unstorage'
+import { defineEventHandler, getRequestHeader, createError, setHeader, getRouteRules, useStorage } from '#imports'
+import type { H3Event } from 'h3'
 
 type StorageItem = {
-  value: number,
-  date: number
+  remaining: number,
+  startDate: number
 }
-
-/*
-const driverConfig = useRuntimeConfig().security.rateLimiter.driver
-const driver = storageDriver(driverConfig.options)
-const storage = createStorage({ driver }).mount('', driver)
-*/
 const storage = useStorage<StorageItem>('#storage-driver')
 
 export default defineEventHandler(async (event) => {
   const routeRules = getRouteRules(event)
 
-  const rateLimiterConfig = routeRules.security.rateLimiter
+  const rateLimiter = routeRules.security.rateLimiter
 
-  if (rateLimiterConfig !== false) {
+  if (rateLimiter) {
 
     const ip = getIP(event)
 
     let storageItem = await storage.getItem(ip)
 
     if (!storageItem) {
-      await setStorageItem(rateLimiterConfig, ip)
+      await setStorageItem(rateLimiter, ip)
     } else {
       if (typeof storageItem !== 'object') { return }
 
-      const timeSinceFirstRateLimit = storageItem.date
-      const timeForInterval = storageItem.date + (rateLimiterConfig?.interval || 0)
+      const startDate = storageItem.startDate
+      const maxDate = startDate + (rateLimiter.interval as number)
 
-      if (Date.now() >= timeForInterval) {
-        await setStorageItem(rateLimiterConfig, ip)
-        storageItem = await storage.getItem(ip)
+      if (Date.now() >= maxDate) {
+        await setStorageItem(rateLimiter, ip)
+        storageItem = await storage.getItem(ip) as StorageItem
       }
 
-      const isLimited = timeSinceFirstRateLimit <= timeForInterval && storageItem.value === 0
+      const isLimited = startDate <= maxDate && storageItem.remaining === 0
 
       if (isLimited) {
         const tooManyRequestsError = {
@@ -51,37 +39,37 @@ export default defineEventHandler(async (event) => {
           statusMessage: 'Too Many Requests'
         }
 
-        if (rateLimiterConfig.headers) {
+        if (rateLimiter.headers) {
           setHeader(event, 'x-ratelimit-remaining', 0)
-          setHeader(event, 'x-ratelimit-limit', rateLimiterConfig?.tokensPerInterval)
-          setHeader(event, 'x-ratelimit-reset', timeForInterval)
+          setHeader(event, 'x-ratelimit-limit', rateLimiter.tokensPerInterval as number)
+          setHeader(event, 'x-ratelimit-reset', maxDate)
         }
 
-        if (rateLimiterConfig.throwError === false) {
+        if (rateLimiter.throwError === false) {
           return tooManyRequestsError
         }
         throw createError(tooManyRequestsError)
       }
 
-      const newItemDate = timeSinceFirstRateLimit > timeForInterval ? Date.now() : storageItem.date
+      const newItemDate = startDate > maxDate ? Date.now() : storageItem.startDate
 
-      const newStorageItem: StorageItem = { value: storageItem.value - 1, date: newItemDate }
+      const newStorageItem: StorageItem = { remaining: storageItem.remaining - 1, startDate: newItemDate }
 
-      await storage.setItem(ip, JSON.stringify(newStorageItem))
+      await storage.setItem(ip, newStorageItem)
       const currentItem = await storage.getItem(ip)as StorageItem
 
-      if (currentItem && rateLimiterConfig.headers) {
-        setHeader(event, 'x-ratelimit-remaining', currentItem.value)
-        setHeader(event, 'x-ratelimit-limit', rateLimiterConfig?.tokensPerInterval)
-        setHeader(event, 'x-ratelimit-reset', timeForInterval)
+      if (currentItem && rateLimiter.headers) {
+        setHeader(event, 'x-ratelimit-remaining', currentItem.remaining)
+        setHeader(event, 'x-ratelimit-limit', rateLimiter.tokensPerInterval as number)
+        setHeader(event, 'x-ratelimit-reset', maxDate)
       }
     }
   }
 })
 
 async function setStorageItem (rateLimiterConfig: any, ip: string) {
-  const rateLimitedObject: StorageItem = { value: rateLimiterConfig?.tokensPerInterval, date: Date.now() }
-  await storage.setItem(ip, JSON.stringify(rateLimitedObject))
+  const rateLimitedObject: StorageItem = { remaining: rateLimiterConfig?.tokensPerInterval, startDate: Date.now() }
+  await storage.setItem(ip, rateLimitedObject)
 }
 
 // Taken and modified from https://github.com/timb-103/nuxt-rate-limit/blob/8a37846469c2f32f0e2ca6893a31baeec944d56c/src/runtime/server/utils/rate-limit.ts#L78

@@ -1,15 +1,5 @@
 import crypto from 'node:crypto'
-import { createError, defineEventHandler, getCookie, sendError, setCookie } from 'h3'
-// @ts-ignore
-import { getRouteRules } from '#imports'
-/*
-export type NonceOptions = {
-  enabled: boolean;
-  mode: 'renew' | 'check';
-  value: undefined | (() => string);
-}
-*/
-
+import { createError, defineEventHandler, getCookie, sendError, setCookie, getRouteRules } from '#imports'
 
 export default defineEventHandler((event) => {
   let csp = `${event.node.res.getHeader('Content-Security-Policy')}`

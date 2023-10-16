@@ -1,38 +1,21 @@
 import path from 'node:path'
 import crypto from 'node:crypto'
-import type { NitroAppPlugin } from 'nitropack'
+import { defineNitroPlugin } from '#imports'
 import type { H3Event } from 'h3'
 import defu from 'defu'
-import type {
-  ModuleOptions
-} from '../../../types'
-import type {
-  ContentSecurityPolicyValue
-} from '../../../types/headers'
-import Module from 'node:module'
+import type { ContentSecurityPolicyValue } from '../../../types/headers'
 import { useRuntimeConfig } from '#imports'
-/*
-interface NuxtRenderHTMLContext {
-  island?: boolean
-  htmlAttrs: string[]
-  head: string[]
-  bodyAttrs: string[]
-  bodyPrepend: string[]
-  body: string[]
-  bodyAppend: string[]
-}
-*/
-const moduleOptions = useRuntimeConfig().security
 
-export default <NitroAppPlugin> function (nitro) {
-  nitro.hooks.hook('render:html', (html, { event }) => {
+export default defineNitroPlugin((nitroApp) => {
+  const securityOptions = useRuntimeConfig().security
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Content Security Policy
 
     if (!isContentSecurityPolicyEnabled(event)) {
       return
     }
 
-    if (!moduleOptions.headers) {
+    if (!securityOptions.headers) {
       return
     }
 
@@ -47,7 +30,7 @@ export default <NitroAppPlugin> function (nitro) {
       }
     }
 
-    const cspConfig = moduleOptions.headers.contentSecurityPolicy
+    const cspConfig = securityOptions.headers.contentSecurityPolicy
 
     if (cspConfig && typeof cspConfig !== 'string') {
       html.head.push(generateCspMetaTag(cspConfig, scriptHashes))
@@ -62,7 +45,7 @@ export default <NitroAppPlugin> function (nitro) {
     }
 
     const tagPolicies = defu(policies) as ContentSecurityPolicyValue
-    if (scriptHashes.length > 0 && moduleOptions.ssg?.hashScripts) {
+    if (scriptHashes.length > 0 && securityOptions.ssg?.hashScripts) {
       // Remove '""'
       tagPolicies['script-src'] = (tagPolicies['script-src'] ?? []).concat(scriptHashes)
     }
@@ -121,4 +104,4 @@ export default <NitroAppPlugin> function (nitro) {
 
     return true
   }
-}
+})

@@ -1,6 +1,4 @@
-import { defineEventHandler, getRequestHeader, createError } from 'h3'
-// @ts-ignore
-import { getRouteRules } from '#imports'
+import { defineEventHandler, getRequestHeader, createError, getRouteRules } from '#imports'
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 

@@ -21,7 +21,10 @@ export default defineNuxtConfig({
   // Global configuration
   security: {
     headers: {
-      xXSSProtection: '0'
+      xXSSProtection: '0',
+    },
+    rateLimiter: {
+      tokensPerInterval: 1000
     }
   }
 })

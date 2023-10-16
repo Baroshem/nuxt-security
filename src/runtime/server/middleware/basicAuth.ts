@@ -1,23 +1,13 @@
 //@ts-ignore
 import getCredentials from 'basic-auth'
-import { createError, defineEventHandler, sendError, setHeader } from 'h3'
+import { createError, defineEventHandler, sendError, setHeader, useRuntimeConfig } from '#imports'
 import type { BasicAuth } from '~/src/types/middlewares';
-import { useRuntimeConfig } from '#imports'
 
 type Credentials = {
   name: string;
   pass: string;
-};
-/*
-export type BasicAuth = {
-  exclude?: string[];
-  include?: string[];
-  name: string;
-  pass: string;
-  enabled?: boolean;
-  message: string;
 }
-*/
+
 const securityConfig = useRuntimeConfig().security
 
 export default defineEventHandler((event) => {
