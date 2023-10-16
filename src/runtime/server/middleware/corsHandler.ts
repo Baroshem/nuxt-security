@@ -1,8 +1,11 @@
 import { defineEventHandler, handleCors } from 'h3'
-// @ts-ignore
 import { getRouteRules } from '#imports'
 
 export default defineEventHandler((event) => {
   const routeRules = getRouteRules(event)
-  handleCors(event, routeRules.security.corsHandler)
+  const { corsHandler } = routeRules.security
+  if (!corsHandler) {
+    return
+  }
+  handleCors(event, corsHandler)
 })

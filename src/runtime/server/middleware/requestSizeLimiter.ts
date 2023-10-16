@@ -6,7 +6,7 @@ const FILE_UPLOAD_HEADER = 'multipart/form-data'
 
 export default defineEventHandler((event) => {
   const routeRules = getRouteRules(event)
-  if (routeRules.security.requestSizeLimiter !== false) {
+  if (routeRules.security.requestSizeLimiter) {
     if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {
       const contentLengthValue = getRequestHeader(event, 'content-length')
       const contentTypeValue = getRequestHeader(event, 'content-type')

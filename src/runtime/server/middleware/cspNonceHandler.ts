@@ -2,19 +2,21 @@ import crypto from 'node:crypto'
 import { createError, defineEventHandler, getCookie, sendError, setCookie } from 'h3'
 // @ts-ignore
 import { getRouteRules } from '#imports'
-
+/*
 export type NonceOptions = {
   enabled: boolean;
   mode: 'renew' | 'check';
   value: undefined | (() => string);
 }
+*/
+
 
 export default defineEventHandler((event) => {
   let csp = `${event.node.res.getHeader('Content-Security-Policy')}`
   const routeRules = getRouteRules(event)
+  const nonceConfig = routeRules.security.nonce
 
-  if (routeRules.security.nonce !== false) {
-    const nonceConfig: NonceOptions = routeRules.security.nonce
+  if (nonceConfig !== false) {
 
     // See if we are checking the nonce against the current value, or if we are renewing the nonce value
     let nonce: string | undefined
@@ -30,7 +32,7 @@ export default defineEventHandler((event) => {
       }
       case 'renew':
       default: {
-        nonce = nonceConfig?.value ? nonceConfig.value() : Buffer.from(crypto.randomUUID()).toString('base64')
+        nonce = nonceConfig?.value ? nonceConfig?.value() : Buffer.from(crypto.randomUUID()).toString('base64')
         setCookie(event, 'nonce', nonce, { sameSite: true, secure: true })
         event.context.nonce = nonce
         break
@@ -38,7 +40,7 @@ export default defineEventHandler((event) => {
     }
 
     // Set actual nonce value in CSP header
-    csp = csp.replaceAll('{{nonce}}', nonce as string)
+    csp = csp.replaceAll('{{nonce}}', nonce)
   } else {
     // Nonce is disabled, so make sure it's also not set in the csp header
     csp = csp.replaceAll('\'nonce-{{nonce}}\'', '')

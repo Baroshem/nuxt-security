@@ -5,23 +5,41 @@ export type RequestSizeLimiter = {
 };
 
 export type RateLimiter = {
-  tokensPerInterval: number;
-  interval: string | number;
+  /** 
+   * Max number of tokens per time interval
+   * @default 150 
+   */
+  tokensPerInterval?: number;
+  /**
+   * Time interval basis, in ms
+   * @default 300_000
+   */
+  interval?: number;
+  /**
+   * The unstorage driver
+   */
   driver?: {
+    /**
+     * @default 'lruCache'
+     */
     name: string,
     options?: Record<string, any>
   }
   headers?: boolean;
+  /**
+   * Whether to throw on error
+   * @default true
+   */
   throwError?: boolean;
 };
 
 export type XssValidator = {
-  whiteList: Record<string, any>;
-  stripIgnoreTag: boolean;
-  stripIgnoreTagBody: boolean;
-  css: Record<string, any> | boolean;
+  whiteList?: Record<string, any>;
+  stripIgnoreTag?: boolean;
+  stripIgnoreTagBody?: boolean;
+  css?: Record<string, any> | boolean;
   throwError?: boolean;
-} | {};
+}
 
 export type BasicAuth = {
   exclude?: string[];
@@ -41,6 +59,8 @@ export type NonceOptions = {
 export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
 
 // Cannot use the H3CorsOptions from `h3` as it breaks the build process for some reason :(
+  // Now with proper TS imports we can
+  /*
 export type CorsOptions = {
   origin?: '*' | 'null' | string | (string | RegExp)[] | ((origin: string) => boolean);
   methods?: '*' | HTTPMethod[];
@@ -52,6 +72,7 @@ export type CorsOptions = {
       statusCode?: number;
   };
 }
+*/
 
 export type AllowedHTTPMethods = {
   methods: HTTPMethod[] | '*';

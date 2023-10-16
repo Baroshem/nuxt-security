@@ -1,19 +1,23 @@
 import { defineEventHandler, getRequestHeader, createError, H3Event, setHeader } from 'h3'
 import { createStorage } from 'unstorage'
 // @ts-ignore
-import { getRouteRules, useRuntimeConfig } from '#imports'
+import { getRouteRules, useRuntimeConfig, useStorage } from '#imports'
+//import { builtinDrivers } from 'unstorage'
 // @ts-ignore
-import storageDriver from '#storage-driver'
+// import storageDriver from '#storage-driver'
+import { lruCache } from 'unstorage'
 
 type StorageItem = {
   value: number,
   date: number
 }
 
+/*
 const driverConfig = useRuntimeConfig().security.rateLimiter.driver
-
 const driver = storageDriver(driverConfig.options)
 const storage = createStorage({ driver }).mount('', driver)
+*/
+const storage = useStorage<StorageItem>('#storage-driver')
 
 export default defineEventHandler(async (event) => {
   const routeRules = getRouteRules(event)
@@ -21,9 +25,10 @@ export default defineEventHandler(async (event) => {
   const rateLimiterConfig = routeRules.security.rateLimiter
 
   if (rateLimiterConfig !== false) {
+
     const ip = getIP(event)
 
-    let storageItem = await storage.getItem(ip) as StorageItem
+    let storageItem = await storage.getItem(ip)
 
     if (!storageItem) {
       await setStorageItem(rateLimiterConfig, ip)
@@ -31,11 +36,11 @@ export default defineEventHandler(async (event) => {
       if (typeof storageItem !== 'object') { return }
 
       const timeSinceFirstRateLimit = storageItem.date
-      const timeForInterval = storageItem.date + rateLimiterConfig?.interval
+      const timeForInterval = storageItem.date + (rateLimiterConfig?.interval || 0)
 
       if (Date.now() >= timeForInterval) {
         await setStorageItem(rateLimiterConfig, ip)
-        storageItem = await storage.getItem(ip) as StorageItem
+        storageItem = await storage.getItem(ip)
       }
 
       const isLimited = timeSinceFirstRateLimit <= timeForInterval && storageItem.value === 0

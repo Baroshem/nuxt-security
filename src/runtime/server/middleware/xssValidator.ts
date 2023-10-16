@@ -5,11 +5,13 @@ import { getRouteRules } from '#imports'
 
 export default defineEventHandler(async (event) => {
   const routeRules = getRouteRules(event)
-
+  if (routeRules.security.xssValidator === false) {
+    return
+  }
   const xssValidator = new FilterXSS(routeRules.security.xssValidator)
 
   if (event.node.req.socket.readyState !== 'readOnly') {
-    if (routeRules.security.xssValidator !== false) {
+    // if (routeRules.security.xssValidator !== false) {
       if (['POST', 'GET'].includes(event.node.req.method!)) {
         const valueToFilter =
           event.node.req.method === 'GET'
@@ -30,14 +32,14 @@ export default defineEventHandler(async (event) => {
               statusCode: 400,
               statusMessage: 'Bad Request'
             }
-            if (routeRules.security.xssValidator.throwError === false) {
+            if (routeRules.security.xssValidator?.throwError === false) {
               return badRequestError
             }
 
             throw createError(badRequestError)
           }
         }
-      }
+      // }
     }
   }
 })

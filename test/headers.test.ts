@@ -6,7 +6,7 @@ describe('[nuxt-security] Headers', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
   })
-  let res
+  let res: Response
 
   it ('fetches the homepage', async () => {
     res = await fetch('/')

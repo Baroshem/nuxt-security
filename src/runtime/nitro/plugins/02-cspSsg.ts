@@ -9,8 +9,9 @@ import type {
 import type {
   ContentSecurityPolicyValue
 } from '../../../types/headers'
+import Module from 'node:module'
 import { useRuntimeConfig } from '#imports'
-
+/*
 interface NuxtRenderHTMLContext {
   island?: boolean
   htmlAttrs: string[]
@@ -20,14 +21,14 @@ interface NuxtRenderHTMLContext {
   body: string[]
   bodyAppend: string[]
 }
-
-const moduleOptions = useRuntimeConfig().security as ModuleOptions
+*/
+const moduleOptions = useRuntimeConfig().security
 
 export default <NitroAppPlugin> function (nitro) {
-  nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
+  nitro.hooks.hook('render:html', (html, { event }) => {
     // Content Security Policy
 
-    if (!isContentSecurityPolicyEnabled(event, moduleOptions)) {
+    if (!isContentSecurityPolicyEnabled(event)) {
       return
     }
 
@@ -54,7 +55,7 @@ export default <NitroAppPlugin> function (nitro) {
   })
 
   function generateCspMetaTag (policies: ContentSecurityPolicyValue, scriptHashes: string[]) {
-    const unsupportedPolicies = {
+    const unsupportedPolicies: any = {
       'frame-ancestors': true,
       'report-uri': true,
       sandbox: true
@@ -104,7 +105,7 @@ export default <NitroAppPlugin> function (nitro) {
    * @param options ModuleOptions
    * @returns boolean
    */
-  function isContentSecurityPolicyEnabled (event: H3Event, options: ModuleOptions): boolean {
+  function isContentSecurityPolicyEnabled (event: H3Event): boolean {
     const nitroPrerenderHeader = 'x-nitro-prerender'
     const nitroPrerenderHeaderValue = event.node.req.headers[nitroPrerenderHeader]
 

@@ -1,14 +1,15 @@
 import { defineNuxtConfig } from 'nuxt/config'
-import NuxtSecurity from '../src/module'
+//import NuxtSecurity from '../src/module'
 
 export default defineNuxtConfig({
-  modules: [NuxtSecurity],
+  modules: ['../src/module.ts'],
 
   // Per route configuration
   routeRules: {
     secret: {
       security: {
-        rateLimiter: false
+        rateLimiter: false,
+        
       },
       headers: {
         'X-XSS-Protection': '1'
@@ -16,13 +17,11 @@ export default defineNuxtConfig({
     }
   },
 
+
   // Global configuration
   security: {
     headers: {
       xXSSProtection: '0'
-    },
-    rateLimiter: {
-      tokensPerInterval: 10
     }
   }
 })
