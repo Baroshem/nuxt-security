@@ -21,9 +21,13 @@ import {
 import { SECURITY_MIDDLEWARE_NAMES } from './middlewares'
 import { HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './headers'
 
-declare module '@nuxt/schema' {
+declare module 'nuxt/schema' {
   interface NuxtOptions {
-    security: ModuleOptions;
+    security: ModuleOptions
+  }
+  interface RuntimeConfig {
+    security: ModuleOptions,
+    private: { basicAuth: BasicAuth | false, [key: string]: any }
   }
 }
 
@@ -65,7 +69,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.private = defu(
       nuxt.options.runtimeConfig.private,
       {
-        basicAuth: securityOptions.basicAuth as BasicAuth | boolean
+        basicAuth: securityOptions.basicAuth
       }
     )
 
@@ -74,7 +78,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.security = defu(
       nuxt.options.runtimeConfig.security,
       {
-        ...(securityOptions as unknown as RuntimeConfig['security'])
+        ...securityOptions
       }
     )
 

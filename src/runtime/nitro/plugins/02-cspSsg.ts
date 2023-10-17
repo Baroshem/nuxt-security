@@ -10,7 +10,7 @@ import type {
 } from '../../../types/headers'
 import { defineNitroPlugin, useRuntimeConfig } from '#imports'
 
-const moduleOptions = useRuntimeConfig().security as ModuleOptions
+const moduleOptions = useRuntimeConfig().security
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
