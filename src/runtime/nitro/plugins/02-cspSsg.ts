@@ -43,7 +43,7 @@ export default defineNitroPlugin((nitroApp) => {
   })
 
   function generateCspMetaTag (policies: ContentSecurityPolicyValue, scriptHashes: string[]) {
-    const unsupportedPolicies = {
+    const unsupportedPolicies:Record<string, boolean> = {
       'frame-ancestors': true,
       'report-uri': true,
       sandbox: true
