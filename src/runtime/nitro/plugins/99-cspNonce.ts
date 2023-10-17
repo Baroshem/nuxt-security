@@ -4,7 +4,6 @@ import type {
   ModuleOptions
 } from '../../../types'
 import { useRuntimeConfig } from '#imports'
-import { tryUseNuxt } from '@nuxt/kit'
 
 interface NuxtRenderHTMLContext {
   island?: boolean
