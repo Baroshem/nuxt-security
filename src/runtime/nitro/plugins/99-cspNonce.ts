@@ -1,4 +1,4 @@
-import type { NitroAppPlugin } from 'nitropack'
+import { defineNitroPlugin } from '#imports'
 
 // To prevent the nonce attribute from being added to literal strings,
 // we need to make sure that the tag is not preceded by a single or double quote.
@@ -6,8 +6,8 @@ import type { NitroAppPlugin } from 'nitropack'
 // See https://regex101.com/r/DBE57j/1 for some examples.
 const tagNotPrecededByQuotes = (tag: string) => new RegExp(`(?<!['|"])<${tag}`, 'g')
 
-export default <NitroAppPlugin> function (nitro) {
-  nitro.hooks.hook('render:html', (html, { event }) => {
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     const nonce = parseNonce(`${event.node.res.getHeader('Content-Security-Policy')}`)
 
     if (!nonce) { return }
@@ -39,4 +39,4 @@ export default <NitroAppPlugin> function (nitro) {
     }
     return null
   }
-}
+})

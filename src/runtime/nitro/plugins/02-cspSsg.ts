@@ -1,6 +1,5 @@
 import path from 'node:path'
 import crypto from 'node:crypto'
-import type { NitroAppPlugin } from 'nitropack'
 import type { H3Event } from 'h3'
 import defu from 'defu'
 import type {
@@ -9,12 +8,12 @@ import type {
 import type {
   ContentSecurityPolicyValue
 } from '../../../types/headers'
-import { useRuntimeConfig } from '#imports'
+import { defineNitroPlugin, useRuntimeConfig } from '#imports'
 
 const moduleOptions = useRuntimeConfig().security as ModuleOptions
 
-export default <NitroAppPlugin> function (nitro) {
-  nitro.hooks.hook('render:html', (html, { event }) => {
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Content Security Policy
 
     if (!isContentSecurityPolicyEnabled(event, moduleOptions)) {
@@ -110,4 +109,4 @@ export default <NitroAppPlugin> function (nitro) {
 
     return true
   }
-}
+})
