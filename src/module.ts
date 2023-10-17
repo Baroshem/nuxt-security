@@ -84,6 +84,11 @@ export default defineNuxtModule<ModuleOptions>({
 
     setSecurityRouteRules(nuxt, securityOptions)
 
+    // Remove Content-Security-Policy header in pre-rendered routes
+    // When pre-rendered, the CSP is provided via html <meta> instead
+    // If kept, this would block the site from rendering
+    removeCspHeaderForPrerenderedRoutes(nuxt)
+
     if (nuxt.options.security.requestSizeLimiter) {
       addServerHandler({
         handler: normalize(
@@ -125,7 +130,6 @@ export default defineNuxtModule<ModuleOptions>({
         )
       })
     }
-
     if (nuxt.options.security.nonce) {
       addServerHandler({
         handler: normalize(
@@ -205,6 +209,17 @@ const setSecurityRouteRules = (nuxt: Nuxt, securityOptions: ModuleOptions) => {
           }
         }
       }
+    }
+  }
+}
+
+const removeCspHeaderForPrerenderedRoutes = (nuxt: Nuxt) => {
+  const nitroRouteRules = nuxt.options.nitro.routeRules
+  for (const route in nitroRouteRules) {
+    const routeRules = nitroRouteRules[route]
+    if (routeRules.prerender) {
+      routeRules.headers = routeRules.headers || {}
+      routeRules.headers['Content-Security-Policy'] = ''
     }
   }
 }

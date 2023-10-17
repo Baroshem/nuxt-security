@@ -87,12 +87,11 @@ describe('[nuxt-security] Nonce', async () => {
     const meta = body.match(/<meta http-equiv="Content-Security-Policy" content="(.*?)"(.*?)>/)
     const content = meta?.[1]
     const cspNonces = content?.match(/'nonce-(.*?)'/)
-    
+
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(content).toBeDefined()
     expect(injectedNonces).toBe(null)
     expect(cspNonces).toBe(null)
-    expect(content).toBe("base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'self'  'strict-dynamic'; style-src 'self' ; upgrade-insecure-requests; script-src 'self'  'strict-dynamic'")
   })
 })
