@@ -98,6 +98,10 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (nuxt.options.security.rateLimiter) {
     // setup unstorage
+    /*
+    // This approach triggers an 'Inlined implicit external unstorage' warning when building
+    // A cleaner alternative is to setup unstorage via the nitro:config hook
+    // See below in registerSecurityNitroPlugins for implementation
       const driverName = (securityOptions.rateLimiter as RateLimiter).driver?.name
       if (driverName) {
         nuxt.options.nitro.virtual = defu(nuxt.options.nitro.virtual, {
@@ -106,6 +110,7 @@ export default defineNuxtModule<ModuleOptions>({
         }'`
         })
       }
+      */
 
       addServerHandler({
         handler: normalize(
@@ -219,6 +224,25 @@ const registerSecurityNitroPlugins = (
 ) => {
   nuxt.hook('nitro:config', (config) => {
     config.plugins = config.plugins || []
+
+    // Alternative way to setup unstorage
+    // Avoids inlining
+    if (securityOptions.rateLimiter) {
+      // setup unstorage
+      const driver = (securityOptions.rateLimiter).driver
+      if (driver) {
+        const { name, options } = driver
+        config.storage = defu(
+          config.storage,
+          {
+            '#storage-driver': {
+              driver: name,
+              options
+            }
+          }
+        )
+      }
+    }
 
     // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
     if (securityOptions.hidePoweredBy) {

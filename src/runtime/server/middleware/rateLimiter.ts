@@ -1,18 +1,20 @@
 import type { H3Event } from 'h3'
-import { createStorage } from 'unstorage'
-import { defineEventHandler, getRequestHeader, createError, setHeader, getRouteRules, useRuntimeConfig } from '#imports'
-// @ts-ignore
-import storageDriver from '#storage-driver'
+import { defineEventHandler, getRequestHeader, createError, setHeader, getRouteRules, useStorage } from '#imports'
 
 type StorageItem = {
   value: number,
   date: number
 }
+const storage = useStorage<StorageItem>('#storage-driver')
 
+/*
+// We don't need to mount the storage here anymore
+// Because we know defined #storage-driver explicitely in the nitro:config hook of module.ts
+// Instead of inline the config
 const driverConfig = useRuntimeConfig().security.rateLimiter.driver
-
 const driver = storageDriver(driverConfig.options)
 const storage = createStorage({ driver }).mount('', driver)
+*/
 
 export default defineEventHandler(async (event) => {
   const routeRules = getRouteRules(event)
@@ -22,7 +24,7 @@ export default defineEventHandler(async (event) => {
   if (rateLimiterConfig !== false) {
     const ip = getIP(event)
 
-    let storageItem = await storage.getItem(ip) as StorageItem
+    let storageItem = await storage.getItem(ip)
 
     if (!storageItem) {
       await setStorageItem(rateLimiterConfig, ip)
@@ -61,7 +63,7 @@ export default defineEventHandler(async (event) => {
 
       const newStorageItem: StorageItem = { value: storageItem.value - 1, date: newItemDate }
 
-      await storage.setItem(ip, JSON.stringify(newStorageItem))
+      await storage.setItem(ip, newStorageItem)
       const currentItem = await storage.getItem(ip)as StorageItem
 
       if (currentItem && rateLimiterConfig.headers) {
@@ -75,7 +77,7 @@ export default defineEventHandler(async (event) => {
 
 async function setStorageItem (rateLimiterConfig: any, ip: string) {
   const rateLimitedObject: StorageItem = { value: rateLimiterConfig?.tokensPerInterval, date: Date.now() }
-  await storage.setItem(ip, JSON.stringify(rateLimitedObject))
+  await storage.setItem(ip, rateLimitedObject)
 }
 
 // Taken and modified from https://github.com/timb-103/nuxt-rate-limit/blob/8a37846469c2f32f0e2ca6893a31baeec944d56c/src/runtime/server/utils/rate-limit.ts#L78
