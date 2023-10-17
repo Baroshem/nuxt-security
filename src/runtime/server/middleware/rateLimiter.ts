@@ -1,7 +1,6 @@
-import { defineEventHandler, getRequestHeader, createError, H3Event, setHeader } from 'h3'
+import type { H3Event } from 'h3'
 import { createStorage } from 'unstorage'
-// @ts-ignore
-import { getRouteRules, useRuntimeConfig } from '#imports'
+import { defineEventHandler, getRequestHeader, createError, setHeader, getRouteRules, useRuntimeConfig } from '#imports'
 // @ts-ignore
 import storageDriver from '#storage-driver'
 

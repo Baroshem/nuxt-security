@@ -11,20 +11,10 @@ import type {
 } from '../../../types/headers'
 import { useRuntimeConfig } from '#imports'
 
-interface NuxtRenderHTMLContext {
-  island?: boolean
-  htmlAttrs: string[]
-  head: string[]
-  bodyAttrs: string[]
-  bodyPrepend: string[]
-  body: string[]
-  bodyAppend: string[]
-}
-
 const moduleOptions = useRuntimeConfig().security as ModuleOptions
 
 export default <NitroAppPlugin> function (nitro) {
-  nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
+  nitro.hooks.hook('render:html', (html, { event }) => {
     // Content Security Policy
 
     if (!isContentSecurityPolicyEnabled(event, moduleOptions)) {

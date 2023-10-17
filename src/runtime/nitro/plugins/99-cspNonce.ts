@@ -1,19 +1,4 @@
 import type { NitroAppPlugin } from 'nitropack'
-import type { H3Event } from 'h3'
-import type {
-  ModuleOptions
-} from '../../../types'
-import { useRuntimeConfig } from '#imports'
-
-interface NuxtRenderHTMLContext {
-  island?: boolean
-  htmlAttrs: string[]
-  head: string[]
-  bodyAttrs: string[]
-  bodyPrepend: string[]
-  body: string[]
-  bodyAppend: string[]
-}
 
 // To prevent the nonce attribute from being added to literal strings,
 // we need to make sure that the tag is not preceded by a single or double quote.
@@ -22,7 +7,7 @@ interface NuxtRenderHTMLContext {
 const tagNotPrecededByQuotes = (tag: string) => new RegExp(`(?<!['|"])<${tag}`, 'g')
 
 export default <NitroAppPlugin> function (nitro) {
-  nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
+  nitro.hooks.hook('render:html', (html, { event }) => {
     const nonce = parseNonce(`${event.node.res.getHeader('Content-Security-Policy')}`)
 
     if (!nonce) { return }

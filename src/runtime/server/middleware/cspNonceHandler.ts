@@ -1,7 +1,5 @@
 import crypto from 'node:crypto'
-import { createError, defineEventHandler, getCookie, sendError, setCookie } from 'h3'
-// @ts-ignore
-import { getRouteRules } from '#imports'
+import { getRouteRules, createError, defineEventHandler, getCookie, sendError, setCookie } from '#imports'
 
 export type NonceOptions = {
   enabled: boolean;

@@ -1,7 +1,6 @@
+// @ts-ignore : the basic-auth module does not export types
 import getCredentials from 'basic-auth'
-import { createError, defineEventHandler, sendError, setHeader } from 'h3'
-// @ts-ignore
-import { useRuntimeConfig } from '#imports'
+import { useRuntimeConfig, createError, defineEventHandler, sendError, setHeader } from '#imports'
 
 type Credentials = {
   name: string;
