@@ -31,9 +31,9 @@ Automatically configure your app to follow OWASP security patterns and principle
 Install the module:
 
 ```sh
-npm i -D nuxt-security
-yarn add -D nuxt-security
-pnpm add -D nuxt-security
+npm i -D nuxt-security@rc
+yarn add -D nuxt-security@rc
+pnpm add -D nuxt-security@rc
 ```
 
 Add the module in the `modules` array in `nuxt.config.ts`:
