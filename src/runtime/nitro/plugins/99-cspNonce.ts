@@ -4,6 +4,7 @@ import type {
   ModuleOptions
 } from '../../../types'
 import { useRuntimeConfig } from '#imports'
+import { tryUseNuxt } from '@nuxt/kit'
 
 interface NuxtRenderHTMLContext {
   island?: boolean
@@ -23,6 +24,10 @@ const tagNotPrecededByQuotes = (tag: string) => new RegExp(`(?<!['|"])<${tag}`, 
 
 export default <NitroAppPlugin> function (nitro) {
   nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
+    console.log('pre', isPrerendering(event))
+    if (isPrerendering(event)) {
+      return
+    }
     const nonce = parseNonce(`${event.node.res.getHeader('Content-Security-Policy')}`)
 
     if (!nonce) { return }
@@ -53,5 +58,23 @@ export default <NitroAppPlugin> function (nitro) {
       return match[1]
     }
     return null
+  }
+
+  /**
+   * Only enable behavior if Content Security pPolicy is enabled,
+   * initial page is prerendered and generated file type is HTML.
+   * @param event H3Event
+   * @param options ModuleOptions
+   * @returns boolean
+   */
+  function isPrerendering(event: H3Event): boolean {
+    const nitroPrerenderHeader = 'x-nitro-prerender'
+
+    // Page is not prerendered
+    if (!event.node.req.headers[nitroPrerenderHeader]) {
+      return false
+    }
+
+    return true
   }
 }

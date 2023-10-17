@@ -80,7 +80,7 @@ describe('[nuxt-security] Nonce', async () => {
   })
 
   it('removes the nonces in pre-render mode', async() => {
-    const res = await fetch('/index')
+    const res = await fetch('/prerendered')
 
     const body = await res.text()
     const injectedNonces = body.match(/ nonce="(.*?)"/)
