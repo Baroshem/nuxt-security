@@ -15,6 +15,9 @@ export default defineNuxtConfig({
       security: {
         nonce: false
       }
+    },
+    '/prerendered': {
+      prerender: true
     }
   },
   security: {
