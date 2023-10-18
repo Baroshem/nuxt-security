@@ -3,6 +3,7 @@ import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
 import { defu } from 'defu'
 import { Nuxt, RuntimeConfig } from '@nuxt/schema'
+import viteRemove from 'unplugin-remove/vite'
 import { defuReplaceArray } from './utils'
 import {
   ModuleOptions,
@@ -54,8 +55,6 @@ export default defineNuxtModule<ModuleOptions>({
     if (!securityOptions.enabled) { return }
 
     if (securityOptions.removeLoggers) {
-      // ViteRemove does not come with a proper TS declaration
-      const viteRemove = await import('unplugin-remove/vite') as unknown as (options: any) => any
       addVitePlugin(viteRemove(securityOptions.removeLoggers))
     }
 
