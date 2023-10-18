@@ -6,14 +6,14 @@ export default defineNuxtConfig({
 
   // Per route configuration
   routeRules: {
-    'secret': {
+    secret: {
       security: {
         rateLimiter: false
       },
       headers: {
         'X-XSS-Protection': '1'
-      },
-    },
+      }
+    }
   },
 
   // Global configuration
@@ -22,8 +22,8 @@ export default defineNuxtConfig({
       xXSSProtection: '0'
     },
     rateLimiter: {
-      tokensPerInterval: 3,
-      interval: 'day'
+      tokensPerInterval: 10,
+      interval: 10000
     }
-  },
+  }
 })

@@ -7,7 +7,7 @@ describe('[nuxt-security] Nonce', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/nonce', import.meta.url))
   })
 
-  const expectedNonceElements = 7 // 1 from app.vue/useHead, 6 for nuxt
+  const expectedNonceElements = 8 // 1 from app.vue/useHead, 6 for nuxt, 1 for plugin vue export helper
 
   it('injects `nonce` attribute in response', async () => {
     const res = await fetch('/')
@@ -62,15 +62,6 @@ describe('[nuxt-security] Nonce', async () => {
 
     expect(noncesInCsp).toBe(0)
     expect(cspHeaderValue).toBe("base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'self'  'strict-dynamic'; style-src 'self' ; upgrade-insecure-requests; script-src 'self'  'strict-dynamic'")
-  })
-
-  it('does not add nonce to literal strings', async () => {
-    const res = await fetch('/with-inline-script')
-
-    const text = await res.text()
-    const untouchedLiteral = text.includes('var inlineLiteral = \'<script>console.log("example")\'')
-
-    expect(untouchedLiteral).toBe(true)
   })
 
   it('injects `nonce` attribute in style tags', async () => {

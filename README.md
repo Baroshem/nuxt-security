@@ -1,27 +1,27 @@
 [![nuxt-security](https://nuxt-security.vercel.app/preview.png)](https://nuxt-security.vercel.app)
 
-# nuxt-security
-
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![Github Actions CI][github-actions-ci-src]][github-actions-ci-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-> Security module for Nuxt based on [OWASP Top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html#nodejs-security-cheat-sheet) and [helmet](https://helmetjs.github.io/) that adds security response headers, protection middlewares, CORS, and more.
+# Nuxt Security
+
+Automatically configure your app to follow OWASP security patterns and principles by using HTTP Headers and Middleware.
+
+> This module works with Nuxt 3 only
 
 - [📖 &nbsp;Read the documentation](https://nuxt-security.vercel.app)
-- [👾 &nbsp;Playground](https://stackblitz.com/github/baroshem/nuxt-security?file=.stackblitz%2Fnuxt.config.ts)
-- [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=8ac30Py8Ses)
+- [👾 &nbsp;Playground](https://nuxt-security.vercel.app/playground)
 
 ## Features
 
-- Nuxt 3 ready
-- Security response headers
-- Content Security Policy (CSP) for SSG apps
+- Security response headers (including CSP for SSG apps)
 - Request Size & Rate Limiters
 - Cross Site Scripting (XSS) Validation
 - Cross-Origin Resource Sharing (CORS) support
+- Hide `X-Powered-By` header and remove console loggers utils
 - `[Optional]` Allowed HTTP Methods, Basic Auth, CSRF
 
 ## Usage
@@ -29,9 +29,9 @@
 Install the module:
 
 ```sh
-npm i -D nuxt-security
-yarn add -D nuxt-security
-pnpm add -D nuxt-security
+npm i -D nuxt-security@rc
+yarn add -D nuxt-security@rc
+pnpm add -D nuxt-security@rc
 ```
 
 Add the module in the `modules` array in `nuxt.config.ts`:
@@ -43,10 +43,6 @@ export default defineNuxtConfig({
 ```
 
 And that's it! The module will now register route rules and server middlewares globally so that your application will be more secured.
-
-## Static site generation (SSG)
-
-This module is meant to work with SSR apps, but you can also use this module in SSG apps where you will get a Content Security Policy (CSP) support via `<meta http-equiv>` tag. You can find more about configuring Content Security Policy (CSP) [here](https://nuxt-security.vercel.app/security/headers#content-security-policy).
 
 ## Configuration
 

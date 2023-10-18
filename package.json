@@ -1,10 +1,10 @@
 {
   "name": "nuxt-security",
-  "version": "0.14.4",
+  "version": "1.0.0-rc.1",
   "license": "MIT",
   "type": "module",
   "homepage": "https://nuxt-security.vercel.app",
-  "description": "🛡 Security Module for Nuxt based on OWASP Top 10 and Helmet",
+  "description": "🛡️ Security Module for Nuxt based on HTTP Headers and Middleware",
   "repository": {
     "url": "https://github.com/Baroshem/nuxt-security"
   },
@@ -41,32 +41,32 @@
     "dev:start": "nuxi start playground",
     "dev:generate": "nuxi generate playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
+    "dev:preview": "nuxi preview playground",
+    "dev:docs": "cd docs && yarn dev",
     "lint": "eslint --ext .js,.ts,.vue",
     "test": "vitest run --silent",
     "test:watch": "vitest watch",
-    "docs": "cd docs && yarn dev",
-    "preview": "nuxi preview playground",
     "stackblitz": "cd .stackblitz && yarn && yarn dev"
   },
+  "packageManager": "yarn@1.22.19",
   "dependencies": {
-    "@nuxt/kit": "^3.2.2",
+    "@nuxt/kit": "^3.7.3",
     "basic-auth": "^2.0.1",
     "defu": "^6.1.1",
-    "limiter": "^2.1.0",
-    "memory-cache": "^0.2.0",
-    "nuxt-csurf": "^1.1.0",
+    "nuxt-csurf": "^1.3.1",
     "pathe": "^1.0.0",
+    "unplugin-remove": "^0.1.3",
     "xss": "^1.0.14"
   },
   "devDependencies": {
     "@nuxt/module-builder": "latest",
-    "@nuxt/schema": "^3.2.2",
+    "@nuxt/schema": "^3.7.3",
+    "@nuxt/test-utils": "^3.7.3",
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@nuxt/test-utils": "^3.2.2",
-    "@types/memory-cache": "^0.2.2",
     "@types/node": "^18.14.4",
     "eslint": "latest",
-    "nuxt": "^3.2.2",
+    "nuxt": "^3.7.3",
+    "typescript": "5.2.2",
     "vitest": "^0.28.5"
   },
   "stackblitz": {

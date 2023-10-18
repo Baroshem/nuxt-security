@@ -5,12 +5,16 @@ export default defineNuxtConfig({
     MyModule
   ],
   security: {
-    allowedMethodsRestricter: ['POST']
+    allowedMethodsRestricter: {
+      methods: ['POST']
+    }
   },
   routeRules: {
     '/test': {
       security: {
-        allowedMethodsRestricter: ['GET']
+        allowedMethodsRestricter: {
+          methods: ['GET']
+        }
       }
     }
   }

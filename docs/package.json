@@ -2,16 +2,19 @@
   "name": "nuxt-security-docs",
   "version": "1.0.0",
   "description": "Docs for nuxt-security",
-  "author": "NuxtJS",
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
-    "preview": "nuxi preview",
-    "generate": "nuxi generate"
+    "generate": "nuxi build",
+    "preview": "nuxi preview"
   },
   "devDependencies": {
-    "@docus/docs-theme": "npm:@docus/docs-theme-edge@latest",
-    "@docus/github": "npm:@docus/github-edge@latest",
-    "nuxt": "3.0.0-rc.4"
-  }
+    "@nuxt-themes/docus": "^1.14.7",
+    "@nuxtlabs/github-module": "^1.6.3",
+    "@nuxtjs/plausible": "^0.2.1",
+    "nuxt": "^3.5.3"
+  },
+  "resolutions": {
+    "string-width": "4.2.3"
+ }
 }

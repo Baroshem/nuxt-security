@@ -1,31 +1,32 @@
-import { defineEventHandler, getRequestHeader, createError } from "h3";
-import { getRouteRules } from "#imports";
+import { defineEventHandler, getRequestHeader, createError } from 'h3'
+// @ts-ignore
+import { getRouteRules } from '#imports'
 
-const FILE_UPLOAD_HEADER = "multipart/form-data";
+const FILE_UPLOAD_HEADER = 'multipart/form-data'
 
-export default defineEventHandler(async (event) => {
-  const routeRules = getRouteRules(event);
+export default defineEventHandler((event) => {
+  const routeRules = getRouteRules(event)
   if (routeRules.security.requestSizeLimiter !== false) {
-    if (["POST", "PUT", "DELETE"].includes(event.node.req.method!!)) {
-      const contentLengthValue = getRequestHeader(event, "content-length");
-      const contentTypeValue = getRequestHeader(event, "content-type");
+    if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {
+      const contentLengthValue = getRequestHeader(event, 'content-length')
+      const contentTypeValue = getRequestHeader(event, 'content-type')
 
-      const isFileUpload = contentTypeValue?.includes(FILE_UPLOAD_HEADER);
+      const isFileUpload = contentTypeValue?.includes(FILE_UPLOAD_HEADER)
 
       const requestLimit = isFileUpload
         ? routeRules.security.requestSizeLimiter.maxUploadFileRequestInBytes
-        : routeRules.security.requestSizeLimiter.maxRequestSizeInBytes;
+        : routeRules.security.requestSizeLimiter.maxRequestSizeInBytes
 
       if (parseInt(contentLengthValue as string) >= requestLimit) {
         const payloadTooLargeError = {
           statusCode: 413,
-          statusMessage: "Payload Too Large",
-        };
-        if (routeRules.security.requestSizeLimiter.throwError === false) {
-          return payloadTooLargeError;
+          statusMessage: 'Payload Too Large'
         }
-        throw createError(payloadTooLargeError);
+        if (routeRules.security.requestSizeLimiter.throwError === false) {
+          return payloadTooLargeError
+        }
+        throw createError(payloadTooLargeError)
       }
     }
   }
-});
+})

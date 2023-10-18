@@ -1,10 +1,8 @@
 import {
   ContentSecurityPolicyValue,
-  MiddlewareConfiguration,
   PermissionsPolicyValue,
-  SecurityHeaders,
   StrictTransportSecurityValue
-} from './types'
+} from './types/headers'
 
 type SecurityHeaderNames = Record<string, string>
 
@@ -25,6 +23,8 @@ export const SECURITY_HEADER_NAMES: SecurityHeaderNames = {
   permissionsPolicy: 'Permissions-Policy'
 }
 
+export type HeaderMapper = 'strictTransportSecurity' | 'contentSecurityPolicy' | 'permissionsPolicy'
+
 const headerValueMappers = {
   strictTransportSecurity: (value: StrictTransportSecurityValue) =>
     [
@@ -41,12 +41,12 @@ const headerValueMappers = {
     })
       .filter(Boolean).join('; ')
   },
-  permissionsPolicy: (value: PermissionsPolicyValue) => Object.entries(value).map(([directive, sources]) => (sources as string[])?.length && `${directive}=${(sources as string[]).join(' ')}`).filter(Boolean).join(', ')
+  permissionsPolicy: (value: PermissionsPolicyValue) => Object.entries(value).map(([directive, sources]) => `${directive}=(${(sources as string[]).join(' ')})`).filter(Boolean).join(', ')
 }
 
-export const getHeaderValueFromOptions = <T>(headerType: keyof SecurityHeaders, headerOptions: MiddlewareConfiguration<T>) => {
-  if (typeof headerOptions.value === 'string') {
-    return headerOptions.value
+export const getHeaderValueFromOptions = <T>(headerType: HeaderMapper, headerOptions: any) => {
+  if (typeof headerOptions === 'string') {
+    return headerOptions
   }
   return headerValueMappers[headerType]?.(headerOptions) ?? headerOptions
 }

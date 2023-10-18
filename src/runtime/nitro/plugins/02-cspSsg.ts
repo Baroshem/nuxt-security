@@ -2,14 +2,14 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import type { NitroAppPlugin } from 'nitropack'
 import type { H3Event } from 'h3'
-import { useRuntimeConfig } from '#imports'
-import type {
-  ModuleOptions,
-  ContentSecurityPolicyValue,
-  SecurityHeaders,
-  MiddlewareConfiguration
-} from '../../../types'
 import defu from 'defu'
+import type {
+  ModuleOptions
+} from '../../../types'
+import type {
+  ContentSecurityPolicyValue
+} from '../../../types/headers'
+import { useRuntimeConfig } from '#imports'
 
 interface NuxtRenderHTMLContext {
   island?: boolean
@@ -21,12 +21,17 @@ interface NuxtRenderHTMLContext {
   bodyAppend: string[]
 }
 
+const moduleOptions = useRuntimeConfig().security as ModuleOptions
+
 export default <NitroAppPlugin> function (nitro) {
   nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
     // Content Security Policy
-    const moduleOptions = useRuntimeConfig().security as ModuleOptions
 
     if (!isContentSecurityPolicyEnabled(event, moduleOptions)) {
+      return
+    }
+
+    if (!moduleOptions.headers) {
       return
     }
 
@@ -41,13 +46,14 @@ export default <NitroAppPlugin> function (nitro) {
       }
     }
 
-    const securityHeaders = moduleOptions.headers as SecurityHeaders
-    const contentSecurityPolicies: ContentSecurityPolicyValue = (securityHeaders.contentSecurityPolicy as MiddlewareConfiguration<ContentSecurityPolicyValue>).value || securityHeaders.contentSecurityPolicy
+    const cspConfig = moduleOptions.headers.contentSecurityPolicy
 
-    html.head.push(generateCspMetaTag(contentSecurityPolicies, scriptHashes))
+    if (cspConfig && typeof cspConfig !== 'string') {
+      html.head.push(generateCspMetaTag(cspConfig, scriptHashes))
+    }
   })
 
-  function generateCspMetaTag(policies: ContentSecurityPolicyValue, scriptHashes: string[]) {
+  function generateCspMetaTag (policies: ContentSecurityPolicyValue, scriptHashes: string[]) {
     const unsupportedPolicies = {
       'frame-ancestors': true,
       'report-uri': true,
@@ -55,7 +61,7 @@ export default <NitroAppPlugin> function (nitro) {
     }
 
     const tagPolicies = defu(policies) as ContentSecurityPolicyValue
-    if (scriptHashes.length > 0) {
+    if (scriptHashes.length > 0 && moduleOptions.ssg?.hashScripts) {
       // Remove '""'
       tagPolicies['script-src'] = (tagPolicies['script-src'] ?? []).concat(scriptHashes)
     }
@@ -76,14 +82,16 @@ export default <NitroAppPlugin> function (nitro) {
         policyValue = value
       }
 
-      contentArray.push(`${key} ${policyValue}`)
+      if (value !== false) {
+        contentArray.push(`${key} ${policyValue}`)
+      }
     }
     const content = contentArray.join('; ')
 
     return `<meta http-equiv="Content-Security-Policy" content="${content}">`
   }
 
-  function generateHash(content: string, hashAlgorithm: string) {
+  function generateHash (content: string, hashAlgorithm: string) {
     const hash = crypto.createHash(hashAlgorithm)
     hash.update(content)
     return `'${hashAlgorithm}-${hash.digest('base64')}'`
@@ -96,16 +104,17 @@ export default <NitroAppPlugin> function (nitro) {
    * @param options ModuleOptions
    * @returns boolean
    */
-  function isContentSecurityPolicyEnabled(event: H3Event, options: ModuleOptions): boolean {
+  function isContentSecurityPolicyEnabled (event: H3Event, options: ModuleOptions): boolean {
     const nitroPrerenderHeader = 'x-nitro-prerender'
+    const nitroPrerenderHeaderValue = event.node.req.headers[nitroPrerenderHeader]
 
     // Page is not prerendered
-    if (!event.node.req.headers[nitroPrerenderHeader]) {
+    if (!nitroPrerenderHeaderValue) {
       return false
     }
 
     // File is not HTML
-    if (!['', '.html'].includes(path.extname(event.node.req.headers[nitroPrerenderHeader]))) {
+    if (!['', '.html'].includes(path.extname(nitroPrerenderHeaderValue as string))) {
       return false
     }
 
