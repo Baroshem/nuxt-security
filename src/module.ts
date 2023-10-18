@@ -3,7 +3,6 @@ import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
 import { defu } from 'defu'
 import { Nuxt, RuntimeConfig } from '@nuxt/schema'
-import { builtinDrivers } from 'unstorage'
 import { defuReplaceArray } from './utils'
 import {
   ModuleOptions,
@@ -13,7 +12,7 @@ import {
   SecurityHeaders
 } from './types/headers'
 import {
-  BasicAuth, RateLimiter
+  BasicAuth
 } from './types/middlewares'
 import {
   defaultSecurityConfig
@@ -93,16 +92,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (nuxt.options.security.rateLimiter) {
-    // setup unstorage
-      const driverName = (securityOptions.rateLimiter as RateLimiter).driver?.name
-      if (driverName) {
-        nuxt.options.nitro.virtual = defu(nuxt.options.nitro.virtual, {
-          '#storage-driver': `export { default } from '${
-          builtinDrivers[driverName as keyof typeof builtinDrivers]
-        }'`
-        })
-      }
-
       addServerHandler({
         handler: normalize(
           resolve(runtimeDir, 'server/middleware/rateLimiter')
@@ -215,6 +204,23 @@ const registerSecurityNitroPlugins = (
 ) => {
   nuxt.hook('nitro:config', (config) => {
     config.plugins = config.plugins || []
+
+    if (securityOptions.rateLimiter) {
+      // setup unstorage
+      const driver = (securityOptions.rateLimiter).driver
+      if (driver) {
+        const { name, options } = driver
+        config.storage = defu(
+          config.storage,
+          {
+            '#storage-driver': {
+              driver: name,
+              options
+            }
+          }
+        )
+      }
+    }
 
     // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
     if (securityOptions.hidePoweredBy) {

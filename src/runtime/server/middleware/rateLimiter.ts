@@ -1,19 +1,12 @@
-import { defineEventHandler, getRequestHeader, createError, H3Event, setHeader } from 'h3'
-import { createStorage } from 'unstorage'
-// @ts-ignore
-import { getRouteRules, useRuntimeConfig } from '#imports'
-// @ts-ignore
-import storageDriver from '#storage-driver'
+import type { H3Event } from 'h3'
+import { defineEventHandler, getRequestHeader, createError, setHeader, getRouteRules, useStorage } from '#imports'
 
 type StorageItem = {
   value: number,
   date: number
 }
 
-const driverConfig = useRuntimeConfig().security.rateLimiter.driver
-
-const driver = storageDriver(driverConfig.options)
-const storage = createStorage({ driver }).mount('', driver)
+const storage = useStorage<StorageItem>('#storage-driver')
 
 export default defineEventHandler(async (event) => {
   const routeRules = getRouteRules(event)
@@ -62,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
       const newStorageItem: StorageItem = { value: storageItem.value - 1, date: newItemDate }
 
-      await storage.setItem(ip, JSON.stringify(newStorageItem))
+      await storage.setItem(ip, newStorageItem)
       const currentItem = await storage.getItem(ip)as StorageItem
 
       if (currentItem && rateLimiterConfig.headers) {
@@ -76,7 +69,7 @@ export default defineEventHandler(async (event) => {
 
 async function setStorageItem (rateLimiterConfig: any, ip: string) {
   const rateLimitedObject: StorageItem = { value: rateLimiterConfig?.tokensPerInterval, date: Date.now() }
-  await storage.setItem(ip, JSON.stringify(rateLimitedObject))
+  await storage.setItem(ip, rateLimitedObject)
 }
 
 // Taken and modified from https://github.com/timb-103/nuxt-rate-limit/blob/8a37846469c2f32f0e2ca6893a31baeec944d56c/src/runtime/server/utils/rate-limit.ts#L78
