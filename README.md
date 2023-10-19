@@ -1,6 +1,5 @@
 [![nuxt-security](https://nuxt-security.vercel.app/preview.png)](https://nuxt-security.vercel.app)
 
-
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![Github Actions CI][github-actions-ci-src]][github-actions-ci-href]
@@ -14,8 +13,7 @@ Automatically configure your app to follow OWASP security patterns and principle
 > This module works with Nuxt 3 only
 
 - [📖 &nbsp;Read the documentation](https://nuxt-security.vercel.app)
-- [👾 &nbsp;Playground](https://stackblitz.com/github/baroshem/nuxt-security?file=.stackblitz%2Fnuxt.config.ts)
-- [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=8ac30Py8Ses)
+- [👾 &nbsp;Playground](https://nuxt-security.vercel.app/playground)
 
 ## Features
 
