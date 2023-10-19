@@ -1,3 +1,5 @@
 <template>
-  Secret Route
+  <div>
+    Secret Route
+  </div>
 </template>
