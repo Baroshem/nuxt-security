@@ -22,6 +22,7 @@ export interface ModuleOptions {
   nonce: boolean;
   removeLoggers?: RemoveOptions | false;
   ssg?: Ssg;
+  sri?: boolean
 }
 
 export interface NuxtSecurityRouteRules {
