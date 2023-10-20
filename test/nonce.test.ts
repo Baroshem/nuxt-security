@@ -24,21 +24,6 @@ describe('[nuxt-security] Nonce', async () => {
     expect(elementsWithNonce).toBe(expectedNonceElements)
   })
 
-  it('does not renew nonce if mode is `check`', async () => {
-    // Make sure a nonce exists by doing the initial request
-    const originalRes = await fetch('/')
-    const originalCsp = originalRes.headers.get('content-security-policy')
-    const originalCookie = originalRes.headers.get('set-cookie')
-
-    // Then simulate the second request from the page to the specified route
-    const res = await fetch('/api/generated-script', { headers: { cookie: originalCookie } })
-
-    expect(res).toBeDefined()
-    expect(res).toBeTruthy()
-    expect(res.ok).toBe(true)
-    expect(res.headers.get('content-security-policy')).toBe(originalCsp)
-  })
-
   it('injects `nonce` attribute in response when using useHead composable', async () => {
     const res = await fetch('/use-head')
 

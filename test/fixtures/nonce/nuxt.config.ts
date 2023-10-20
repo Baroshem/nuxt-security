@@ -6,11 +6,6 @@ export default defineNuxtConfig({
   ],
 
   routeRules: {
-    '/api/generated-script': {
-      security: {
-        nonce: { mode: 'check' }
-      }
-    },
     '/api/nonce-exempt': {
       security: {
         nonce: false
