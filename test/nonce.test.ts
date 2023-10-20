@@ -24,7 +24,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(elementsWithNonce).toBe(expectedNonceElements)
   })
 
-  it('does not renew nonce if mode is `check`', async () => {
+  it('renews nonce even if mode is `check`', async () => {
     // Make sure a nonce exists by doing the initial request
     const originalRes = await fetch('/')
     const originalCsp = originalRes.headers.get('content-security-policy')
@@ -36,7 +36,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(res.ok).toBe(true)
-    expect(res.headers.get('content-security-policy')).toBe(originalCsp)
+    expect(res.headers.get('content-security-policy')).not.toBe(originalCsp)
   })
 
   it('injects `nonce` attribute in response when using useHead composable', async () => {
