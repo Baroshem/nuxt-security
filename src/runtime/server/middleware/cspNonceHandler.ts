@@ -8,7 +8,7 @@ export default defineEventHandler((event) => {
   const routeRules = getRouteRules(event)
 
   if (routeRules.security.nonce !== false) {
-    const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
+    const nonce = crypto.randomBytes(16).toString('base64')
     event.context.nonce = nonce
 
     // Set actual nonce value in CSP header
