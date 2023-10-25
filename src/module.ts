@@ -36,6 +36,10 @@ declare module 'nitropack' {
   }
 }
 
+export * from './types/index'
+export * from './types/headers'
+export * from './types/middlewares'
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-security',
