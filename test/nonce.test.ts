@@ -78,4 +78,20 @@ describe('[nuxt-security] Nonce', async () => {
     expect(nonce).toBeDefined()
     expect(elementsWithNonce).toBe(expectedNonceElements + 1) // one extra for the style tag
   })
+
+  it('removes the nonces in pre-render mode', async() => {
+    const res = await fetch('/prerendered')
+
+    const body = await res.text()
+    const injectedNonces = body.match(/ nonce="(.*?)"/)
+    const meta = body.match(/<meta http-equiv="Content-Security-Policy" content="(.*?)"(.*?)>/)
+    const content = meta?.[1]
+    const cspNonces = content?.match(/'nonce-(.*?)'/)
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(content).toBeDefined()
+    expect(injectedNonces).toBe(null)
+    expect(cspNonces).toBe(null)
+  })
 })
