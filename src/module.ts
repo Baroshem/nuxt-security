@@ -2,24 +2,24 @@ import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
 import { defu } from 'defu'
-import { Nuxt, RuntimeConfig } from '@nuxt/schema'
+import type { Nuxt, RuntimeConfig } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
 import { defuReplaceArray } from './utils'
-import {
+import type {
   ModuleOptions,
   NuxtSecurityRouteRules
 } from './types/index'
-import {
+import type {
   SecurityHeaders
 } from './types/headers'
-import {
+import type {
   BasicAuth
 } from './types/middlewares'
 import {
   defaultSecurityConfig
 } from './defaultConfig'
 import { SECURITY_MIDDLEWARE_NAMES } from './middlewares'
-import { HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './headers'
+import { type HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './headers'
 
 declare module 'nuxt/schema' {
   interface NuxtOptions {
