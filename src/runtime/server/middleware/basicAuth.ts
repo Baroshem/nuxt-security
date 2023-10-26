@@ -22,7 +22,12 @@ export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
   const basicAuthConfig: BasicAuth = securityConfig.basicAuth
 
-  if (basicAuthConfig?.exclude?.some(el => event.path?.startsWith(el)) || basicAuthConfig?.include?.some(el => !event.path?.startsWith(el))) { return }
+  const isInExclude = basicAuthConfig?.exclude?.some(el => event.path?.startsWith(el)) ?? false
+  const isInInclude = basicAuthConfig?.include?.some(el => event.path?.startsWith(el)) ?? false
+
+  if (!isInExclude && !isInInclude) {
+    return
+  }
 
   if (!credentials || !validateCredentials(credentials!, basicAuthConfig)) {
     setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Please enter username and password'}`)
