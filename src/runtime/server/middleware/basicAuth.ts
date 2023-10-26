@@ -22,15 +22,10 @@ export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
   const basicAuthConfig = securityConfig.basicAuth
 
-  // Check for exclusion paths
-  const excludePaths = basicAuthConfig?.exclude || ['/']
-  const isPathExcluded = excludePaths.some(el => event.path?.startsWith(el))
+  const isInExclude = basicAuthConfig?.exclude?.some(el => event.path?.startsWith(el)) ?? false
+  const isInInclude = basicAuthConfig?.include?.some(el => event.path?.startsWith(el)) ?? false
 
-  // Check for inclusion paths
-  const includePaths = basicAuthConfig?.include || []
-  const isPathIncluded = includePaths.some(el => event.path?.startsWith(el))
-
-  if (isPathExcluded && !isPathIncluded) {
+  if (!isInExclude && !isInInclude) {
     return
   }
 
