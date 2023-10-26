@@ -16,7 +16,8 @@ describe('[nuxt-security] Nonce', async () => {
     const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)![1]
 
     const text = await res.text()
-    const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
+    const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const elementsWithNonce = text.match(new RegExp(nonceMatch, 'g'))?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
@@ -46,7 +47,8 @@ describe('[nuxt-security] Nonce', async () => {
     const nonce = cspHeaderValue!.match(/'nonce-(.*?)'/)![1]
 
     const text = await res.text()
-    const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
+    const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const elementsWithNonce = text.match(new RegExp(nonceMatch, 'g'))?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
@@ -71,7 +73,8 @@ describe('[nuxt-security] Nonce', async () => {
     const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)![1]
 
     const text = await res.text()
-    const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
+    const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const elementsWithNonce = text.match(new RegExp(nonceMatch, 'g'))?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
@@ -79,7 +82,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(elementsWithNonce).toBe(expectedNonceElements + 1) // one extra for the style tag
   })
 
-  it('removes the nonces in pre-render mode', async() => {
+  it('removes the nonces in pre-render mode', async () => {
     const res = await fetch('/prerendered')
 
     const body = await res.text()
