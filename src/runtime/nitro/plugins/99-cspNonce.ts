@@ -23,6 +23,15 @@ const tagNotPrecededByQuotes = (tag: string) => new RegExp(`(?<!['|"])<${tag}`, 
 
 export default <NitroAppPlugin> function (nitro) {
   nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
+    if (isPrerendering(event)) {
+      // In SSG mode, do not inject nonces in html
+      // However first make sure we erase nonce placeholders from CSP meta
+      html.head = html.head.map((meta) => {
+        if (!meta.startsWith('<meta http-equiv="Content-Security-Policy"')) { return meta }
+        return meta.replaceAll("'nonce-{{nonce}}'", '')
+      })
+      return
+    }
     const nonce = parseNonce(`${event.node.res.getHeader('Content-Security-Policy')}`)
 
     if (!nonce) { return }
@@ -53,5 +62,21 @@ export default <NitroAppPlugin> function (nitro) {
       return match[1]
     }
     return null
+  }
+
+  /**
+   * Detect if page is being pre-rendered
+   * @param event H3Event
+   * @returns boolean
+   */
+  function isPrerendering(event: H3Event): boolean {
+    const nitroPrerenderHeader = 'x-nitro-prerender'
+
+    // Page is not prerendered
+    if (!event.node.req.headers[nitroPrerenderHeader]) {
+      return false
+    }
+
+    return true
   }
 }
