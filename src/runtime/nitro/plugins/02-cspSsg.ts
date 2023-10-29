@@ -8,7 +8,8 @@ import type {
 import type {
   ContentSecurityPolicyValue
 } from '../../../types/headers'
-import { defineNitroPlugin, useRuntimeConfig } from '#imports'
+import { defineNitroPlugin, useRuntimeConfig, getRouteRules } from '#imports'
+import { useNitro } from '@nuxt/kit'
 
 const moduleOptions = useRuntimeConfig().security
 
@@ -24,25 +25,54 @@ export default defineNitroPlugin((nitroApp) => {
       return
     }
 
-    const scriptPattern = /<script[^>]*>(.*?)<\/script>/gs
+    // Detect bothe inline scripts and inline styles
+    const inlineScriptPattern = /<script[^>]*>(.*?)<\/script>/gs
+    const inlineStylePattern = /<style>(.*?)<\/style>/gs
+    // Whitelist external scripts based on integrity attribute
+    const externalScriptPattern = /<script .*?integrity="(.*?)".*?(\/>|>.*?<\/script>)/gs
     const scriptHashes: string[] = []
+    const styleHashes: string[] = []
     const hashAlgorithm = 'sha256'
 
-    let match
-    while ((match = scriptPattern.exec(html.bodyAppend.join(''))) !== null) {
-      if (match[1]) {
-        scriptHashes.push(generateHash(match[1], hashAlgorithm))
+    // Scan all relevant sections of the NuxtRenderHtmlContext
+    for (const section of ['body', 'bodyAppend', 'bodyPrepend', 'head']) {
+      const htmlRecords = html as unknown as Record<string, string[]>
+      const elements = htmlRecords[section]
+      for (const element of elements) {
+        let match
+        while ((match = inlineScriptPattern.exec(element)) !== null) {
+          if (match[1]) {
+            scriptHashes.push(generateHash(match[1], hashAlgorithm))
+          }
+        }
+        while ((match = inlineStylePattern.exec(element)) !== null) {
+          if (match[1]) {
+            styleHashes.push(generateHash(match[1], hashAlgorithm))
+          }
+        }
+        while ((match = externalScriptPattern.exec(element)) !== null) {
+          if (match[1]) {
+            scriptHashes.push(`'${match[1]}'`)
+          }
+        }
       }
     }
 
     const cspConfig = moduleOptions.headers.contentSecurityPolicy
 
     if (cspConfig && typeof cspConfig !== 'string') {
-      html.head.push(generateCspMetaTag(cspConfig, scriptHashes))
+      const content = generateCspMetaTag(cspConfig, scriptHashes, styleHashes)
+      // Insert hashes in the http meta tag
+      html.head.push(`<meta http-equiv="Content-Security-Policy" content="${content}">`)
+      // Also insert hashes in static headers for presets that generate headers rules for static files
+      updateRouteRules(event, content)
     }
+
+
   })
 
-  function generateCspMetaTag (policies: ContentSecurityPolicyValue, scriptHashes: string[]) {
+  // Insert hashes in the CSP meta tag for both the script-src and the style-src policies
+  function generateCspMetaTag (policies: ContentSecurityPolicyValue, scriptHashes: string[], styleHashes: string[]) {
     const unsupportedPolicies:Record<string, boolean> = {
       'frame-ancestors': true,
       'report-uri': true,
@@ -53,6 +83,10 @@ export default defineNitroPlugin((nitroApp) => {
     if (scriptHashes.length > 0 && moduleOptions.ssg?.hashScripts) {
       // Remove '""'
       tagPolicies['script-src'] = (tagPolicies['script-src'] ?? []).concat(scriptHashes)
+    }
+    if (styleHashes.length > 0 && moduleOptions.ssg?.hashScripts) {
+      // Remove '""'
+      tagPolicies['style-src'] = (tagPolicies['style-src'] ?? []).concat(styleHashes)
     }
 
     const contentArray: string[] = []
@@ -75,9 +109,25 @@ export default defineNitroPlugin((nitroApp) => {
         contentArray.push(`${key} ${policyValue}`)
       }
     }
-    const content = contentArray.join('; ')
+    const content = contentArray.join('; ').replaceAll("'nonce-{{nonce}}'", '')
+    return content
+  }
 
-    return `<meta http-equiv="Content-Security-Policy" content="${content}">`
+  // In some Nitro presets (e.g. Vercel), the header rules are generated for the static server
+  // By default we update the nitro route rules with their calculated CSP value to support this possibility
+  function updateRouteRules(event: H3Event, content: string) {
+    const path = event.path
+    const routeRules = getRouteRules(event)
+    let headers
+    if (routeRules.headers) {
+      headers = { ...routeRules.headers }
+    } else {
+      headers = {}
+    }
+    headers['Content-Security-Policy'] = content
+    routeRules.headers = headers
+    const nitro = useNitro()
+    nitro.options.routeRules[path] = routeRules
   }
 
   function generateHash (content: string, hashAlgorithm: string) {

@@ -213,7 +213,7 @@ const removeCspHeaderForPrerenderedRoutes = (nuxt: Nuxt) => {
   const nitroRouteRules = nuxt.options.nitro.routeRules
   for (const route in nitroRouteRules) {
     const routeRules = nitroRouteRules[route]
-    if (routeRules.prerender) {
+    if (routeRules.prerender || nuxt.options.nitro.static) {
       routeRules.headers = routeRules.headers || {}
       routeRules.headers['Content-Security-Policy'] = ''
     }
