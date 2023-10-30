@@ -285,4 +285,48 @@ const registerSecurityNitroPlugins = (
       )
     }
   })
+
+  // Make sure our nitro plugins will be applied last
+  // After all other third-party modules that might have loaded their own nitro plugins
+  nuxt.hook('nitro:init', nitro => {
+    const securityPluginsPrefix = normalize(
+      fileURLToPath(
+        new URL('./runtime/nitro/plugins', import.meta.url)
+      )
+    )
+    // SSR: Reorder plugins in Nitro options
+    nitro.options.plugins.sort((a, b) => {
+      if (a.startsWith(securityPluginsPrefix)) {
+        if (b.startsWith(securityPluginsPrefix)) {
+          return 0
+        } else {
+          return 1
+        }
+      } else {
+        if (b.startsWith(securityPluginsPrefix)) {
+          return -1
+        } else {
+          return 0
+        }
+      }
+    })
+    // SSG: Reorder plugins in Nitro hook
+    nitro.hooks.hook('prerender:config', config => {
+      config.plugins?.sort((a, b) => {
+        if (a?.startsWith(securityPluginsPrefix)) {
+          if (b?.startsWith(securityPluginsPrefix)) {
+            return 0
+          } else {
+            return 1
+          }
+        } else {
+          if (b?.startsWith(securityPluginsPrefix)) {
+            return -1
+          } else {
+            return 0
+          }
+        }
+      })
+    })
+  })
 }
