@@ -49,3 +49,6 @@ coverage
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Yarn is the package manager, do not commit npm lock file
+package-lock.json

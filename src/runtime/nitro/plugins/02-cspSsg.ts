@@ -1,6 +1,5 @@
 import path from 'node:path'
 import crypto from 'node:crypto'
-import type { NitroAppPlugin } from 'nitropack'
 import type { H3Event } from 'h3'
 import defu from 'defu'
 import type {
@@ -9,22 +8,12 @@ import type {
 import type {
   ContentSecurityPolicyValue
 } from '../../../types/headers'
-import { useRuntimeConfig } from '#imports'
+import { defineNitroPlugin, useRuntimeConfig } from '#imports'
 
-interface NuxtRenderHTMLContext {
-  island?: boolean
-  htmlAttrs: string[]
-  head: string[]
-  bodyAttrs: string[]
-  bodyPrepend: string[]
-  body: string[]
-  bodyAppend: string[]
-}
+const moduleOptions = useRuntimeConfig().security
 
-const moduleOptions = useRuntimeConfig().security as ModuleOptions
-
-export default <NitroAppPlugin> function (nitro) {
-  nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Content Security Policy
 
     if (!isContentSecurityPolicyEnabled(event, moduleOptions)) {
@@ -54,7 +43,7 @@ export default <NitroAppPlugin> function (nitro) {
   })
 
   function generateCspMetaTag (policies: ContentSecurityPolicyValue, scriptHashes: string[]) {
-    const unsupportedPolicies = {
+    const unsupportedPolicies:Record<string, boolean> = {
       'frame-ancestors': true,
       'report-uri': true,
       sandbox: true
@@ -120,4 +109,4 @@ export default <NitroAppPlugin> function (nitro) {
 
     return true
   }
-}
+})

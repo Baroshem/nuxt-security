@@ -1,7 +1,5 @@
 import crypto from 'node:crypto'
-import { defineEventHandler } from 'h3'
-// @ts-ignore
-import { getRouteRules } from '#imports'
+import { getRouteRules, defineEventHandler } from '#imports'
 
 export default defineEventHandler((event) => {
   let csp = `${event.node.res.getHeader('Content-Security-Policy')}`

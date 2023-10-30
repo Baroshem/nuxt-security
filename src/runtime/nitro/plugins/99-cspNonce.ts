@@ -1,19 +1,5 @@
-import type { NitroAppPlugin } from 'nitropack'
+import { defineNitroPlugin } from '#imports'
 import type { H3Event } from 'h3'
-import type {
-  ModuleOptions
-} from '../../../types'
-import { useRuntimeConfig } from '#imports'
-
-interface NuxtRenderHTMLContext {
-  island?: boolean
-  htmlAttrs: string[]
-  head: string[]
-  bodyAttrs: string[]
-  bodyPrepend: string[]
-  body: string[]
-  bodyAppend: string[]
-}
 
 // To prevent the nonce attribute from being added to literal strings,
 // we need to make sure that the tag is not preceded by a single or double quote.
@@ -21,8 +7,8 @@ interface NuxtRenderHTMLContext {
 // See https://regex101.com/r/DBE57j/1 for some examples.
 const tagNotPrecededByQuotes = (tag: string) => new RegExp(`(?<!['|"])<${tag}`, 'g')
 
-export default <NitroAppPlugin> function (nitro) {
-  nitro.hooks.hook('render:html', (html: NuxtRenderHTMLContext, { event }: { event: H3Event }) => {
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     if (isPrerendering(event)) {
       // In SSG mode, do not inject nonces in html
       // However first make sure we erase nonce placeholders from CSP meta
@@ -79,4 +65,4 @@ export default <NitroAppPlugin> function (nitro) {
 
     return true
   }
-}
+})
