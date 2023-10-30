@@ -1,18 +1,20 @@
 {
+  "name": "nuxt-security-demo",
   "private": true,
   "version": "1.0.0",
   "description": "Nuxt Security demo based on docs",
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview"
+    "build": "nuxi cleanup && nuxi build",
+    "dev": "nuxi dev",
+    "generate": "nuxi cleanup && nuxi generate",
+    "preview": "nuxi preview",
+    "postinstall": "cd .. && yarn && yarn dev:prepare && yarn prepack"
   },
   "devDependencies": {
     "nuxt": "^3.8.0"
   },
   "dependencies": {
-    "nuxt-security": "^1.0.0-rc.2",
+    "nuxt-security": "../",
     "nuxt-security-docs": "../docs"
   }
 }

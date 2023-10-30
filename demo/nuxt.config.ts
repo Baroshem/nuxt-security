@@ -1,6 +1,10 @@
 export default defineNuxtConfig({
   extends: ['nuxt-security-docs'],
   modules: ['nuxt-security'],
+  experimental: {
+    // Need this otherwise vue-server-renderer not found
+    externalVue: false
+  },
   content: {
     sources: {
       // overwrite default source AKA `content` directory
@@ -18,7 +22,14 @@ export default defineNuxtConfig({
         'script-src': ["'self'", "'unsafe-inline'"]
       },
     },
-    nonce: true
+    nonce: true,
+    rateLimiter: {
+      tokensPerInterval: 1500,
+      interval: 1000
+    },
+    ssg: {
+      hashScripts: false
+    }
   },
   routeRules: {
     '/playground': {

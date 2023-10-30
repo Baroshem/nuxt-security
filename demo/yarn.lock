@@ -1020,7 +1020,7 @@
     which "^3.0.1"
     ws "^8.14.2"
 
-"@nuxt/kit@3.8.0", "@nuxt/kit@^3.3.1", "@nuxt/kit@^3.3.2", "@nuxt/kit@^3.4.2", "@nuxt/kit@^3.5.3", "@nuxt/kit@^3.7.1", "@nuxt/kit@^3.7.3", "@nuxt/kit@^3.7.4", "@nuxt/kit@^3.8.0":
+"@nuxt/kit@3.8.0", "@nuxt/kit@^3.3.1", "@nuxt/kit@^3.3.2", "@nuxt/kit@^3.4.2", "@nuxt/kit@^3.5.3", "@nuxt/kit@^3.7.1", "@nuxt/kit@^3.7.4", "@nuxt/kit@^3.8.0":
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.8.0.tgz#cd8a32981c2fe151e0acde7145f7e4ca38920f24"
   integrity sha512-oIthQxeMIVs4ESVP5FqLYn8tj0S1sLd+eYreh+dNYgnJ2pTi7+THR12ONBNHjk668jqEe7ErUJ8UlGwqBzgezg==
@@ -1589,9 +1589,9 @@
     "@types/ms" "*"
 
 "@types/estree@*", "@types/estree@^1.0.0":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.3.tgz#2be19e759a3dd18c79f9f436bd7363556c1a73dd"
-  integrity sha512-CS2rOaoQ/eAgAfcTfq6amKG7bsN+EMcgGY4FAFQdvSj2y1ixvOZTUA9mOtCai7E1SYu283XNw7urKK30nP3wkQ==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.4.tgz#d9748f5742171b26218516cf1828b8eafaf8a9fa"
+  integrity sha512-2JwWnHK9H+wUZNorf2Zr6ves96WHoWDJIftkcxPKsS7Djta6Zu519LarhRNljPXkpsZR2ZMwNCPeW7omW07BJw==
 
 "@types/hast@^2.0.0":
   version "2.3.7"
@@ -1752,12 +1752,12 @@
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.4.0.tgz#8ae96573236cdb12de6850a6d929b5537ec85390"
   integrity sha512-xdguqb+VUwiRpSg+nsc2HtbAUSGak25DXYvpQQi4RVU1Xq1uworyoH/md9Rfd8zMmPR/pSghr309QNcftUVseg==
 
-"@volar/language-core@1.10.7", "@volar/language-core@~1.10.5":
-  version "1.10.7"
-  resolved "https://registry.yarnpkg.com/@volar/language-core/-/language-core-1.10.7.tgz#9d555bf0a3ca652c525651baba5ecf8a55cf3471"
-  integrity sha512-6+WI7HGqWCsKJ/bms4V45WP7eDeoGxDtLjYPrHB7QkIWVkRLIeGPzzBoonZz9kERM+Kld3W89Y+IlICejVAKhA==
+"@volar/language-core@1.10.9", "@volar/language-core@~1.10.5":
+  version "1.10.9"
+  resolved "https://registry.yarnpkg.com/@volar/language-core/-/language-core-1.10.9.tgz#49b960ce4d73f2de278231610c1fb47a268aad6a"
+  integrity sha512-QXHMX7CeXLqXwvC7nbr6iZ3zrqgKdJ9f6g1B211eZBnvaBki2ds0+Kz8cprUiulVuMQEPJNhDfuh8Vym1gxHRQ==
   dependencies:
-    "@volar/source-map" "1.10.7"
+    "@volar/source-map" "1.10.9"
 
 "@volar/language-core@1.4.1":
   version "1.4.1"
@@ -1766,10 +1766,10 @@
   dependencies:
     "@volar/source-map" "1.4.1"
 
-"@volar/source-map@1.10.7", "@volar/source-map@~1.10.5":
-  version "1.10.7"
-  resolved "https://registry.yarnpkg.com/@volar/source-map/-/source-map-1.10.7.tgz#f2b5c6b99f3fc91c10d4013eaeb083fbbf4b9e0d"
-  integrity sha512-anA254XO0lmmeu0p/kvgPOCkrVpqNIHWMvEkPX70PSk4ntg0iBzN/f0Kip6deXvibl6v14Q3Z8RihWrZwdZEEQ==
+"@volar/source-map@1.10.9", "@volar/source-map@~1.10.5":
+  version "1.10.9"
+  resolved "https://registry.yarnpkg.com/@volar/source-map/-/source-map-1.10.9.tgz#3b2e0dd5b2786ce2057f2159c381f298cbe16785"
+  integrity sha512-ul8yGO9nCxy6UedVuo0VsfKMLZzr39N1rgbtnYTGP5C554EDcUix6K/HDurhVdPHEDIw1yhXltLZZQKi3NrTvA==
   dependencies:
     muggle-string "^0.3.1"
 
@@ -1781,11 +1781,11 @@
     muggle-string "^0.2.2"
 
 "@volar/typescript@~1.10.5":
-  version "1.10.7"
-  resolved "https://registry.yarnpkg.com/@volar/typescript/-/typescript-1.10.7.tgz#2ed47e3260d4161445099ba89c7471fbc51133b6"
-  integrity sha512-2hvA3vjXVUn1vOpsP/nWLnE5DUmY6YKQhvDRoZVfBrnWwIo0ySxdTUP4XieXGGgSk43xJaeU1zqQS/3Wfm7QgA==
+  version "1.10.9"
+  resolved "https://registry.yarnpkg.com/@volar/typescript/-/typescript-1.10.9.tgz#0c019f94f33fe0f2ab9e0c32afc9dbfa391ad32a"
+  integrity sha512-5jLB46mCQLJqLII/qDLgfyHSq1cesjwuJQIa2GNWd7LPLSpX5vzo3jfQLWc/gyo3up2fQFrlRJK2kgY5REtwuQ==
   dependencies:
-    "@volar/language-core" "1.10.7"
+    "@volar/language-core" "1.10.9"
     path-browserify "^1.0.1"
 
 "@volar/vue-language-core@^1.2.0":
@@ -5815,12 +5815,10 @@ nuxt-security-docs@../docs:
     "@nuxtjs/plausible" "^0.2.1"
     "@nuxtlabs/github-module" "^1.6.3"
 
-nuxt-security@^1.0.0-rc.2:
+nuxt-security@../:
   version "1.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-1.0.0-rc.2.tgz#66d07d851730f1da3a136355256a01f8169f563f"
-  integrity sha512-gLAz85Auebne+cCm3bmGpqE/NpGkG889iVndJWlelnYQcW4dFXZAbCMVH0jznQJKF4qdvEUPkgp4pWSVc2TQyA==
   dependencies:
-    "@nuxt/kit" "^3.7.3"
+    "@nuxt/kit" "^3.8.0"
     basic-auth "^2.0.1"
     defu "^6.1.1"
     nuxt-csurf "^1.3.1"
