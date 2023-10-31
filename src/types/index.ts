@@ -6,6 +6,7 @@ import type { AllowedHTTPMethods, BasicAuth, CorsOptions, RateLimiter, RequestSi
 
 export type Ssg = {
   hashScripts?: boolean;
+  hashStyles?: boolean;
 };
 
 export interface ModuleOptions {
