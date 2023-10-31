@@ -21,16 +21,22 @@ const securityConfig = useRuntimeConfig().private
 
 export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
-  const basicAuthConfig: BasicAuth = securityConfig.basicAuth
+  const basicAuthConfig = securityConfig.basicAuth
 
-  const isInExclude = basicAuthConfig?.exclude?.some(el => event.path?.startsWith(el)) ?? false
-  const isInInclude = basicAuthConfig?.include?.some(el => event.path?.startsWith(el)) ?? false
+  // Check for exclusion paths
+  const excludePaths = basicAuthConfig?.exclude || []
+  const isPathExcluded = excludePaths.some(el => event.path?.startsWith(el))
 
-  if (!isInExclude && !isInInclude) {
+  // Check for inclusion paths
+  const includePaths = basicAuthConfig?.include || []
+  const isPathIncluded = includePaths.some(el => event.path?.startsWith(el))
+
+  if (isPathExcluded && !isPathIncluded) {
     return
   }
 
-  if (!credentials || !validateCredentials(credentials!, basicAuthConfig)) {
+  if (!credentials || !validateCredentials(credentials, basicAuthConfig)) {
+    // Set the authentication header and send an error response
     setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Please enter username and password'}`)
     sendError(event, createError({ statusCode: 401, statusMessage: 'Access denied' }))
   }
