@@ -24,7 +24,7 @@ export default defineEventHandler((event) => {
   const basicAuthConfig = securityConfig.basicAuth
 
   // Check for exclusion paths
-  const excludePaths = basicAuthConfig?.exclude || []
+  const excludePaths = basicAuthConfig?.exclude || ['/']
   const isPathExcluded = excludePaths.some(el => event.path?.startsWith(el))
 
   // Check for inclusion paths
