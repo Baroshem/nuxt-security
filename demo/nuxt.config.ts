@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     headers: {
       contentSecurityPolicy: {
         'img-src': ["'self'", 'data:', 'https://i3.ytimg.com/vi/8RDPrptc9uU/hqdefault.jpg'],
-        'script-src': ["'self'", "'unsafe-inline'"]
+        'script-src': ["'self'", "'unsafe-inline'", "'strict-dynamic'", "'nonce-{{nonce}}'"]
       },
     },
     nonce: true,
@@ -28,7 +28,7 @@ export default defineNuxtConfig({
       interval: 1000
     },
     ssg: {
-      hashScripts: false
+      hashScripts: true
     }
   },
   routeRules: {
