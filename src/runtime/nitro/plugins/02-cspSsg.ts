@@ -3,13 +3,11 @@ import crypto from 'node:crypto'
 import type { H3Event } from 'h3'
 import defu from 'defu'
 import type {
-  ModuleOptions
-} from '../../../types'
-import type {
   ContentSecurityPolicyValue
 } from '../../../types/headers'
 import { defineNitroPlugin, useRuntimeConfig, getRouteRules } from '#imports'
 import { useNitro } from '@nuxt/kit'
+import * as cheerio from 'cheerio'
 
 const moduleOptions = useRuntimeConfig().security
 
@@ -17,7 +15,7 @@ export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Content Security Policy
 
-    if (!isContentSecurityPolicyEnabled(event, moduleOptions)) {
+    if (!isContentSecurityPolicyEnabled(event)) {
       return
     }
 
@@ -25,11 +23,6 @@ export default defineNitroPlugin((nitroApp) => {
       return
     }
 
-    // Detect bothe inline scripts and inline styles
-    const inlineScriptPattern = /<script[^>]*>(.*?)<\/script>/gs
-    const inlineStylePattern = /<style>(.*?)<\/style>/gs
-    // Whitelist external scripts based on integrity attribute
-    const externalScriptPattern = /<script .*?integrity="(.*?)".*?(\/>|>.*?<\/script>)/gs
     const scriptHashes: string[] = []
     const styleHashes: string[] = []
     const hashAlgorithm = 'sha256'
@@ -39,22 +32,31 @@ export default defineNitroPlugin((nitroApp) => {
       const htmlRecords = html as unknown as Record<string, string[]>
       const elements = htmlRecords[section]
       for (const element of elements) {
-        let match
-        while ((match = inlineScriptPattern.exec(element)) !== null) {
-          if (match[1]) {
-            scriptHashes.push(generateHash(match[1], hashAlgorithm))
+        const $ = cheerio.load(element, null, false)
+
+        // Parse all script tags
+        $('script').each((i, script) => {
+          const scriptText = $(script).text()
+          const scriptAttrs = $(script).attr()
+          const src = scriptAttrs?.src
+          const integrity = scriptAttrs?.integrity
+          if (!src && scriptText) {
+            // Hash inline scripts with content
+            scriptHashes.push(generateHash(scriptText, hashAlgorithm))
+          } else if (src && integrity) {
+            // Whitelist external scripts with integrity
+            scriptHashes.push(`'${integrity}'`)
           }
-        }
-        while ((match = inlineStylePattern.exec(element)) !== null) {
-          if (match[1]) {
-            styleHashes.push(generateHash(match[1], hashAlgorithm))
+        })
+
+        // Parse all style tags
+        $('style').each((i, style) => {
+          const styleText = $(style).text()
+          if (styleText) {
+            // Hash inline styles with content
+            styleHashes.push(generateHash(styleText, hashAlgorithm))
           }
-        }
-        while ((match = externalScriptPattern.exec(element)) !== null) {
-          if (match[1]) {
-            scriptHashes.push(`'${match[1]}'`)
-          }
-        }
+        })
       }
     }
 
@@ -67,7 +69,6 @@ export default defineNitroPlugin((nitroApp) => {
       // Also insert hashes in static headers for presets that generate headers rules for static files
       updateRouteRules(event, content)
     }
-
 
   })
 
@@ -143,7 +144,7 @@ export default defineNitroPlugin((nitroApp) => {
    * @param options ModuleOptions
    * @returns boolean
    */
-  function isContentSecurityPolicyEnabled (event: H3Event, options: ModuleOptions): boolean {
+  function isContentSecurityPolicyEnabled (event: H3Event): boolean {
     const nitroPrerenderHeader = 'x-nitro-prerender'
     const nitroPrerenderHeaderValue = event.node.req.headers[nitroPrerenderHeader]
 
