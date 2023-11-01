@@ -19,4 +19,28 @@ describe('[nuxt-security] Basic Auth', async () => {
 
     expect(res.status).toBe(200)
   })
+
+  it ('should return 401 status code for included route', async () => {
+    const res = await fetch('/api/hello/world/nuxt')
+
+    expect(res.status).toBe(401)
+  })
+
+  it ('should return 200 status code for multiple included route', async () => {
+    const res = await fetch('/admin')
+
+    expect(res.status).toBe(401)
+  })
+
+  it ('should return 200 status code for multiple excluded route', async () => {
+    const res = await fetch('/content')
+
+    expect(res.status).toBe(200)
+  })
+
+  it ('should return a 401 status code for any arbitrary path', async () => {
+    const res = await fetch('/arbitrary')
+
+    expect(res.status).toBe(401)
+  })
 })
