@@ -32,12 +32,6 @@ export type BasicAuth = {
   message: string;
 }
 
-export type NonceOptions = {
-  enabled: boolean;
-  mode?: 'renew' | 'check';
-  value?: (() => string);
-}
-
 export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
 
 // Cannot use the H3CorsOptions from `h3` as it breaks the build process for some reason :(

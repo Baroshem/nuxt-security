@@ -16,7 +16,8 @@ describe('[nuxt-security] Nonce', async () => {
     const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)![1]
 
     const text = await res.text()
-    const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
+    const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const elementsWithNonce = text.match(new RegExp(nonceMatch, 'g'))?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
@@ -24,7 +25,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(elementsWithNonce).toBe(expectedNonceElements)
   })
 
-  it('does not renew nonce if mode is `check`', async () => {
+  it('renews nonce even if mode is `check`', async () => {
     // Make sure a nonce exists by doing the initial request
     const originalRes = await fetch('/')
     const originalCsp = originalRes.headers.get('content-security-policy')
@@ -36,7 +37,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(res.ok).toBe(true)
-    expect(res.headers.get('content-security-policy')).toBe(originalCsp)
+    expect(res.headers.get('content-security-policy')).not.toBe(originalCsp)
   })
 
   it('injects `nonce` attribute in response when using useHead composable', async () => {
@@ -46,7 +47,8 @@ describe('[nuxt-security] Nonce', async () => {
     const nonce = cspHeaderValue!.match(/'nonce-(.*?)'/)![1]
 
     const text = await res.text()
-    const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
+    const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const elementsWithNonce = text.match(new RegExp(nonceMatch, 'g'))?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
@@ -71,11 +73,28 @@ describe('[nuxt-security] Nonce', async () => {
     const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)![1]
 
     const text = await res.text()
-    const elementsWithNonce = text.match(new RegExp(`nonce="${nonce}"`, 'g'))?.length ?? 0
+    const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const elementsWithNonce = text.match(new RegExp(nonceMatch, 'g'))?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(nonce).toBeDefined()
     expect(elementsWithNonce).toBe(expectedNonceElements + 1) // one extra for the style tag
+  })
+
+  it('removes the nonces in pre-render mode', async () => {
+    const res = await fetch('/prerendered')
+
+    const body = await res.text()
+    const injectedNonces = body.match(/ nonce="(.*?)"/)
+    const meta = body.match(/<meta http-equiv="Content-Security-Policy" content="(.*?)"(.*?)>/)
+    const content = meta?.[1]
+    const cspNonces = content?.match(/'nonce-(.*?)'/)
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(content).toBeDefined()
+    expect(injectedNonces).toBe(null)
+    expect(cspNonces).toBe(null)
   })
 })

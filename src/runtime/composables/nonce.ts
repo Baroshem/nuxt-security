@@ -1,5 +1,5 @@
-import { useNuxtApp, useCookie } from '#imports'
+import { useNuxtApp } from '#imports'
 
 export function useNonce () {
-  return useNuxtApp().ssrContext?.event?.context.nonce ?? useCookie('nonce').value
+  return useNuxtApp().ssrContext?.event?.context.nonce
 }

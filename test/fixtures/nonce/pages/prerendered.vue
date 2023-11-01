@@ -1,5 +1,5 @@
 <template>
   <div>
-    Secret Route
+    prerendered page
   </div>
 </template>

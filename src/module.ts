@@ -2,28 +2,32 @@ import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
 import { defu } from 'defu'
-import { Nuxt, RuntimeConfig } from '@nuxt/schema'
+import type { Nuxt, RuntimeConfig } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
 import { defuReplaceArray } from './utils'
-import {
+import type {
   ModuleOptions,
   NuxtSecurityRouteRules
 } from './types/index'
-import {
+import type {
   SecurityHeaders
 } from './types/headers'
-import {
+import type {
   BasicAuth
 } from './types/middlewares'
 import {
   defaultSecurityConfig
 } from './defaultConfig'
 import { SECURITY_MIDDLEWARE_NAMES } from './middlewares'
-import { HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './headers'
+import { type HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './headers'
 
-declare module '@nuxt/schema' {
+declare module 'nuxt/schema' {
   interface NuxtOptions {
-    security: ModuleOptions;
+    security: ModuleOptions
+  }
+  interface RuntimeConfig {
+    security: ModuleOptions,
+    private: { basicAuth: BasicAuth | false, [key: string]: any }
   }
 }
 
@@ -35,6 +39,10 @@ declare module 'nitropack' {
     security: NuxtSecurityRouteRules;
   }
 }
+
+export * from './types/index'
+export * from './types/headers'
+export * from './types/middlewares'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -63,7 +71,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.private = defu(
       nuxt.options.runtimeConfig.private,
       {
-        basicAuth: securityOptions.basicAuth as BasicAuth | boolean
+        basicAuth: securityOptions.basicAuth
       }
     )
 
@@ -72,7 +80,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.security = defu(
       nuxt.options.runtimeConfig.security,
       {
-        ...(securityOptions as unknown as RuntimeConfig['security'])
+        ...securityOptions
       }
     )
 
@@ -81,6 +89,11 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     setSecurityRouteRules(nuxt, securityOptions)
+
+    // Remove Content-Security-Policy header in pre-rendered routes
+    // When pre-rendered, the CSP is provided via html <meta> instead
+    // If kept, this would block the site from rendering
+    removeCspHeaderForPrerenderedRoutes(nuxt)
 
     if (nuxt.options.security.requestSizeLimiter) {
       addServerHandler({
@@ -113,7 +126,6 @@ export default defineNuxtModule<ModuleOptions>({
         )
       })
     }
-
     if (nuxt.options.security.nonce) {
       addServerHandler({
         handler: normalize(
@@ -197,6 +209,17 @@ const setSecurityRouteRules = (nuxt: Nuxt, securityOptions: ModuleOptions) => {
   }
 }
 
+const removeCspHeaderForPrerenderedRoutes = (nuxt: Nuxt) => {
+  const nitroRouteRules = nuxt.options.nitro.routeRules
+  for (const route in nitroRouteRules) {
+    const routeRules = nitroRouteRules[route]
+    if (routeRules.prerender || nuxt.options.nitro.static) {
+      routeRules.headers = routeRules.headers || {}
+      routeRules.headers['Content-Security-Policy'] = ''
+    }
+  }
+}
+
 const registerSecurityNitroPlugins = (
   nuxt: Nuxt,
   securityOptions: ModuleOptions
@@ -261,5 +284,49 @@ const registerSecurityNitroPlugins = (
         )
       )
     }
+  })
+
+  // Make sure our nitro plugins will be applied last
+  // After all other third-party modules that might have loaded their own nitro plugins
+  nuxt.hook('nitro:init', nitro => {
+    const securityPluginsPrefix = normalize(
+      fileURLToPath(
+        new URL('./runtime/nitro/plugins', import.meta.url)
+      )
+    )
+    // SSR: Reorder plugins in Nitro options
+    nitro.options.plugins.sort((a, b) => {
+      if (a.startsWith(securityPluginsPrefix)) {
+        if (b.startsWith(securityPluginsPrefix)) {
+          return 0
+        } else {
+          return 1
+        }
+      } else {
+        if (b.startsWith(securityPluginsPrefix)) {
+          return -1
+        } else {
+          return 0
+        }
+      }
+    })
+    // SSG: Reorder plugins in Nitro hook
+    nitro.hooks.hook('prerender:config', config => {
+      config.plugins?.sort((a, b) => {
+        if (a?.startsWith(securityPluginsPrefix)) {
+          if (b?.startsWith(securityPluginsPrefix)) {
+            return 0
+          } else {
+            return 1
+          }
+        } else {
+          if (b?.startsWith(securityPluginsPrefix)) {
+            return -1
+          } else {
+            return 0
+          }
+        }
+      })
+    })
   })
 }

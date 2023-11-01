@@ -2,7 +2,7 @@ export type CrossOriginResourcePolicyValue = 'same-site' | 'same-origin' | 'cros
 
 export type CrossOriginOpenerPolicyValue = 'unsafe-none' | 'same-origin-allow-popups' | 'same-origin';
 
-export type CrossOriginEmbedderPolicyValue = 'unsafe-none' | 'require-corp';
+export type CrossOriginEmbedderPolicyValue = 'unsafe-none' | 'require-corp' | 'credentialless';
 
 export type ReferrerPolicyValue =
   | 'no-referrer'
