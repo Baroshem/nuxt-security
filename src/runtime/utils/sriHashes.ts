@@ -19,7 +19,6 @@ export default async function (nitro: Nitro) {
     // recursive option on readdir is supported since NodeJS 18
     // do we have a minimum build engine requirement ?
     const entries = await readdir(dir, { withFileTypes: true, recursive: true })
-    console.log(`in ${dir}`, publicAsset, entries)
     for (const entry of entries) {
       if (entry.isFile()) {
         const fullPath = join(entry.path, entry.name)

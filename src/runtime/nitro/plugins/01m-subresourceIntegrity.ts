@@ -21,6 +21,8 @@ export default defineNitroPlugin((nitroApp) => {
     const sriHashes: Record<string, string> = await useStorage(storageBase).getItem('integrity:sriHashes.json') || {}
     
     // Scan all relevant sections of the NuxtRenderHtmlContext
+    // Note: integrity can only be set on scripts and on links with rel preload, modulepreload and stylesheet
+    // However the SRI standard provides that other elements may be added to that list in the future
     for (const section of ['body', 'bodyAppend', 'bodyPrepend', 'head']) {
       const htmlRecords = html as unknown as Record<string, string[]>
 
