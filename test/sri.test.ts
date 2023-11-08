@@ -4,8 +4,7 @@ import { setup, fetch } from '@nuxt/test-utils'
 
 describe('[nuxt-security] Subresource Integrity', async () => {
   await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/sri', import.meta.url)),
-    build: true
+    rootDir: fileURLToPath(new URL('./fixtures/sri', import.meta.url))
   })
 
   const expectedIntegrityAttributes = 7 // 6 links (entry, index, nuxt-link, error-404, vue, error-500), 1 script (entry)
