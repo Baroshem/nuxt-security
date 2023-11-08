@@ -23,8 +23,8 @@ export default defineNitroPlugin((nitroApp) => {
       return
     }
 
-    const scriptHashes: string[] = []
-    const styleHashes: string[] = []
+    const scriptHashes: Set<string> = new Set()
+    const styleHashes: Set<string> = new Set()
     const hashAlgorithm = 'sha256'
 
     // Scan all relevant sections of the NuxtRenderHtmlContext
@@ -42,10 +42,10 @@ export default defineNitroPlugin((nitroApp) => {
           const integrity = scriptAttrs?.integrity
           if (!src && scriptText) {
             // Hash inline scripts with content
-            scriptHashes.push(generateHash(scriptText, hashAlgorithm))
+            scriptHashes.add(generateHash(scriptText, hashAlgorithm))
           } else if (src && integrity) {
             // Whitelist external scripts with integrity
-            scriptHashes.push(`'${integrity}'`)
+            scriptHashes.add(`'${integrity}'`)
           }
         })
 
@@ -54,7 +54,41 @@ export default defineNitroPlugin((nitroApp) => {
           const styleText = $(style).text()
           if (styleText) {
             // Hash inline styles with content
-            styleHashes.push(generateHash(styleText, hashAlgorithm))
+            styleHashes.add(generateHash(styleText, hashAlgorithm))
+          }
+        })
+
+        // Parse all link tags
+        $('link').each((i, link) => {
+          const linkAttrs = $(link).attr()
+          const integrity = linkAttrs?.integrity
+          // Whitelist links to external resources with integrity
+          if (integrity) {
+            const rel = linkAttrs?.rel
+            // HTML standard defines only 3 rel values for valid integrity attributes on links : stylesheet, preload and modulepreload
+            // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-integrity
+            if (rel === 'stylesheet') {
+              // style: add to style-src
+              styleHashes.add(`'${integrity}'`)
+            } else if (rel === 'preload') {
+              // Fetch standard defines the destination (https://fetch.spec.whatwg.org/#destination-table)
+              // This table is the official mapping between HTML and CSP
+              // We only support script-src for now, but we could populate other policies in the future
+              const as = linkAttrs.as
+              switch (as) {
+                case 'script':
+                case 'audioworklet':
+                case 'paintworklet':
+                case 'xlst':
+                  scriptHashes.add(`'${integrity}'`)
+                  break
+                default:
+                  break
+              }
+            } else if (rel === 'modulepreload') {
+              // script is the default and only possible destination
+              scriptHashes.add(`'${integrity}'`)
+            }
           }
         })
       }
@@ -73,7 +107,7 @@ export default defineNitroPlugin((nitroApp) => {
   })
 
   // Insert hashes in the CSP meta tag for both the script-src and the style-src policies
-  function generateCspMetaTag (policies: ContentSecurityPolicyValue, scriptHashes: string[], styleHashes: string[]) {
+  function generateCspMetaTag (policies: ContentSecurityPolicyValue, scriptHashes: Set<string>, styleHashes: Set<string>) {
     const unsupportedPolicies:Record<string, boolean> = {
       'frame-ancestors': true,
       'report-uri': true,
@@ -81,13 +115,13 @@ export default defineNitroPlugin((nitroApp) => {
     }
 
     const tagPolicies = defu(policies) as ContentSecurityPolicyValue
-    if (scriptHashes.length > 0 && moduleOptions.ssg?.hashScripts) {
+    if (scriptHashes.size > 0 && moduleOptions.ssg?.hashScripts) {
       // Remove '""'
-      tagPolicies['script-src'] = (tagPolicies['script-src'] ?? []).concat(scriptHashes)
+      tagPolicies['script-src'] = (tagPolicies['script-src'] ?? []).concat(...scriptHashes)
     }
-    if (styleHashes.length > 0 && moduleOptions.ssg?.hashStyles) {
+    if (styleHashes.size > 0 && moduleOptions.ssg?.hashStyles) {
       // Remove '""'
-      tagPolicies['style-src'] = (tagPolicies['style-src'] ?? []).concat(styleHashes)
+      tagPolicies['style-src'] = (tagPolicies['style-src'] ?? []).concat(...styleHashes)
     }
 
     const contentArray: string[] = []
