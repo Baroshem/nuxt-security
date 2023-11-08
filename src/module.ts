@@ -268,6 +268,17 @@ const registerSecurityNitroPlugins = (
       )
     }
 
+    // Register nitro plugin to enable subresource integrity
+    if (securityOptions.sri) {
+      config.plugins.push(
+        normalize(
+          fileURLToPath(
+            new URL('./runtime/nitro/plugins/01m-subresourceIntegrity', import.meta.url)
+          )
+        )
+      )
+    }
+
     // Register nitro plugin to enable CSP for SSG
     if (
       typeof securityOptions.headers === 'object' &&
@@ -277,17 +288,6 @@ const registerSecurityNitroPlugins = (
         normalize(
           fileURLToPath(
             new URL('./runtime/nitro/plugins/02-cspSsg', import.meta.url)
-          )
-        )
-      )
-    }
-
-    // Register nitro plugin to enable subresource integrity and 'strict-dynamic' CSP for SSG
-    if (securityOptions.sri) {
-      config.plugins.push(
-        normalize(
-          fileURLToPath(
-            new URL('./runtime/nitro/plugins/01m-subresourceIntegrity', import.meta.url)
           )
         )
       )
