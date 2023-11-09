@@ -29,7 +29,8 @@ export default defineNuxtConfig({
     },
     ssg: {
       hashScripts: true
-    }
+    },
+    sri: false
   },
   routeRules: {
     '/playground': {
