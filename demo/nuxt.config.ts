@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     ssg: {
       hashScripts: true
     },
-    sri: false
+    sri: true
   },
   routeRules: {
     '/playground': {
