@@ -119,6 +119,7 @@ export default defineNitroPlugin((nitroApp) => {
       // Remove '""'
       tagPolicies['script-src'] = (tagPolicies['script-src'] ?? []).concat(...scriptHashes)
     }
+
     if (styleHashes.size > 0 && moduleOptions.ssg?.hashStyles) {
       // Remove '""'
       tagPolicies['style-src'] = (tagPolicies['style-src'] ?? []).concat(...styleHashes)
