@@ -6,6 +6,7 @@ import type { AllowedHTTPMethods, BasicAuth, CorsOptions, RateLimiter, RequestSi
 
 export type Ssg = {
   hashScripts?: boolean;
+  hashStyles?: boolean;
 };
 
 export interface ModuleOptions {
@@ -22,6 +23,7 @@ export interface ModuleOptions {
   nonce: boolean;
   removeLoggers?: RemoveOptions | false;
   ssg?: Ssg;
+  sri?: boolean
 }
 
 export interface NuxtSecurityRouteRules {

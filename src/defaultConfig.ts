@@ -1,4 +1,4 @@
-import { ModuleOptions } from './types'
+import type { ModuleOptions } from './types'
 
 const defaultThrowErrorValue = { throwError: true }
 
@@ -81,6 +81,7 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     exclude: [/node_modules/, /\.git/]
   },
   ssg: {
-    hashScripts: true
+    hashScripts: true,
+    hashStyles: false
   }
 })
