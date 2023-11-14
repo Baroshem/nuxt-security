@@ -29,8 +29,7 @@ export default defineNuxtConfig({
           "'self'", // backwards compatibility for older browsers that don't support strict-dynamic
           "'nonce-{{nonce}}'",
           "'strict-dynamic'"
-        ],
-        'script-src-attr': ["'self'", "'nonce-{{nonce}}'", "'strict-dynamic'"]
+        ]
       }
     }
   }
