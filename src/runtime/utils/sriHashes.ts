@@ -4,7 +4,7 @@ import type { Nitro } from 'nitropack'
 import { join } from 'pathe'
 
 
-export default async function (nitro: Nitro) {
+export async function sriHashes(nitro: Nitro) {
   const hashAlgorithm = 'sha384'
   const sriHashes: Record<string, string> = {}
 

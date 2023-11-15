@@ -22,6 +22,10 @@ export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
   const basicAuthConfig = securityConfig.basicAuth
 
+  if (!basicAuthConfig) {
+    return
+  }
+
   // Check for exclusion paths
   const excludePaths = basicAuthConfig?.exclude || ['/']
   const isPathExcluded = excludePaths.some(el => event.path?.startsWith(el))

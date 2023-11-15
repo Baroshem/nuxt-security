@@ -2,7 +2,7 @@ import type { ModuleOptions } from './types'
 
 const defaultThrowErrorValue = { throwError: true }
 
-export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
+export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions> => ({
   headers: {
     crossOriginResourcePolicy: 'same-origin',
     crossOriginOpenerPolicy: 'same-origin',
@@ -59,7 +59,7 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   },
   corsHandler: {
     // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
-    origin: serverlUrl,
+    origin: [serverlUrl],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     preflight: {
       statusCode: 204
