@@ -273,7 +273,7 @@ const registerSecurityNitroPlugins = (
       config.plugins.push(
         normalize(
           fileURLToPath(
-            new URL('./runtime/nitro/plugins/01m-subresourceIntegrity', import.meta.url)
+            new URL('./runtime/nitro/plugins/02-subresourceIntegrity', import.meta.url)
           )
         )
       )
@@ -287,7 +287,7 @@ const registerSecurityNitroPlugins = (
       config.plugins.push(
         normalize(
           fileURLToPath(
-            new URL('./runtime/nitro/plugins/02-cspSsg', import.meta.url)
+            new URL('./runtime/nitro/plugins/03-cspSsg', import.meta.url)
           )
         )
       )

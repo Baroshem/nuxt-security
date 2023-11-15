@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3'
 import { extname } from 'pathe'
-import { useStorage } from '#imports'
+import { useStorage, defineNitroPlugin } from '#imports'
 import * as cheerio from 'cheerio'
 
 export default defineNitroPlugin((nitroApp) => {
