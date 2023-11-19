@@ -6,10 +6,10 @@ export default defineNitroPlugin((nitroApp) => {
     const router = createRouter()
 
     nitroApp.hooks.hook('nuxt-security:headers', (route, headersConfig) => {
-        const headers: Record<string, string> = {}
+        const headers: Record<string, string |false > = {}
 
         for (const [header, headerOptions] of Object.entries(headersConfig)) {
-            headers[SECURITY_HEADER_NAMES[header]] = getHeaderValueFromOptions(header as HeaderMapper, headerOptions as any)
+            headers[SECURITY_HEADER_NAMES[header]] = headerOptions === false ? false : getHeaderValueFromOptions(header as HeaderMapper, headerOptions as any)
         }
 
         router.insert(route, headers)

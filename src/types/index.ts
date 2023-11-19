@@ -37,7 +37,7 @@ export interface NuxtSecurityRouteRules {
 }
 
 export interface NuxtSecurityEventContext {
-  headers: Record<string, string | string[] | number> | null
+  headers: Record<string, string | string[] | number | false> | null
 }
 
 declare module 'h3' {
