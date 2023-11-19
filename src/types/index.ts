@@ -5,6 +5,7 @@ import type { AllowedHTTPMethods, BasicAuth, CorsOptions, RateLimiter, RequestSi
 
 export type Ssg = {
   hashScripts?: boolean;
+  hashStyles?: boolean;
 };
 
 export interface ModuleOptions {
@@ -25,6 +26,7 @@ export interface ModuleOptions {
    * enable runtime nitro hooks to configure some options at runtime
    */
   runtimeHooks: boolean;
+  sri?: boolean
 }
 
 export interface NuxtSecurityRouteRules {

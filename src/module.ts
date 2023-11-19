@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin } from '@nuxt/kit'
 import { defu } from 'defu'
-import type { Nuxt, RuntimeConfig } from '@nuxt/schema'
+import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
 import { defuReplaceArray } from './utils'
 import type {
@@ -20,6 +20,7 @@ import {
 } from './defaultConfig'
 import { SECURITY_MIDDLEWARE_NAMES } from './middlewares'
 import { type HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './runtime/utils/headers'
+import sriHashes from './runtime/utils/sriHashes'
 
 declare module 'nuxt/schema' {
   interface NuxtOptions {
@@ -166,6 +167,13 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
+    // Calculates SRI hashes at build time
+    if (nuxt.options.security.sri) {
+      // At server build time, we calculate sri hashes
+      nuxt.hook('nitro:build:public-assets', sriHashes)
+
+    }
+
     nuxt.hook('imports:dirs', (dirs) => {
       dirs.push(normalize(resolve(runtimeDir, 'composables')))
     })
@@ -269,6 +277,17 @@ const registerSecurityNitroPlugins = (
       )
     }
 
+    // Register nitro plugin to enable subresource integrity
+    if (securityOptions.sri) {
+      config.plugins.push(
+        normalize(
+          fileURLToPath(
+            new URL('./runtime/nitro/plugins/02-subresourceIntegrity', import.meta.url)
+          )
+        )
+      )
+    }
+
     // Register nitro plugin to enable CSP for SSG
     if (
       typeof securityOptions.headers === 'object' &&
@@ -277,7 +296,7 @@ const registerSecurityNitroPlugins = (
       config.plugins.push(
         normalize(
           fileURLToPath(
-            new URL('./runtime/nitro/plugins/02-cspSsg', import.meta.url)
+            new URL('./runtime/nitro/plugins/03-cspSsg', import.meta.url)
           )
         )
       )

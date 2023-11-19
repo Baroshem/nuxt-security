@@ -1,4 +1,4 @@
-import { ModuleOptions } from './types'
+import type { ModuleOptions } from './types'
 
 const defaultThrowErrorValue = { throwError: true }
 
@@ -8,7 +8,7 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     crossOriginOpenerPolicy: 'same-origin',
     crossOriginEmbedderPolicy: 'require-corp',
     contentSecurityPolicy: {
-      'base-uri': ["'self'"],
+      'base-uri': ["'none'"],
       'font-src': ["'self'", 'https:', 'data:'],
       'form-action': ["'self'"],
       'frame-ancestors': ["'self'"],
@@ -16,6 +16,7 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
       'object-src': ["'none'"],
       'script-src-attr': ["'none'"],
       'style-src': ["'self'", 'https:', "'unsafe-inline'"],
+      'script-src': ["'self'", 'https:', "'unsafe-inline'", "'strict-dynamic'", "'nonce-{{nonce}}'"],
       'upgrade-insecure-requests': true
     },
     originAgentCluster: '?1',
@@ -72,7 +73,7 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   basicAuth: false,
   enabled: true,
   csrf: false,
-  nonce: false,
+  nonce: true,
   // https://github.com/Talljack/unplugin-remove/blob/main/src/types.ts
   removeLoggers: {
     external: [],
@@ -81,6 +82,8 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     exclude: [/node_modules/, /\.git/]
   },
   ssg: {
-    hashScripts: true
-  }
+    hashScripts: true,
+    hashStyles: false
+  },
+  sri: true
 })
