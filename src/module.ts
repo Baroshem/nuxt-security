@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { Nuxt, RuntimeConfig } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
@@ -19,7 +19,7 @@ import {
   defaultSecurityConfig
 } from './defaultConfig'
 import { SECURITY_MIDDLEWARE_NAMES } from './middlewares'
-import { type HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './headers'
+import { type HeaderMapper, SECURITY_HEADER_NAMES, getHeaderValueFromOptions } from './runtime/utils/headers'
 
 declare module 'nuxt/schema' {
   interface NuxtOptions {
@@ -130,6 +130,15 @@ export default defineNuxtModule<ModuleOptions>({
       addServerHandler({
         handler: normalize(
           resolve(runtimeDir, 'server/middleware/cspNonceHandler')
+        )
+      })
+    }
+
+    if(nuxt.options.security.runtimeHooks) {
+      addServerPlugin(resolve(runtimeDir, 'nitro/plugins/00-context'))
+      addServerHandler({
+        handler: normalize(
+          resolve(runtimeDir, 'server/middleware/headers')
         )
       })
     }

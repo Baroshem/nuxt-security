@@ -1,8 +1,8 @@
-import {
+import type {
   ContentSecurityPolicyValue,
   PermissionsPolicyValue,
   StrictTransportSecurityValue
-} from './types/headers'
+} from '../../types/headers'
 
 type SecurityHeaderNames = Record<string, string>
 
