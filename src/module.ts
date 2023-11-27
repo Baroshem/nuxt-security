@@ -150,7 +150,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
     
     // Calculates SRI hashes at build time
-    nuxt.hook('nitro:build:public-assets', sriHashes)
+    nuxt.hook('nitro:build:before', sriHashes)
 
 
     nuxt.hook('imports:dirs', (dirs) => {
