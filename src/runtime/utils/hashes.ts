@@ -4,7 +4,7 @@ import type { Nitro } from 'nitropack'
 import { join } from 'pathe'
 
 
-export async function sriHashes(nitro: Nitro) {
+export async function bundledAssetsHashes(nitro: Nitro) {
   const hashAlgorithm = 'sha384'
   const sriHashes: Record<string, string> = {}
 
@@ -60,7 +60,7 @@ export async function sriHashes(nitro: Nitro) {
   nitro.options.serverAssets.push({ dir: integrityDir, baseName: 'integrity' })
 }
 
-function generateHash (content: Buffer, hashAlgorithm: string) {
+export function generateHash (content: Buffer | string, hashAlgorithm: string) {
   const hash = createHash(hashAlgorithm)
   hash.update(content)
   return `${hashAlgorithm}-${hash.digest('base64')}`

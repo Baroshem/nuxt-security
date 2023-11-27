@@ -140,7 +140,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
   })
 
-  it('does not CSP via meta in SSR mode', async () => {
+  it('does not set CSP via meta in SSR mode', async () => {
     const res = await fetch('/not-ssg')
 
     const body = await res.text()

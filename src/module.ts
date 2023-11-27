@@ -20,7 +20,7 @@ import {
   defaultSecurityConfig
 } from './defaultConfig'
 import { headerObjectFromString, getKeyFromName } from './runtime/utils/headers'
-import { sriHashes } from './runtime/utils/sriHashes'
+import { bundledAssetsHashes } from './runtime/utils/hashes'
 
 declare module '@nuxt/schema' {
   interface NuxtOptions {
@@ -150,7 +150,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
     
     // Calculates SRI hashes at build time
-    nuxt.hook('nitro:build:before', sriHashes)
+    nuxt.hook('nitro:build:before', bundledAssetsHashes)
 
 
     nuxt.hook('imports:dirs', (dirs) => {
@@ -306,6 +306,15 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
       normalize(
         fileURLToPath(
           new URL('./runtime/nitro/plugins/04-cspSsgHashes', import.meta.url)
+        )
+      )
+    )
+
+    // Register nitro plugin to enable CSP Headers presets for SSG
+    config.plugins.push(
+      normalize(
+        fileURLToPath(
+          new URL('./runtime/nitro/plugins/05-cspSsgPresets', import.meta.url)
         )
       )
     )

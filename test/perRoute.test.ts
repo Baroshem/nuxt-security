@@ -833,20 +833,26 @@ describe('[nuxt-security] Per-route Configuration', async () => {
   it('does not inject CSP hashes on a deeply-disabled route', async () => {
     const res = await fetch('/csp-hash/deep/disabled')
     const cspHeaderValue = res.headers.get('content-security-policy')
-    expect(cspHeaderValue).toBeNull()
+    expect(cspHeaderValue).toBeDefined()
+    const headerHashes = cspHeaderValue!.match(/'sha256-(.*?)'/)
+    expect(headerHashes).toBeNull()
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
     expect(head).toBeDefined()
 
     const content = head!.match(/<meta http-equiv="Content-Security-Policy" content="(.*?)">/)?.[1]
-    expect(content).toBeUndefined()
+    expect(content).toBeDefined()
+    const contentHashes = content!.match(/'sha256-(.*?)'/)
+    expect(contentHashes).toBeNull()
   })
 
   it('injects CSP hashes on a deeply-enabled route', async () => {
     const res = await fetch('/csp-hash/deep/enabled')
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
+    const headerHashes = cspHeaderValue!.match(/'sha256-(.*?)'/)
+    expect(headerHashes).toHaveLength(2)
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]

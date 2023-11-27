@@ -1,8 +1,8 @@
-import { defineNitroPlugin, getRouteRules, setResponseHeader, getRequestHeader } from '#imports'
-import type { H3Event } from 'h3'
+import { defineNitroPlugin, getRouteRules, setResponseHeader } from '#imports'
 import * as cheerio from 'cheerio'
 import type { ContentSecurityPolicyValue } from '~/src/module'
 import { headerStringFromObject } from '../../utils/headers'
+import { isPrerendering } from '../utils'
 
 
 export default defineNitroPlugin((nitroApp) => {
@@ -39,6 +39,7 @@ export default defineNitroPlugin((nitroApp) => {
         })
       }
     }
+
     // Generate CSP rules
     const csp = security.headers.contentSecurityPolicy
     const headerValue = generateCspRules(csp, nonce)
@@ -71,14 +72,5 @@ export default defineNitroPlugin((nitroApp) => {
       return [directive, modifiedSources]
     })) as ContentSecurityPolicyValue
     return headerStringFromObject('contentSecurityPolicy', generatedCsp)
-  }
-
-  /**
-   * Detect if page is being pre-rendered
-   * @param event H3Event
-   * @returns boolean
-   */
-  function isPrerendering(event: H3Event): boolean {
-    return !!getRequestHeader(event, 'x-nitro-prerender')
   }
 })

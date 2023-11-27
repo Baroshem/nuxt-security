@@ -1,6 +1,6 @@
-import type { H3Event } from 'h3'
-import { useStorage, defineNitroPlugin, getRouteRules, getRequestHeader } from '#imports'
+import { useStorage, defineNitroPlugin, getRouteRules } from '#imports'
 import * as cheerio from 'cheerio'
+import { isPrerendering } from '../utils'
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', async (html, { event }) => {
@@ -67,13 +67,4 @@ export default defineNitroPlugin((nitroApp) => {
       })
     }
   })
-
-  /**
-   * Detect if page is being pre-rendered
-   * @param event H3Event
-   * @returns boolean
-   */
-  function isPrerendering (event: H3Event) {
-    return !!getRequestHeader(event, 'x-nitro-prerender')
-  }
 })
