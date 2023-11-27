@@ -6,39 +6,20 @@ export default defineNuxtConfig({
 
   // Per route configuration
   routeRules: {
-    '/**': { 
-      headers: {
-        'X-Toto': 'xxx',
-        'Y-Toto': 'yyy'
-      }
-    },
     secret: {
       security: {
-        rateLimiter: false,
-        nonce: true,
-        headers: {
-          contentSecurityPolicy: {
-            "manifest-src": ["'self'", 'https:']
-          }
-        }
+        rateLimiter: false
       },
       headers: {
-        'X-XSS-Protection': '1',
-        'X-Toto': '',
-        'Z-Toto': 'zzzzzz'
-      },
-    },
-    '/about': {
-      headers: {
-        'Content-Security-Policy': "script-src 'self'"
+        'X-XSS-Protection': '1'
       }
-    },
+    }
   },
 
   // Global configuration
   security: {
     headers: {
-      xXSSProtection: '0',
+      xXSSProtection: '0'
     },
     rateLimiter: {
       tokensPerInterval: 10,

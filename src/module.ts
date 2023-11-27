@@ -22,7 +22,7 @@ import {
 import { headerObjectFromString, getKeyFromName } from './runtime/utils/headers'
 import { sriHashes } from './runtime/utils/sriHashes'
 
-declare module 'nuxt/schema' {
+declare module '@nuxt/schema' {
   interface NuxtOptions {
     security: ModuleOptions
   }
@@ -283,7 +283,7 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
       )
     }
 
-    // Register nitro plugin to enable subresource integrity
+    // Register nitro plugin to enable Security Headers
     config.plugins.push(
       normalize(
         fileURLToPath(
@@ -292,7 +292,7 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
       )
     )
 
-    // Register nitro plugin to enable Security Headers
+    // Register nitro plugin to enable Subresource Integrity
     config.plugins.push(
       normalize(
         fileURLToPath(
@@ -301,7 +301,7 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
       )
     )
 
-    // Register nitro plugin to enable CSP for SSG
+    // Register nitro plugin to enable CSP Hashes for SSG
     config.plugins.push(
       normalize(
         fileURLToPath(
@@ -310,7 +310,7 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
       )
     )
 
-    // Nitro plugin to enable nonce for CSP
+    // Nitro plugin to enable CSP Nonce for SSR
     config.plugins.push(
       normalize(
         fileURLToPath(
