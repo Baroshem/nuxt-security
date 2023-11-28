@@ -20,7 +20,7 @@ import {
   defaultSecurityConfig
 } from './defaultConfig'
 import { headerObjectFromString, getKeyFromName } from './runtime/utils/headers'
-import { bundledAssetsHashes } from './runtime/utils/hashes'
+import { hashBundledAssets } from './runtime/utils/hashes'
 
 declare module '@nuxt/schema' {
   interface NuxtOptions {
@@ -150,7 +150,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
     
     // Calculates SRI hashes at build time
-    nuxt.hook('nitro:build:before', bundledAssetsHashes)
+    nuxt.hook('nitro:build:before', hashBundledAssets)
 
 
     nuxt.hook('imports:dirs', (dirs) => {

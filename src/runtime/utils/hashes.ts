@@ -4,7 +4,7 @@ import type { Nitro } from 'nitropack'
 import { join } from 'pathe'
 
 
-export async function bundledAssetsHashes(nitro: Nitro) {
+export async function hashBundledAssets(nitro: Nitro) {
   const hashAlgorithm = 'sha384'
   const sriHashes: Record<string, string> = {}
 

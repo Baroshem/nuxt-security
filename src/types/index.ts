@@ -1,8 +1,7 @@
 import type { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
 import type { Options as RemoveOptions } from 'unplugin-remove/types'
-import type { H3CorsOptions } from 'h3'
 import type { SecurityHeaders } from './headers'
-import type { AllowedHTTPMethods, BasicAuth, RateLimiter, RequestSizeLimiter, XssValidator } from './middlewares'
+import type { AllowedHTTPMethods, BasicAuth, RateLimiter, RequestSizeLimiter, XssValidator, CorsOptions } from './middlewares'
 
 export type Ssg = {
   hashScripts?: boolean;
@@ -14,7 +13,7 @@ export interface ModuleOptions {
   requestSizeLimiter: RequestSizeLimiter | false;
   rateLimiter: RateLimiter | false;
   xssValidator: XssValidator | false;
-  corsHandler: H3CorsOptions | false;
+  corsHandler: CorsOptions | false;
   allowedMethodsRestricter: AllowedHTTPMethods | false;
   hidePoweredBy: boolean;
   basicAuth: BasicAuth | false;
