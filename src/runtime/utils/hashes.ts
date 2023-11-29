@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto'
+import { existsSync } from 'node:fs'
 import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises'
 import type { Nitro } from 'nitropack'
 import { join } from 'pathe'
@@ -17,7 +18,7 @@ export async function hashBundledAssets(nitro: Nitro) {
   for (const publicAsset of publicAssets) {
     const { dir, baseURL = '' } = publicAsset
 
-    try {
+    if (existsSync(dir)) {
       // Node 16 compatibility maintained
       // Node 18.17+ supports recursive option on readdir
       // const entries = await readdir(dir, { withFileTypes: true, recursive: true })
@@ -44,15 +45,15 @@ export async function hashBundledAssets(nitro: Nitro) {
           sriHashes[url] = hash
         }
       }
-    } catch(error) {
-      // skip if directory does not exist
     }
   }
 
   // Save hashes in a /integrity directory within the .nuxt build for later use with SSG
   const buildDir = nitro.options.buildDir
   const integrityDir = join(buildDir, 'integrity')
-  await mkdir(integrityDir)
+  if (!existsSync(integrityDir)) {
+    await mkdir(integrityDir)
+  }
   const hashFilePath = join(integrityDir, 'sriHashes.json')
   await writeFile(hashFilePath, JSON.stringify(sriHashes))
 
