@@ -10,10 +10,10 @@ type StorageItem = {
   date: number
 }
 
-const driverConfig = useRuntimeConfig().security.rateLimiter.driver
+const driverConfig = useRuntimeConfig().security.rateLimiter?.driver
 
-const driver = storageDriver(driverConfig.options)
-const storage = createStorage({ driver }).mount('', driver)
+const driver = driverConfig && storageDriver(driverConfig.options)
+const storage = driverConfig && createStorage({ driver }).mount('', driver)
 
 export default defineEventHandler(async (event) => {
   const routeRules = getRouteRules(event)
