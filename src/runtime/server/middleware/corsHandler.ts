@@ -4,5 +4,7 @@ import { getRouteRules } from '#imports'
 
 export default defineEventHandler((event) => {
   const routeRules = getRouteRules(event)
-  handleCors(event, routeRules.security.corsHandler)
+  if (routeRules.security.corsHandler !== false) {
+    handleCors(event, routeRules.security.corsHandler)
+  }
 })
