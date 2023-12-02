@@ -65,7 +65,7 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/node": "^18.14.4",
     "eslint": "latest",
-    "nuxt": "^3.7.3",
+    "nuxt": "npm:nuxt-nightly@latest",
     "typescript": "5.2.2",
     "vitest": "^0.28.5"
   },
