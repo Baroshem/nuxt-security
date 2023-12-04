@@ -3,8 +3,9 @@ import { defineEventHandler, getRequestHeader, createError, getRouteRules } from
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 
 export default defineEventHandler((event) => {
-  const routeRules = getRouteRules(event)
-  if (routeRules.security.requestSizeLimiter !== false) {
+  const { security } = getRouteRules(event)
+
+  if (security?.requestSizeLimiter) {
     if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {
       const contentLengthValue = getRequestHeader(event, 'content-length')
       const contentTypeValue = getRequestHeader(event, 'content-type')
@@ -12,15 +13,15 @@ export default defineEventHandler((event) => {
       const isFileUpload = contentTypeValue?.includes(FILE_UPLOAD_HEADER)
 
       const requestLimit = isFileUpload
-        ? routeRules.security.requestSizeLimiter.maxUploadFileRequestInBytes
-        : routeRules.security.requestSizeLimiter.maxRequestSizeInBytes
+        ? security.requestSizeLimiter.maxUploadFileRequestInBytes
+        : security.requestSizeLimiter.maxRequestSizeInBytes
 
       if (parseInt(contentLengthValue as string) >= requestLimit) {
         const payloadTooLargeError = {
           statusCode: 413,
           statusMessage: 'Payload Too Large'
         }
-        if (routeRules.security.requestSizeLimiter.throwError === false) {
+        if (security.requestSizeLimiter.throwError === false) {
           return payloadTooLargeError
         }
         throw createError(payloadTooLargeError)
