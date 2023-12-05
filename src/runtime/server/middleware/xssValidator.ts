@@ -2,12 +2,12 @@ import { FilterXSS } from 'xss'
 import { defineEventHandler, createError, getQuery, readBody, getRouteRules } from '#imports'
 
 export default defineEventHandler(async (event) => {
-  const routeRules = getRouteRules(event)
+  const { security } = getRouteRules(event)
 
-  const xssValidator = new FilterXSS(routeRules.security.xssValidator)
+  if (security?.xssValidator) {
+    const xssValidator = new FilterXSS(security.xssValidator)
 
-  if (event.node.req.socket.readyState !== 'readOnly') {
-    if (routeRules.security.xssValidator !== false) {
+    if (event.node.req.socket.readyState !== 'readOnly') {
       if (['POST', 'GET'].includes(event.node.req.method!)) {
         const valueToFilter =
           event.node.req.method === 'GET'
@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
               statusCode: 400,
               statusMessage: 'Bad Request'
             }
-            if (routeRules.security.xssValidator.throwError === false) {
+            if (security.xssValidator.throwError === false) {
               return badRequestError
             }
 

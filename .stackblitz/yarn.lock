@@ -1218,7 +1218,7 @@ abbrev@1:
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
-acorn@8.10.0, acorn@^8.10.0, acorn@^8.6.0, acorn@^8.7.1, acorn@^8.8.2:
+acorn@8.10.0, acorn@^8.10.0, acorn@^8.6.0, acorn@^8.8.2:
   version "8.10.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.10.0.tgz#8be5b3907a67221a81ab23c7889c4c5526b62ec5"
   integrity sha512-F0SAmZ8iUtS//m8DmCTA0jlh6TDKkHQyK6xc6V4KDTyZKA9dnvX9/3sRTVQrWm79glUAZbnmmNcdYwUIHWVybw==
@@ -3113,10 +3113,10 @@ nuxt-csurf@^1.3.1:
     defu "^6.1.1"
     uncsrf "^1.1.1"
 
-nuxt-security@^1.0.0-rc.4:
-  version "1.0.0-rc.4"
-  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-1.0.0-rc.4.tgz#b3e2ba1a6d3d54d239e2bc8091c6ebd3bcbfc8c6"
-  integrity sha512-xYj0+kXpgePq59UPTZ73eGN74LT2ByFMbobV5eZkePVLWwa8MNl1j0XhM2IjdBhowFnCMasApU2P/dnP27J96g==
+nuxt-security@^1.0.0-rc.5:
+  version "1.0.0-rc.5"
+  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-1.0.0-rc.5.tgz#cad530e21ae38aa0c1397a2edd3e8c58c94021f5"
+  integrity sha512-2FgpQZVD4zky9biyRC8WaaK16QxLj2obeCPm1xFJyiCZ9eP2I5XduL+8unwjw+vx72YbaDCelqz7Bnnhjs2mxw==
   dependencies:
     "@nuxt/kit" "^3.8.0"
     basic-auth "^2.0.1"
@@ -3124,7 +3124,7 @@ nuxt-security@^1.0.0-rc.4:
     defu "^6.1.1"
     nuxt-csurf "^1.3.1"
     pathe "^1.0.0"
-    unplugin-remove "^0.1.3"
+    unplugin-remove "^0.1.6"
     xss "^1.0.14"
 
 nuxt@3.7.3:
@@ -4211,14 +4211,14 @@ universalify@^2.0.0:
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
 
-unplugin-remove@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/unplugin-remove/-/unplugin-remove-0.1.3.tgz#5cb7e8a3f1caa123ddd08327d21a2d42cf103fc6"
-  integrity sha512-jU0cuadFPtJFuzKjcPoW6wisr80g/8pZOQWxUKjFmwjOTcf0kKkw+TMVJfFfQdNwwJujIzT2maRLqxvYYYJ0fw==
+unplugin-remove@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/unplugin-remove/-/unplugin-remove-0.1.6.tgz#0b3d0a77ef2061de8a85cc239a5ba7f5c64d535d"
+  integrity sha512-/jwD4+ZzeBGC32Rx7m59FOhqALmtLsTeabFwaYM8yQMVaVO8un8AQxZi3YFJirPzJgEW43e5/wQpze8z/WwOxA==
   dependencies:
     "@rollup/pluginutils" "^4.2.1"
     magic-string "^0.26.3"
-    unplugin "^0.7.1"
+    unplugin "^1.5.0"
 
 unplugin-vue-router@^0.6.4:
   version "0.6.4"
@@ -4238,16 +4238,6 @@ unplugin-vue-router@^0.6.4:
     scule "^1.0.0"
     unplugin "^1.3.1"
     yaml "^2.2.2"
-
-unplugin@^0.7.1:
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/unplugin/-/unplugin-0.7.2.tgz#4127012fdc2c84ea4ce03ce75e3d4f54ea47bba1"
-  integrity sha512-m7thX4jP8l5sETpLdUASoDOGOcHaOVtgNyrYlToyQUvILUtEzEnngRBrHnAX3IKqooJVmXpoa/CwQ/QqzvGaHQ==
-  dependencies:
-    acorn "^8.7.1"
-    chokidar "^3.5.3"
-    webpack-sources "^3.2.3"
-    webpack-virtual-modules "^0.4.4"
 
 unplugin@^1.3.1, unplugin@^1.4.0, unplugin@^1.5.0:
   version "1.5.0"
@@ -4450,11 +4440,6 @@ webpack-sources@^3.2.3:
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.3.tgz#2d4daab8451fd4b240cc27055ff6a0c2ccea0cde"
   integrity sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==
-
-webpack-virtual-modules@^0.4.4:
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/webpack-virtual-modules/-/webpack-virtual-modules-0.4.6.tgz#3e4008230731f1db078d9cb6f68baf8571182b45"
-  integrity sha512-5tyDlKLqPfMqjT3Q9TAqf2YqjwmnUleZwzJi1A5qXnlBCdj2AtOJ6wAWdglTIDOPgOiOrXeBeFcsQ8+aGQ6QbA==
 
 webpack-virtual-modules@^0.5.0:
   version "0.5.0"

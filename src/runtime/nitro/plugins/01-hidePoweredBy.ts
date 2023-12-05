@@ -1,9 +1,7 @@
-import { defineNitroPlugin } from '#imports'
+import { defineNitroPlugin, removeResponseHeader } from '#imports'
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:response', (response) => {
-    if (response?.headers?.['x-powered-by']) {
-      delete response.headers['x-powered-by']
-    }
+  nitroApp.hooks.hook('beforeResponse', (event) => {
+    removeResponseHeader(event, 'x-powered-by')
   })
 })

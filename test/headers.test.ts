@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { fileURLToPath } from 'node:url'
 import { setup, fetch } from '@nuxt/test-utils'
 
 describe('[nuxt-security] Headers', async () => {
   await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
+    rootDir: fileURLToPath(new URL('./fixtures/headers', import.meta.url)),
   })
   let res: Response 
 
@@ -37,7 +37,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(cspHeaderValue).toBeTruthy()
     expect(nonceValue).toBeDefined()
     expect(nonceValue).toHaveLength(24)
-    expect(cspHeaderValue).toBe(`base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests`)
+    expect(cspHeaderValue).toBe(`base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests;`)
   })
 
   it('has `cross-origin-embedder-policy` header set with correct default value', async () => {
@@ -114,7 +114,7 @@ describe('[nuxt-security] Headers', async () => {
     const stsHeaderValue = headers.get('strict-transport-security')
 
     expect(stsHeaderValue).toBeTruthy()
-    expect(stsHeaderValue).toBe('max-age=15552000; includeSubDomains')
+    expect(stsHeaderValue).toBe('max-age=15552000; includeSubDomains;')
   })
 
   it('has `x-content-type-options` header set with correct default value', async () => {
@@ -183,3 +183,5 @@ describe('[nuxt-security] Headers', async () => {
     expect(xxpHeaderValue).toBe('0')
   })
 })
+
+
