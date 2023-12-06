@@ -9,26 +9,26 @@ export type Ssg = {
 };
 
 export interface ModuleOptions {
-  headers: SecurityHeaders | boolean;
-  requestSizeLimiter: RequestSizeLimiter | boolean;
-  rateLimiter: RateLimiter | boolean;
-  xssValidator: XssValidator | boolean;
-  corsHandler: CorsOptions | boolean;
-  allowedMethodsRestricter: AllowedHTTPMethods | boolean;
+  headers: SecurityHeaders | false;
+  requestSizeLimiter: RequestSizeLimiter | false;
+  rateLimiter: RateLimiter | false;
+  xssValidator: XssValidator | false;
+  corsHandler: CorsOptions | false;
+  allowedMethodsRestricter: AllowedHTTPMethods | false;
   hidePoweredBy: boolean;
-  basicAuth: BasicAuth | boolean;
+  basicAuth: BasicAuth | false;
   enabled: boolean;
   csrf: CsrfOptions | boolean;
   nonce: boolean;
-  removeLoggers?: RemoveOptions | boolean;
+  removeLoggers?: RemoveOptions | false;
   ssg?: Ssg;
 }
 
 export interface NuxtSecurityRouteRules {
-  requestSizeLimiter?: RequestSizeLimiter | boolean;
-  rateLimiter?: RateLimiter | boolean;
-  xssValidator?: XssValidator | boolean;
-  corsHandler?: CorsOptions | boolean;
-  allowedMethodsRestricter?: AllowedHTTPMethods | boolean;
+  requestSizeLimiter?: RequestSizeLimiter | false;
+  rateLimiter?: RateLimiter | false;
+  xssValidator?: XssValidator | false;
+  corsHandler?: CorsOptions | false;
+  allowedMethodsRestricter?: AllowedHTTPMethods | false;
   nonce?: boolean;
 }
