@@ -22,7 +22,7 @@ import {
 import { headerObjectFromString, getKeyFromName } from './runtime/utils/headers'
 import { hashBundledAssets } from './runtime/utils/hashes'
 
-declare module '@nuxt/schema' {
+declare module 'nuxt/schema' {
   interface NuxtOptions {
     security: ModuleOptions
   }
