@@ -18,7 +18,7 @@ export interface ModuleOptions {
   hidePoweredBy: boolean;
   basicAuth: BasicAuth | false;
   enabled: boolean;
-  csrf: CsrfOptions | false;
+  csrf: CsrfOptions | boolean;
   nonce: boolean;
   removeLoggers: RemoveOptions | false;
   ssg: Ssg | false;
