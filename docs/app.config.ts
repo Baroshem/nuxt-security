@@ -1,9 +1,11 @@
 export default defineAppConfig({
+  /*
   github: {
     owner: 'Baroshem',
     repo: 'nuxt-security',
     branch: 'main'
   },
+  */
   docus: {
     title: 'Nuxt Security',
     description: '🛡️ Security Module for Nuxt based on HTTP Headers and Middleware',
@@ -26,7 +28,7 @@ export default defineAppConfig({
       root: 'docs/content',
       edit: true,
       releases: true,
-      owner: 'baroshem',
+      owner: 'Baroshem',
       repo: 'nuxt-security',
       branch: 'main'
     },

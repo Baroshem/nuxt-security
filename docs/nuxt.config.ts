@@ -5,6 +5,6 @@ export default defineNuxtConfig({
   github: {
     owner: 'Baroshem',
     repo: 'nuxt-security',
-    branch: 'main'
+    branch: 'main',
   }
 })
