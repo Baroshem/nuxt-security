@@ -237,6 +237,13 @@ export default defineNuxtConfig({
         sri: false
       }
     },
+    '/preserve-middleware': {
+      security: {
+        headers: {
+          contentSecurityPolicy: false
+        }
+      }
+    },    
   },
   security: {
     headers: {

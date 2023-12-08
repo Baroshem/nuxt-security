@@ -883,6 +883,26 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(elementsWithIntegrity).toHaveLength(6)
   })
 
+  it ('should not remove middleware headers when false', async () => {
+    const res = await fetch('/preserve-middleware')
+    expect(res.status).toBe(200)
+    
+    const { headers } = res
+    const csp = headers.get('content-security-policy')
+    expect(csp).toBeDefined()
+    expect(csp).toBe('example')
+  })
+
+  it ('should overwrite middleware headers when not false', async () => {
+    const res = await fetch('/preserve-middleware/deep/page')
+    expect(res.status).toBe(200)
+    
+    const { headers } = res
+    const csp = headers.get('content-security-policy')
+    expect(csp).toBeDefined()
+    expect(csp).toBe("base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic'; upgrade-insecure-requests;")
+  })
+
 })
 
 

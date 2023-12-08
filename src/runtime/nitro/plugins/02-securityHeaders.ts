@@ -1,4 +1,4 @@
-import { getRouteRules, defineNitroPlugin, setResponseHeader, removeResponseHeader } from '#imports'
+import { getRouteRules, defineNitroPlugin, setResponseHeader } from '#imports'
 import { type OptionKey } from '../../../types/headers'
 import { getNameFromKey, headerStringFromObject } from '../../utils/headers'
 
@@ -10,10 +10,7 @@ export default defineNitroPlugin((nitroApp) => {
       Object.entries(headers).forEach(([key, optionValue]) => {
         const optionKey = key as OptionKey
         const headerName = getNameFromKey(optionKey)
-        if (optionValue === false) {
-          removeResponseHeader(event, headerName)
-        } 
-        else {
+        if (optionValue !== false) {
           const headerValue = headerStringFromObject(optionKey, optionValue)
           setResponseHeader(event, headerName, headerValue)
         }
