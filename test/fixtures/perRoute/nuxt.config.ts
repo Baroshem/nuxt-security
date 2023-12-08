@@ -6,9 +6,10 @@ export default defineNuxtConfig({
     '/**': {
       headers: {
         'foo': 'bar',
+        'Referrer-Policy': 'no-referrer-when-downgrade'
       }
     },
-    '/remove-all/**': {
+    '/ignore-all/**': {
       security: {
         headers: false
       }
@@ -20,10 +21,11 @@ export default defineNuxtConfig({
         }
       },
     },
-    '/remove-specific/**': {
+    '/ignore-specific/**': {
       security: {
         headers: {
-          crossOriginOpenerPolicy: false
+          crossOriginOpenerPolicy: false,
+          referrerPolicy: false
         }
       }
     },
@@ -240,10 +242,22 @@ export default defineNuxtConfig({
     '/preserve-middleware': {
       security: {
         headers: {
-          contentSecurityPolicy: false
+          contentSecurityPolicy: false,
+          referrerPolicy: false
         }
       }
-    },    
+    },
+    '/remove-deprecated/**': {
+      headers: {
+        //@ts-ignore - Intentional as we test backwards compatibility with a deprecated syntax
+        'Referrer-Policy': false
+      },
+      security: {
+        headers: {
+          contentSecurityPolicy: false,
+        }
+      }
+    }, 
   },
   security: {
     headers: {
