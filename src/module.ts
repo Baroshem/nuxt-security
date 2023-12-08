@@ -200,6 +200,8 @@ function mergeSecurityPerRoute(nuxt: Nuxt) {
             // Because in the pre-rc1 syntax, standard headers could also be supplied in object format
             standardHeadersAsObject[optionKey] = headerValue
           }
+          // Delete security header from route rules to avoid route resolution overlaps
+          delete standardHeaders[headerName]
         }
       })
     }
