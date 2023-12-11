@@ -11,9 +11,9 @@ describe('[nuxt-security] runtime hooks', () => {
         const res = await fetch('/api/runtime-hooks')
         expect(await res.json()).toMatchInlineSnapshot(`
           {
-            "csp": "script-src 'self' 'unsafe-inline' *.azure.com",
+            "csp": "script-src 'self' 'unsafe-inline' *.azure.com;",
           }
         `)
-        expect(res.headers.get('Content-Security-Policy')).toMatchInlineSnapshot( '"script-src \'self\' \'unsafe-inline\' *.azure.com"')
+        expect(res.headers.get('Content-Security-Policy')).toMatchInlineSnapshot('"script-src \'self\' \'unsafe-inline\' *.azure.com;"')
     })
 })

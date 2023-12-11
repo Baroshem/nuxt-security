@@ -1,6 +1,7 @@
-import { type HeaderMapper, getHeaderValueFromOptions, SECURITY_HEADER_NAMES } from "../../utils/headers"
+import { getNameFromKey, headerStringFromObject} from "../../utils/headers"
 import { createRouter} from "radix3"
 import { defineNitroPlugin } from '#imports'
+import { OptionKey } from "~/src/module"
 
 export default defineNitroPlugin((nitroApp) => {
     const router = createRouter()
@@ -9,7 +10,15 @@ export default defineNitroPlugin((nitroApp) => {
         const headers: Record<string, string |false > = {}
 
         for (const [header, headerOptions] of Object.entries(headersConfig)) {
-            headers[SECURITY_HEADER_NAMES[header]] = headerOptions === false ? false : getHeaderValueFromOptions(header as HeaderMapper, headerOptions as any)
+            const headerName = getNameFromKey(header as OptionKey) 
+            if(headerName) {
+                const value = headerStringFromObject(header as OptionKey, headerOptions)
+                if(value) {
+                    headers[headerName] = value
+                } else {
+                    delete headers[headerName]
+                }
+            }
         }
 
         router.insert(route, headers)

@@ -1,12 +1,13 @@
 import type {
   ContentSecurityPolicyValue,
   PermissionsPolicyValue,
-  StrictTransportSecurityValue
+  StrictTransportSecurityValue,
+  OptionKey,
+  HeaderName,
+  SecurityHeaders
 } from '../../types/headers'
 
-type SecurityHeaderNames = Record<string, string>
-
-export const SECURITY_HEADER_NAMES: SecurityHeaderNames = {
+export const KEYS_TO_NAMES: Record<OptionKey, HeaderName> = {
   contentSecurityPolicy: 'Content-Security-Policy',
   crossOriginEmbedderPolicy: 'Cross-Origin-Embedder-Policy',
   crossOriginOpenerPolicy: 'Cross-Origin-Opener-Policy',
@@ -23,30 +24,112 @@ export const SECURITY_HEADER_NAMES: SecurityHeaderNames = {
   permissionsPolicy: 'Permissions-Policy'
 }
 
-export type HeaderMapper = 'strictTransportSecurity' | 'contentSecurityPolicy' | 'permissionsPolicy'
+const NAMES_TO_KEYS = Object.fromEntries(Object.entries(KEYS_TO_NAMES).map(([key, name]) => ([name, key]))) as Record<HeaderName, OptionKey>
 
-const headerValueMappers = {
-  strictTransportSecurity: (value: StrictTransportSecurityValue) =>
-    [
-      `max-age=${value.maxAge}`,
-      value.includeSubdomains && 'includeSubDomains',
-      value.preload && 'preload'
-    ].filter(Boolean).join('; '),
-  contentSecurityPolicy: (value: ContentSecurityPolicyValue) => {
-    return Object.entries(value).map(([directive, sources]) => {
-      if (directive === 'upgrade-insecure-requests') {
-        return sources ? 'upgrade-insecure-requests' : ''
-      }
-      return (sources as string[])?.length && `${directive} ${(sources as string[]).join(' ')}`
-    })
-      .filter(Boolean).join('; ')
-  },
-  permissionsPolicy: (value: PermissionsPolicyValue) => Object.entries(value).map(([directive, sources]) => `${directive}=(${(sources as string[]).join(' ')})`).filter(Boolean).join(', ')
+export function getNameFromKey(key: OptionKey) {
+  return KEYS_TO_NAMES[key]
 }
 
-export const getHeaderValueFromOptions = <T>(headerType: HeaderMapper, headerOptions: any) => {
-  if (typeof headerOptions === 'string') {
-    return headerOptions
+export function getKeyFromName(headerName: string) {
+  const [, key] = Object.entries(NAMES_TO_KEYS).find(([name]) => name.toLowerCase() === headerName.toLowerCase()) || []
+  return key
+}
+
+export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclude<SecurityHeaders[OptionKey], undefined>) {
+  // False value translates into empty header
+  if (optionValue === false) {
+    return ''
   }
-  return headerValueMappers[headerType]?.(headerOptions) ?? headerOptions
+  // Detect if we are in one of the three object cases and stringify them
+  if (optionKey === 'contentSecurityPolicy') {
+    const policies = optionValue as ContentSecurityPolicyValue
+    return Object.entries(policies)
+      .filter(([, value]) => value !== false)
+      .map(([directive, sources]) => {
+        if (directive === 'upgrade-insecure-requests') {
+          return 'upgrade-insecure-requests;'
+        } else {
+          const stringifiedSources = (typeof sources === 'string')
+            ? sources
+            : (sources as string[])
+              .map(source => source.trim())
+              .join(' ')
+          return `${directive} ${stringifiedSources};`
+        }
+      })
+      .join(' ')
+
+  } else if (optionKey === 'strictTransportSecurity') {
+    const policies = optionValue as StrictTransportSecurityValue
+    return [
+      `max-age=${policies.maxAge};`,
+      policies.includeSubdomains && 'includeSubDomains;',
+      policies.preload && 'preload;'
+    ].filter(Boolean).join(' ')
+  
+  } else if (optionKey === 'permissionsPolicy') {
+    const policies = optionValue as PermissionsPolicyValue
+    return Object.entries(policies)
+      .filter(([, value]) => value !== false)
+      .map(([directive, sources]) => {
+        if (typeof sources === 'string') {
+          return `${directive}=${sources}`
+        } else {
+          return `${directive}=(${(sources as string[]).join(' ')})`
+        }
+      })
+      .join(', ')
+
+  } else {
+    // Fallback: all other fields are already in string format
+    return optionValue as string
+  }
+}
+
+export function headerObjectFromString(optionKey: OptionKey, headerValue: string) {
+  // Empty string should remove header
+  if (!headerValue) {
+    return false
+  }
+  // Detect if we are in one of the three cases for object format, and objectify them
+  if (optionKey === 'contentSecurityPolicy') {
+    const directives = headerValue.split(';').map(directive => directive.trim()).filter(directive => directive)
+    const objectForm = {} as ContentSecurityPolicyValue
+    for (const directive of directives) {
+      const [type, ...sources] = directive.split(' ').map(token => token.trim()) as [keyof ContentSecurityPolicyValue, ...any]          
+      if (type === 'upgrade-insecure-requests') {
+        objectForm[type] = true
+      } else {
+        objectForm[type] = sources.join(' ')
+      }
+    }
+    return objectForm
+  }
+  else if (optionKey === 'strictTransportSecurity') {
+    const directives = headerValue.split(';').map(directive => directive.trim()).filter(directive => directive)
+    const objectForm = {} as StrictTransportSecurityValue
+    for (const directive of directives) {
+      const [type, value] = directive.split('=').map(token => token.trim())
+      if (type === 'max-age') {
+        objectForm.maxAge = Number(value)
+      }
+      else if (type === 'includeSubdomains' || type === 'preload') {
+        objectForm[type] = true
+      }
+    }
+    return objectForm
+  }
+  else if (optionKey === 'permissionsPolicy') {
+    const directives = headerValue.split(',').map(directive => directive.trim()).filter(directive => directive)
+    const objectForm = {} as PermissionsPolicyValue
+    for (const directive of directives) {
+      const [type, value] = directive.split('=').map(token => token.trim()) as [keyof PermissionsPolicyValue, string]
+      objectForm[type] = value
+    }
+    return objectForm
+  }
+  else {
+    // Fallback: all other fields have string format
+    return headerValue
+  }
 }
