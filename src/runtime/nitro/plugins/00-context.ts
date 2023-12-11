@@ -6,7 +6,7 @@ import { OptionKey } from "~/src/module"
 export default defineNitroPlugin((nitroApp) => {
     const router = createRouter()
 
-    nitroApp.hooks.hook('nuxt-security:headers', (route, headersConfig) => {
+    nitroApp.hooks.hook('nuxt-security:headers', ({route, headers: headersConfig}) => {
         const headers: Record<string, string |false > = {}
 
         for (const [header, headerOptions] of Object.entries(headersConfig)) {

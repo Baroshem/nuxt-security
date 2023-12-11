@@ -125,15 +125,13 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
     
-
-    if(nuxt.options.security.runtimeHooks) {
-      addServerPlugin(resolve(runtimeDir, 'nitro/plugins/00-context'))
-      addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/headers')
-        )
-      })
-    }
+ 
+    addServerPlugin(resolve(runtimeDir, 'nitro/plugins/00-context'))
+    addServerHandler({
+      handler: normalize(
+        resolve(runtimeDir, 'server/middleware/headers')
+      )
+    }) 
 
     const allowedMethodsRestricterConfig = nuxt.options.security
     .allowedMethodsRestricter
