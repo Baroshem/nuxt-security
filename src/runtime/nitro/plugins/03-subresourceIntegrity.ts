@@ -51,15 +51,20 @@ export default defineNitroPlugin((nitroApp) => {
         // Add integrity to all relevant link tags
         $('link').each((i, link) => {
           const linkAttrs = $(link).attr()
-          const href = linkAttrs?.href
-          const integrity = linkAttrs?.integrity
-          // Only add integrity to resources that do not already have one
-          if (href && !integrity) {
-            // Get the integrity hash from our static database
-            const hash = sriHashes[href]
-            // Set the integrity hash in HTML if found
-            if (hash) {
-              $(link).attr('integrity', hash)
+          const rel = linkAttrs?.rel
+          // HTML standard defines only 3 rel values for valid integrity attributes on links : stylesheet, preload and modulepreload
+          // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-integrity
+          if (rel === 'stylesheet' || rel === 'preload' || rel === 'modulepreload') {
+            const href = linkAttrs?.href
+            const integrity = linkAttrs?.integrity
+            // Only add integrity to resources that do not already have one
+            if (href && !integrity) {
+              // Get the integrity hash from our static database
+              const hash = sriHashes[href]
+              // Set the integrity hash in HTML if found
+              if (hash) {
+                $(link).attr('integrity', hash)
+              }
             }
           }
         })
