@@ -880,7 +880,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     const text = await res.text()
     const elementsWithIntegrity = text.match(/ integrity="sha384-/g)
 
-    expect(elementsWithIntegrity).toHaveLength(6)
+    expect(elementsWithIntegrity).toHaveLength(3)
   })
 
   it ('does not overwrite middleware headers when false', async () => {

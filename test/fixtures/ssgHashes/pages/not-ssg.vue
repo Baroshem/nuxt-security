@@ -11,7 +11,7 @@ useHead({
   ],
   link: [
     { rel: 'stylesheet', href: '/external.css' },
-    { rel: 'icon', href: '/icon.png' }
+    { rel: 'preload', as: 'image', href: '/icon.png' }
   ]
 })
 </script>

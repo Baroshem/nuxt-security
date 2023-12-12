@@ -7,7 +7,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/ssgHashes', import.meta.url))
   })
 
-  const expectedIntegrityAttributes = 6 // 5 links (entry, index, error-404, vue, error-500), 1 script (entry)
+  const expectedIntegrityAttributes = 4 // 3 links (entry, page, vue), 1 script (entry)
   const expectedInlineScriptHashes = 2 // 1 Hydration data, 1 Nuxt global
   const expectedExternalScriptHashes = 2 // 1 entry (modulepreload + script), 1 index (modulepreload)
   const expectedInlineStyleHashes = 0
@@ -40,7 +40,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes - 1) // No vue on home page
     expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
@@ -95,7 +95,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // External script
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 External script
     expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes + 2) // External script + 1 vue modulepreload
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
@@ -114,7 +114,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // External style 
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 External style 
     expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes + 1) // + 1 vue modulepreload
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
@@ -133,7 +133,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // External link
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 External link on image
     expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes + 1) // + 1 vue modulepreload
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
@@ -151,7 +151,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(body).toBeDefined()
     expect(metaTag).toBeNull()
     expect(csp).toBeUndefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 3) // External script + style + icon
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 3) // + 1 External script + 2 links (style + icon)
     expect(inlineScriptHashes).toBe(0)
     expect(externalScriptHashes).toBe(0)
     expect(inlineStyleHashes).toBe(0)
