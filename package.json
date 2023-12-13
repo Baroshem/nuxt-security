@@ -1,6 +1,6 @@
 {
   "name": "nuxt-security",
-  "version": "1.0.0-rc.5",
+  "version": "1.0.0",
   "license": "MIT",
   "type": "module",
   "homepage": "https://nuxt-security.vercel.app",
@@ -20,7 +20,8 @@
     "cors",
     "request-size-limit",
     "allowed-http-methods",
-    "csrf"
+    "csrf",
+    "content-security-policy"
   ],
   "exports": {
     ".": {
