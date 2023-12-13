@@ -1,7 +1,9 @@
 <template>
   <div>
-    Includes an image the ~/assets folder
-    <img src="~/assets/snyk.png">
+    Includes css from the assets folder
   </div>
 </template>
+<style>
+@import '~/assets/external.css';
+</style>
 

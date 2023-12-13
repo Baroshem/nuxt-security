@@ -4,10 +4,10 @@ import { setup, fetch } from '@nuxt/test-utils'
 
 describe('[nuxt-security] Subresource Integrity', async () => {
   await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/sri', import.meta.url))
+    rootDir: fileURLToPath(new URL('./fixtures/sri', import.meta.url)),
   })
 
-  const expectedIntegrityAttributes = 7 // 6 links (entry, index, nuxt-link, error-404, vue, error-500), 1 script (entry)
+  const expectedIntegrityAttributes = 3 // 2 links (entry, index), 1 script (entry)
 
   it('injects `integrity` on Nuxt root scripts', async () => {
     const res = await fetch('/')
@@ -18,7 +18,7 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + nuxt-link
   })
 
   it('injects `integrity` on resources bundled from assets folder', async () => {
@@ -30,7 +30,7 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // 7 for Nuxt, 1 image
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 image 
   })
 
 
@@ -43,7 +43,7 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 2) // 7 for Nuxt, 2 images
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 2) // + 1 image + vue head
   })
 
   it('does not modify `integrity` attributes when manually provided', async () => {
@@ -55,6 +55,6 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 2) // 7 for Nuxt, 2 Bootstrap (script + css)
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 3) // + 2 Bootstrap + vue head
   })
 })

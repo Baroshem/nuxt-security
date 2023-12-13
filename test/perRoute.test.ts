@@ -121,8 +121,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(foo).toBe('bar')
   })
 
-  it('removes all security headers for a page', async () => {
-    const { headers } = await fetch('/remove-all')
+  it('does not set security headers when false', async () => {
+    const { headers } = await fetch('/ignore-all')
     expect(headers).toBeDefined()
 
     const corp = headers.get('cross-origin-resource-policy')
@@ -145,7 +145,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBeNull()
+    expect(rp).toBe('no-referrer-when-downgrade')
     expect(sts).toBeNull()
     expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
@@ -159,8 +159,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(foo).toBe('bar')
   })
 
-  it('removes all security headers recursively', async () => {
-    const { headers } = await fetch('/remove-all/deep/page')
+  it('does not set security headers recursively when false', async () => {
+    const { headers } = await fetch('/ignore-all/deep/page')
     expect(headers).toBeDefined()
 
     const corp = headers.get('cross-origin-resource-policy')
@@ -183,7 +183,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBeNull()
+    expect(rp).toBe('no-referrer-when-downgrade')
     expect(sts).toBeNull()
     expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
@@ -273,8 +273,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(foo).toBe('bar')
   })
 
-  it('removes a specific security header for a page', async () => {
-    const { headers } = await fetch('/remove-specific')
+  it('does not set a specific security header when false', async () => {
+    const { headers } = await fetch('/ignore-specific')
     expect(headers).toBeDefined()
 
     const corp = headers.get('cross-origin-resource-policy')
@@ -297,7 +297,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBe('require-corp')
     expect(csp).toBe("base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic'; upgrade-insecure-requests;")
     expect(oac).toBe('?1')
-    expect(rp).toBe('no-referrer')
+    expect(rp).toBeNull()
     expect(sts).toBe('max-age=15552000; includeSubDomains;')
     expect(xcto).toBe('nosniff')
     expect(xdpc).toBe('off')
@@ -311,8 +311,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(foo).toBe('bar')
   })
 
-  it('removes a specific security header recursively', async () => {
-    const { headers } = await fetch('/remove-specific/deep/page')
+  it('does not set a specific security header recursively when false', async () => {
+    const { headers } = await fetch('/ignore-specific/deep/page')
     expect(headers).toBeDefined()
 
     const corp = headers.get('cross-origin-resource-policy')
@@ -335,7 +335,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBe('require-corp')
     expect(csp).toBe("base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic'; upgrade-insecure-requests;")
     expect(oac).toBe('?1')
-    expect(rp).toBe('no-referrer')
+    expect(rp).toBeNull()
     expect(sts).toBe('max-age=15552000; includeSubDomains;')
     expect(xcto).toBe('nosniff')
     expect(xdpc).toBe('off')
@@ -679,7 +679,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBeNull()
+    expect(rp).toBe('no-referrer-when-downgrade')
     expect(sts).toBeNull()
     expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
@@ -723,7 +723,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBeNull()
+    expect(rp).toBe('no-referrer-when-downgrade')
     expect(sts).toBeNull()
     expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
@@ -758,7 +758,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBeNull()
+    expect(rp).toBe('no-referrer-when-downgrade')
     expect(sts).toBeNull()
     expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
@@ -776,7 +776,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(foo).toBe('bar')
   })
 
-  it('preserves radix headers for a bundled asset', async () => {
+  it('preserves standard headers for a bundled asset', async () => {
     const res = await fetch('/')
     const text = await res.text()
 
@@ -880,7 +880,46 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     const text = await res.text()
     const elementsWithIntegrity = text.match(/ integrity="sha384-/g)
 
-    expect(elementsWithIntegrity).toHaveLength(6)
+    expect(elementsWithIntegrity).toHaveLength(3)
+  })
+
+  it ('does not overwrite middleware headers when false', async () => {
+    const res = await fetch('/preserve-middleware')
+    expect(res.status).toBe(200)
+    
+    const { headers } = res
+    const csp = headers.get('content-security-policy')
+    expect(csp).toBeDefined()
+    expect(csp).toBe('example')
+    const rp = headers.get('referrer-policy')
+    expect(rp).toBeDefined()
+    expect(rp).toBe('harder-example')
+  })
+
+  it ('overwrites middleware headers when not false', async () => {
+    const res = await fetch('/preserve-middleware/deep/page')
+    expect(res.status).toBe(200)
+    
+    const { headers } = res
+    const csp = headers.get('content-security-policy')
+    expect(csp).toBeDefined()
+    expect(csp).toBe("base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic'; upgrade-insecure-requests;")
+    const rp = headers.get('referrer-policy')
+    expect(rp).toBeDefined()
+    expect(rp).toBe('no-referrer')
+  })
+
+  it ('removes deprecated standard headers when false', async () => {
+    const res = await fetch('/remove-deprecated')
+    expect(res.status).toBe(200)
+    
+    const { headers } = res
+    const csp = headers.get('content-security-policy')
+    expect(csp).toBeDefined()
+    expect(csp).toBeNull()
+    const rp = headers.get('referrer-policy')
+    expect(rp).toBeDefined()
+    expect(rp).toBeNull()
   })
 
 })

@@ -19,10 +19,10 @@ import type {
 import {
   defaultSecurityConfig
 } from './defaultConfig'
-import { headerObjectFromString, getKeyFromName } from './runtime/utils/headers'
+import { headerObjectFromString, getKeyFromName, headerStringFromObject } from './runtime/utils/headers'
 import { hashBundledAssets } from './runtime/utils/hashes'
 
-declare module '@nuxt/schema' {
+declare module 'nuxt/schema' {
   interface NuxtOptions {
     security: ModuleOptions
   }
@@ -199,6 +199,7 @@ function mergeSecurityPerRoute(nuxt: Nuxt) {
             // Here we ensure backwards compatibility 
             // Because in the pre-rc1 syntax, standard headers could also be supplied in object format
             standardHeadersAsObject[optionKey] = headerValue
+            standardHeaders[headerName] = headerStringFromObject(optionKey, headerValue)
           }
         }
       })
