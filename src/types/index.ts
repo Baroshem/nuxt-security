@@ -22,6 +22,11 @@ export interface ModuleOptions {
   nonce: boolean;
   removeLoggers: RemoveOptions | false;
   ssg: Ssg | false;
+  /**
+   * enable runtime nitro hooks to configure some options at runtime
+   * Current configuration editable at runtime: headers
+   */
+  runtimeHooks: boolean;
   sri: boolean
 }
 
