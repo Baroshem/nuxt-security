@@ -157,9 +157,8 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(inlineStyleHashes).toBe(0)
     expect(externalStyleHashes).toBe(0)
   })
-})
 
-it('does not set CSP via meta when disabled', async () => {
+  it('does not set CSP via meta when disabled', async () => {
     const res = await fetch('/no-meta-tag')
 
     const body = await res.text()
