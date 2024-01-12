@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     '/no-meta-tag': {
       prerender: true,
       ssg: {
-        meta: false,
+        meta: false
       }
     }
   },
