@@ -220,6 +220,7 @@ export default defineNuxtConfig({
       prerender: true,
       security: {
         ssg: {
+          enabled: true,
           hashScripts: true
         }
       }
