@@ -32,6 +32,7 @@ export default defineNuxtConfig({
     rateLimiter: false,
     sri: true,
     ssg: {
+      enabled: true,
       hashScripts: true,
       hashStyles: true
     }
