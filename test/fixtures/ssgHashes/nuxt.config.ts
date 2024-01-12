@@ -24,7 +24,13 @@ export default defineNuxtConfig({
     },
     '/not-ssg': {
       prerender: false
-    }
+    },
+    '/no-meta-tag': {
+      prerender: true,
+      ssg: {
+        enabled: false,
+      },
+    },
   },
 
   // Global configuration
