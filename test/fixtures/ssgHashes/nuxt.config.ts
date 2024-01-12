@@ -29,8 +29,8 @@ export default defineNuxtConfig({
       prerender: true,
       ssg: {
         meta: false,
-      },
-    },
+      }
+    }
   },
 
   // Global configuration
