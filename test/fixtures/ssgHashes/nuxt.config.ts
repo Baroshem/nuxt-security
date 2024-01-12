@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     '/no-meta-tag': {
       prerender: true,
       ssg: {
-        enabled: false,
+        meta: false,
       },
     },
   },
@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     rateLimiter: false,
     sri: true,
     ssg: {
-      enabled: true,
+      meta: true,
       hashScripts: true,
       hashStyles: true
     }

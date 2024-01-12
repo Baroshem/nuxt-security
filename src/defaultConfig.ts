@@ -82,7 +82,7 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
     exclude: [/node_modules/, /\.git/]
   },
   ssg: {
-    enabled: true,
+    meta: true,
     hashScripts: true,
     hashStyles: false
   },

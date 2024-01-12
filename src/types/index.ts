@@ -4,7 +4,7 @@ import type { SecurityHeaders } from './headers'
 import type { AllowedHTTPMethods, BasicAuth, RateLimiter, RequestSizeLimiter, XssValidator, CorsOptions } from './middlewares'
 
 export type Ssg = {
-  enabled?: boolean;
+  meta?: boolean;
   hashScripts?: boolean;
   hashStyles?: boolean;
 };

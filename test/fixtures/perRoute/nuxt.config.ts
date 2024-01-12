@@ -220,7 +220,7 @@ export default defineNuxtConfig({
       prerender: true,
       security: {
         ssg: {
-          enabled: true,
+          meta: true,
           hashScripts: true
         }
       }
@@ -258,7 +258,7 @@ export default defineNuxtConfig({
           contentSecurityPolicy: false,
         }
       }
-    }, 
+    },
   },
   security: {
     headers: {

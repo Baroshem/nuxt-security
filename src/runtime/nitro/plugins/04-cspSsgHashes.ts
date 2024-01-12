@@ -25,7 +25,7 @@ export default defineNitroPlugin((nitroApp) => {
 
     // Parse HTML if SSG is enabled for this route
     if (security.ssg) {
-      const { enabled, hashScripts, hashStyles } = security.ssg
+      const { hashScripts, hashStyles } = security.ssg
 
       // Scan all relevant sections of the NuxtRenderHtmlContext
       type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
@@ -102,8 +102,8 @@ export default defineNitroPlugin((nitroApp) => {
     // Generate CSP rules
     const csp = security.headers.contentSecurityPolicy
     const headerValue = generateCspRules(csp, scriptHashes, styleHashes)
-    // Insert CSP in the http meta tag if enabled
-    if (enabled) {
+    // Insert CSP in the http meta tag if meta is true
+    if (security.ssg?.meta) {
       html.head.push(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`)
     }
     // Update rules in HTTP header
