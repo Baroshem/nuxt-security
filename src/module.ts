@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
@@ -125,6 +125,15 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
     
+
+    if(nuxt.options.security.runtimeHooks) {
+      addServerPlugin(resolve(runtimeDir, 'nitro/plugins/00-context'))
+      addServerHandler({
+        handler: normalize(
+          resolve(runtimeDir, 'server/middleware/headers')
+        )
+      })
+    }
 
     const allowedMethodsRestricterConfig = nuxt.options.security
     .allowedMethodsRestricter

@@ -7,7 +7,7 @@ import type {
   SecurityHeaders
 } from '../../types/headers'
 
-const KEYS_TO_NAMES: Record<OptionKey, HeaderName> = {
+export const KEYS_TO_NAMES: Record<OptionKey, HeaderName> = {
   contentSecurityPolicy: 'Content-Security-Policy',
   crossOriginEmbedderPolicy: 'Cross-Origin-Embedder-Policy',
   crossOriginOpenerPolicy: 'Cross-Origin-Opener-Policy',

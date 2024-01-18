@@ -22,6 +22,11 @@ export interface ModuleOptions {
   nonce: boolean;
   removeLoggers: RemoveOptions | false;
   ssg: Ssg | false;
+  /**
+   * enable runtime nitro hooks to configure some options at runtime
+   * Current configuration editable at runtime: headers
+   */
+  runtimeHooks: boolean;
   sri: boolean
 }
 
@@ -36,3 +41,18 @@ export type NuxtSecurityRouteRules = Pick<ModuleOptions,
   'sri' |
   'ssg'>
 
+  declare module 'nitropack' {
+    interface NitroRuntimeHooks {
+      'nuxt-security:headers': (config: {
+        /**
+         * The route for which the headers are being configured
+         */
+        route: string,
+        /**
+         * The headers configuration for the route
+         */
+        headers: SecurityHeaders
+      }) => void
+      'nuxt-security:ready': () => void
+    }
+  } 
