@@ -321,6 +321,8 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
     )
 
     // Register nitro plugin to enable CSP Headers presets for SSG
+    // TEMPORARILY DISABLED AS NUXT 3.9.3 PREVENTS IMPORTING @NUXT/KIT IN NITRO PLUGINS
+    /*
     config.plugins.push(
       normalize(
         fileURLToPath(
@@ -328,6 +330,7 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
         )
       )
     )
+    */
 
     // Nitro plugin to enable CSP Nonce for SSR
     config.plugins.push(
