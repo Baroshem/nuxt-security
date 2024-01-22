@@ -302,6 +302,15 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
       )
     )
 
+    // Pre-process HTML into DOM tree
+    config.plugins.push(
+      normalize(
+        fileURLToPath(
+          new URL('./runtime/nitro/plugins/02a-preprocessHtml', import.meta.url)
+        )
+      )
+    )
+
     // Register nitro plugin to enable Subresource Integrity
     config.plugins.push(
       normalize(
@@ -337,6 +346,16 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
       normalize(
         fileURLToPath(
           new URL('./runtime/nitro/plugins/99-cspSsrNonce', import.meta.url)
+        )
+      )
+    )
+
+
+    // Recombine HTML from DOM tree
+    config.plugins.push(
+      normalize(
+        fileURLToPath(
+          new URL('./runtime/nitro/plugins/99b-recombineHtml', import.meta.url)
         )
       )
     )
