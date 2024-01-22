@@ -1,5 +1,5 @@
 import { defineNitroPlugin, getRouteRules } from '#imports'
-import * as cheerio from 'cheerio'
+import * as cheerio from 'cheerio/lib/slim'
 
 
 export default defineNitroPlugin((nitroApp) => {
@@ -16,7 +16,12 @@ export default defineNitroPlugin((nitroApp) => {
     const cheerios = {} as Record<Section, ReturnType<typeof cheerio.load>[]>
     for (const section of sections) {
       cheerios[section] = html[section].map(element => {
-        return cheerio.load(element, null, false)
+        return cheerio.load(element, {
+          xml: {
+            // Disable `xmlMode` to parse HTML with htmlparser2.
+            xmlMode: false,
+          },
+        }, false)
       })
     }
     event.context.cheerios = cheerios
