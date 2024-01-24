@@ -1,5 +1,5 @@
 import { defineNitroPlugin, getRouteRules, setResponseHeader } from '#imports'
-import * as cheerio from 'cheerio'
+import { type CheerioAPI } from 'cheerio'
 import type { ContentSecurityPolicyValue } from '~/src/module'
 import { headerStringFromObject } from '../../utils/headers'
 import { isPrerendering } from '../utils'
@@ -26,16 +26,15 @@ export default defineNitroPlugin((nitroApp) => {
       // Scan all relevant sections of the NuxtRenderHtmlContext
       type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
+      const cheerios = event.context.cheerios as Record<Section, CheerioAPI[]>
       for (const section of sections) {
-        html[section] = html[section].map(element => {
-          const $ = cheerio.load(element, null, false)
+        cheerios[section].forEach($ => {
           // Add nonce to all link tags
           $('link').attr('nonce', nonce)
           // Add nonce to all script tags
           $('script').attr('nonce', nonce)
           // Add nonce to all style tags
           $('style').attr('nonce', nonce)
-          return $.html()
         })
       }
     }

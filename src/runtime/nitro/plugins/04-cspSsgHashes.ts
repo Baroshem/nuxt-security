@@ -22,18 +22,17 @@ export default defineNitroPlugin((nitroApp) => {
     const scriptHashes: Set<string> = new Set()
     const styleHashes: Set<string> = new Set()
     const hashAlgorithm = 'sha256'
+    type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
+    const cheerios = event.context.cheerios as Record<Section, ReturnType<typeof cheerio.load>[]>
 
     // Parse HTML if SSG is enabled for this route
     if (security.ssg) {
       const { hashScripts, hashStyles } = security.ssg
 
       // Scan all relevant sections of the NuxtRenderHtmlContext
-      type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
       for (const section of sections) {
-        html[section].forEach(element => {
-          const $ = cheerio.load(element, null, false)
-
+        cheerios[section].forEach($ => {
           // Parse all script tags
           if (hashScripts) {
             $('script').each((i, script) => {
@@ -104,11 +103,10 @@ export default defineNitroPlugin((nitroApp) => {
     const headerValue = generateCspRules(csp, scriptHashes, styleHashes)
     // Insert CSP in the http meta tag if meta is true
     if (security.ssg?.meta) {
-      html.head.push(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`)
+      cheerios.head.push(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`))
     }
     // Update rules in HTTP header
     setResponseHeader(event, 'Content-Security-Policy', headerValue)
-
   })
 
   // Insert hashes in the CSP meta tag for both the script-src and the style-src policies

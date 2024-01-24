@@ -1,10 +1,10 @@
 import { useStorage, defineNitroPlugin, getRouteRules } from '#imports'
-import * as cheerio from 'cheerio'
 import { isPrerendering } from '../utils'
+import { type CheerioAPI } from 'cheerio'
+
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', async (html, { event }) => {
-
     // Exit if SRI not enabled for this route
     const { security } = getRouteRules(event)
     if (!security?.sri) {
@@ -29,10 +29,9 @@ export default defineNitroPlugin((nitroApp) => {
     // However the SRI standard provides that other elements may be added to that list in the future
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
+    const cheerios = event.context.cheerios as Record<Section, CheerioAPI[]>
     for (const section of sections) {
-      html[section] = html[section].map(element => {
-        
-        const $ = cheerio.load(element, null, false)
+      cheerios[section].forEach($ => {
         // Add integrity to all relevant script tags
         $('script').each((i, script) => {
           const scriptAttrs = $(script).attr()
@@ -68,7 +67,6 @@ export default defineNitroPlugin((nitroApp) => {
             }
           }
         })
-        return $.html()
       })
     }
   })

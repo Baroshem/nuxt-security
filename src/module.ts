@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve, normalize } from 'pathe'
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
@@ -125,6 +125,15 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
     
+
+    if(nuxt.options.security.runtimeHooks) {
+      addServerPlugin(resolve(runtimeDir, 'nitro/plugins/00-context'))
+      addServerHandler({
+        handler: normalize(
+          resolve(runtimeDir, 'server/middleware/headers')
+        )
+      })
+    }
 
     const allowedMethodsRestricterConfig = nuxt.options.security
     .allowedMethodsRestricter
@@ -293,6 +302,15 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
       )
     )
 
+    // Pre-process HTML into DOM tree
+    config.plugins.push(
+      normalize(
+        fileURLToPath(
+          new URL('./runtime/nitro/plugins/02a-preprocessHtml', import.meta.url)
+        )
+      )
+    )
+
     // Register nitro plugin to enable Subresource Integrity
     config.plugins.push(
       normalize(
@@ -312,6 +330,8 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
     )
 
     // Register nitro plugin to enable CSP Headers presets for SSG
+    // TEMPORARILY DISABLED AS NUXT 3.9.3 PREVENTS IMPORTING @NUXT/KIT IN NITRO PLUGINS
+    /*
     config.plugins.push(
       normalize(
         fileURLToPath(
@@ -319,12 +339,23 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
         )
       )
     )
+    */
 
     // Nitro plugin to enable CSP Nonce for SSR
     config.plugins.push(
       normalize(
         fileURLToPath(
           new URL('./runtime/nitro/plugins/99-cspSsrNonce', import.meta.url)
+        )
+      )
+    )
+
+
+    // Recombine HTML from DOM tree
+    config.plugins.push(
+      normalize(
+        fileURLToPath(
+          new URL('./runtime/nitro/plugins/99b-recombineHtml', import.meta.url)
         )
       )
     )
