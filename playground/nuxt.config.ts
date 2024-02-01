@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     rateLimiter: {
       tokensPerInterval: 10,
       interval: 10000
-    }
+    },
+    runtimeHooks: true
   }
 })
