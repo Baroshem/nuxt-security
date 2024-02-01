@@ -1183,7 +1183,7 @@
   dependencies:
     "@rollup/pluginutils" "^5.0.2"
 
-"@rollup/pluginutils@^4.0.0", "@rollup/pluginutils@^4.2.1":
+"@rollup/pluginutils@^4.0.0":
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-4.2.1.tgz#e6c6c3aba0744edce3fb2074922d3776c0af2a6d"
   integrity sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==
@@ -3574,13 +3574,6 @@ magic-string-ast@^0.3.0:
   dependencies:
     magic-string "^0.30.2"
 
-magic-string@^0.26.3:
-  version "0.26.7"
-  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.26.7.tgz#caf7daf61b34e9982f8228c4527474dac8981d6f"
-  integrity sha512-hX9XH3ziStPoPhJxLq1syWuZMxbDvGNbVchfrdCtanC7D13888bMFow61x8axrx+GfHLtVeAx2kxL7tTGRl+Ow==
-  dependencies:
-    sourcemap-codec "^1.4.8"
-
 magic-string@^0.30.0, magic-string@^0.30.2, magic-string@^0.30.3, magic-string@^0.30.4, magic-string@^0.30.5:
   version "0.30.5"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.30.5.tgz#1994d980bd1c8835dc6e78db7cbd4ae4f24746f9"
@@ -4108,10 +4101,10 @@ nuxt-csurf@^1.3.1:
     defu "^6.1.1"
     uncsrf "^1.1.1"
 
-nuxt-security@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-1.0.1.tgz#a98a5b8636e46c6ff97bc7ec104d03b4c58aee0f"
-  integrity sha512-GT504TFIJn0sM6yhdiUIf5EXoakYir0zs/2KO4uLqcP6XyX7FDj/SW0D3r8EvK80peL2dPvcWRmYRaqo1vPU2g==
+nuxt-security@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-1.1.0.tgz#ccb5600cbb835a4523fe22f89b7fd23a6544a287"
+  integrity sha512-nsvdUQbHjpGPNRUYi+ZDB5yUGL7rjTIhTxpuZwqxJuOPwAbw19S2DlgE+HTxn9CmzTCv8231lEhpD5G/Y4uG7g==
   dependencies:
     "@nuxt/kit" "^3.8.0"
     basic-auth "^2.0.1"
@@ -4119,7 +4112,7 @@ nuxt-security@^1.0.1:
     defu "^6.1.1"
     nuxt-csurf "^1.3.1"
     pathe "^1.0.0"
-    unplugin-remove "^0.1.6"
+    unplugin-remove "^0.1.7"
     xss "^1.0.14"
 
 nuxt@3.9.3:
@@ -5101,11 +5094,6 @@ source-map@^0.7.4:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.7.4.tgz#a9bbe705c9d8846f4e08ff6765acf0f1b0898656"
   integrity sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==
 
-sourcemap-codec@^1.4.8:
-  version "1.4.8"
-  resolved "https://registry.yarnpkg.com/sourcemap-codec/-/sourcemap-codec-1.4.8.tgz#ea804bd94857402e6992d05a38ef1ae35a9ab4c4"
-  integrity sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==
-
 spdx-correct@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/spdx-correct/-/spdx-correct-3.2.0.tgz#4f5ab0668f0059e34f9c00dce331784a12de4e9c"
@@ -5517,14 +5505,14 @@ universalify@^2.0.0:
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
 
-unplugin-remove@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/unplugin-remove/-/unplugin-remove-0.1.6.tgz#0b3d0a77ef2061de8a85cc239a5ba7f5c64d535d"
-  integrity sha512-/jwD4+ZzeBGC32Rx7m59FOhqALmtLsTeabFwaYM8yQMVaVO8un8AQxZi3YFJirPzJgEW43e5/wQpze8z/WwOxA==
+unplugin-remove@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/unplugin-remove/-/unplugin-remove-0.1.7.tgz#0ee1b14963a6c186f5f263224b7085bf260913a5"
+  integrity sha512-7BaEfgR/hMQRgaN++RAILeq9/wBrJPqCLRsQH+ow8979s2TE3TAFE4rQRmMUPcJ/w4ccsVSLepwGbimLMkQjyA==
   dependencies:
-    "@rollup/pluginutils" "^4.2.1"
-    magic-string "^0.26.3"
-    unplugin "^1.5.0"
+    "@rollup/pluginutils" "^5.1.0"
+    magic-string "^0.30.5"
+    unplugin "^1.5.1"
 
 unplugin-vue-router@^0.7.0:
   version "0.7.0"
