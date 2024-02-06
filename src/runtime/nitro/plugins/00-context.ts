@@ -42,7 +42,6 @@ export default defineNitroPlugin((nitroApp) => {
                 }
             })
         }
-        console.log('before response', getResponseHeaders(event))
     })
 
     nitroApp.hooks.callHook('nuxt-security:ready')
