@@ -7,5 +7,13 @@ export default defineNitroPlugin((nitroApp) => {
                 }
             }
         })
+        nitroApp.hooks.callHook('nuxt-security:headers', {
+            route: '/', 
+            headers: {
+                contentSecurityPolicy: {
+                    "script-src": ["'self'", "'unsafe-inline'", "some-value.com"],
+                }
+            }
+        })
     })
 })

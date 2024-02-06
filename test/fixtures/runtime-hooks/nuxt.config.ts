@@ -15,7 +15,11 @@ export default defineNuxtConfig({
     nonce: false,
     runtimeHooks: true,
     headers: {
-      contentSecurityPolicy: false
-    }
+      crossOriginResourcePolicy: 'cross-origin',
+      contentSecurityPolicy: {
+        'frame-ancestors': ['*','weird-value.com'],
+        'script-src': ["'unsafe-inline'", '*'],
+      },
+    },
   }
 })
