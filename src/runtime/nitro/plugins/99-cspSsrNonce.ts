@@ -52,14 +52,21 @@ export default defineNitroPlugin((nitroApp) => {
     for (const key in csp) {
       const value = csp[key]
       if (typeof value !== 'boolean') {
-        const sources = (typeof value === 'string') ? value.split(' ').reduce((values, value) => {
-          value = value.trim()
-          if (value) {
-            values.push(value)
+        // Assuming it is originally an array, which we could change to a string later
+        let sources: any = []
+        if (typeof value === 'string') {
+          for (const valuee in value.split(' ')) {
+            const trim = valuee.trim()
+            if (trim) {
+              sources.push(trim)
+            }
           }
-          return values
-        }, []) : value
-        const modifiedSources = sources.reduce((sources, source) => {
+        }
+        else {
+          sources = value
+        }
+        const modifiedSources = []
+        for (const source in sources) {
           let tempSource;
           if (source === "'nonce-{{nonce}}'") {
             tempSource = nonce ? `'nonce-${nonce}'` : ''
@@ -67,9 +74,9 @@ export default defineNitroPlugin((nitroApp) => {
             tempSource = nonce
           }
           if (tempSource) {
-            sources.push(tempSource)
+            modifiedSources.push(tempSource)
           }
-        }, [])
+        }
         const directive = key as keyof ContentSecurityPolicyValue
         csp[directive]=modifiedSources
       }
