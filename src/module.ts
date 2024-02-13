@@ -230,7 +230,7 @@ function mergeSecurityPerRoute(nuxt: Nuxt) {
         } else {
           securityHeadersAsObject[optionKey] = value
         }
-      })
+      }
     }
 
     // STEP 3 - MERGE RESULT INTO SECURITY RULE
