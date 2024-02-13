@@ -76,27 +76,5 @@ export default defineNitroPlugin((nitroApp) => {
     }
     const generatedCsp = csp as ContentSecurityPolicyValue
     return headerStringFromObject('contentSecurityPolicy', generatedCsp)
-    /*const generatedCsp = Object.fromEntries(Object.entries(csp).map(([key, value]) => {
-      // Return boolean values unchanged
-      if (typeof value === 'boolean') {
-        return [key, value]
-      }
-      // Make sure nonce placeholders are eliminated
-      const sources = (typeof value === 'string') ? value.split(' ').map(token => token.trim()).filter(token => token) : value
-      const modifiedSources = sources
-        .filter(source => !source.startsWith("'nonce-") || source === "'nonce-{{nonce}}'")
-        .map(source => {
-          if (source === "'nonce-{{nonce}}'") {
-            return nonce ? `'nonce-${nonce}'` : ''
-          } else {
-            return source
-          }
-        })
-        .filter(source => source)
-
-      const directive = key as keyof ContentSecurityPolicyValue
-      return [directive, modifiedSources]
-    })) as ContentSecurityPolicyValue
-    return headerStringFromObject('contentSecurityPolicy', generatedCsp)*/
   }
 })
