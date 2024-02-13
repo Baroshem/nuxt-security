@@ -10,7 +10,7 @@ import type {
 import { 
   KEYS_TO_NAMES,
   NAMES_TO_KEYS
-} from "./headerConstants
+} from "./headerConstants"
   
 export function getNameFromKey(key: OptionKey) {
   return KEYS_TO_NAMES[key]
