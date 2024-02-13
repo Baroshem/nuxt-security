@@ -9,7 +9,8 @@ export default defineNitroPlugin((nitroApp) => {
     nitroApp.hooks.hook('nuxt-security:headers', ({route, headers: headersConfig}) => {
         const headers: Record<string, string |false > = {}
 
-        for (const [header, headerOptions] of Object.entries(headersConfig)) {
+        for (const header in headersConfig) {
+            const headerOptions = headersConfig[header]
             const headerName = getNameFromKey(header as OptionKey) 
             if(headerName) {
                 const value = headerStringFromObject(header as OptionKey, headerOptions)
