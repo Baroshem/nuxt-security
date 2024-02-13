@@ -109,28 +109,27 @@ export default defineNitroPlugin((nitroApp) => {
 
   // Insert hashes in the CSP meta tag for both the script-src and the style-src policies
   function generateCspRules(csp: ContentSecurityPolicyValue, scriptHashes: Set<string>, styleHashes: Set<string>) {
-    const generatedCsp = Object.fromEntries(Object.entries(csp).map(([key, value]) => {
-      // Return boolean values unchanged
-      if (typeof value === 'boolean') {
-        return [key, value]
+    for (const key in csp) {
+      const value = csp[key]
+      if (typeof value !== 'boolean') {
+        const sources = (typeof value === 'string') ? value.split(' ').reduce((values, token) => {
+          token = token.trim()
+          if (token) {
+            values.push(token)
+          }
+          return values
+        }, []) : value
+        const modifiedSources = sources.filter(source => !source.startsWith("'nonce-"))
+        const directive = key as keyof ContentSecurityPolicyValue
+        if (directive === 'script-src') {
+          modifiedSources.push(...scriptHashes)
+        } else if (directive === 'style-src') {
+          modifiedSources.push(...styleHashes)
+        }
+        csp[directive] = modifiedSources
       }
-
-      // Make sure nonce placeholders are eliminated
-      const sources = (typeof value === 'string') ? value.split(' ').map(token => token.trim()).filter(token => token) : value
-      const modifiedSources = sources.filter(source => !source.startsWith("'nonce-"))
-
-      const directive = key as keyof ContentSecurityPolicyValue
-      // Add hashes to script and style
-      if (directive === 'script-src') {
-        modifiedSources.push(...scriptHashes)
-        return [directive, modifiedSources]
-      } else if (directive === 'style-src') {
-        modifiedSources.push(...styleHashes)
-        return [directive, modifiedSources]
-      } else {
-        return [directive, modifiedSources]
-      }
-    })) as ContentSecurityPolicyValue
+    }
+    const generatedCsp = csp as ContentSecurityPolicyValue
     return headerStringFromObject('contentSecurityPolicy', generatedCsp)
   }
 })
