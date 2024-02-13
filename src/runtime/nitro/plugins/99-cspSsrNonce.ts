@@ -65,7 +65,7 @@ export default defineNitroPlugin((nitroApp) => {
         else {
           sources = value
         }
-        const modifiedSources = []
+        const modifiedSources: Array<unknown> = []
         for (const source in sources) {
           let tempSource;
           if (source === "'nonce-{{nonce}}'") {
