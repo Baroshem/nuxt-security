@@ -217,7 +217,8 @@ function mergeSecurityPerRoute(nuxt: Nuxt) {
 
     if (security?.headers) {
       const { headers: securityHeaders } = security
-      Object.entries(securityHeaders).forEach(([key, value]) => {
+      for (const key in securityHeaders) {
+        const value = securityHeaders[key]
         const optionKey = key as OptionKey
         if ((optionKey === 'contentSecurityPolicy' || optionKey === 'permissionsPolicy' || optionKey === 'strictTransportSecurity') && (typeof value === 'string')) {
           // Altough this does not make sense in post-rc1 typescript definitions
