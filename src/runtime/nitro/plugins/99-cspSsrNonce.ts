@@ -52,19 +52,13 @@ export default defineNitroPlugin((nitroApp) => {
     for (const key in csp) {
       const value = csp[key]
       if (typeof value !== 'boolean') {
-        // Assuming it is originally an array, which we could change to a string later
-        let sources: any = []
-        if (typeof value === 'string') {
-          for (const valuee in value.split(' ')) {
-            const trim = valuee.trim()
-            if (trim) {
-              sources.push(trim)
-            }
+        const sources = (typeof value === 'string') ? value.split(' ').reduce((values, value) => {
+          value = value.trim()
+          if (value) {
+            values.push(value)
           }
-        }
-        else {
-          sources = value
-        }
+          return values
+        }, []) : value
         const modifiedSources: Array<unknown> = []
         for (const source in sources) {
           let tempSource;
