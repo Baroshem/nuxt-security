@@ -74,7 +74,7 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
   const directives = []
   // Detect if we are in one of the three cases for object format, and objectify them
   if (optionKey === 'contentSecurityPolicy') {
-    for (const directive in headerValue.split(';')) {
+    for (const directive of headerValue.split(';')) {
       const trim = directive.trim()
       if (trim) {
         directives.push(trim)
@@ -92,7 +92,7 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     return objectForm
   }
   else if (optionKey === 'strictTransportSecurity') {
-    for (const directive in headerValue.split(';')) {
+    for (const directive of headerValue.split(';')) {
       const trim = directive.trim()
       if (trim) {
         directives.push(trim)
@@ -111,7 +111,7 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     return objectForm
   }
   else if (optionKey === 'permissionsPolicy') {
-    for (const directive in headerValue.split(',')) {
+    for (const directive of headerValue.split(',')) {
       const trim = directive.trim()
       if (trim) {
         directives.push(trim)
