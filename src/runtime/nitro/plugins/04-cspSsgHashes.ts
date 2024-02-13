@@ -112,13 +112,18 @@ export default defineNitroPlugin((nitroApp) => {
     for (const key in csp) {
       const value = csp[key]
       if (typeof value !== 'boolean') {
-        const sources = (typeof value === 'string') ? value.split(' ').reduce((values, token) => {
-          token = token.trim()
-          if (token) {
-            values.push(token)
+        let sources: any = []
+        if (typeof value === 'string') {
+          for (const valuee in value.split(' ')) {
+            const trim = valuee.trim()
+            if (trim) {
+              sources.push(trim)
+            }
           }
-          return values
-        }, []) : value
+        }
+        else {
+          sources = value
+        }
         const modifiedSources = sources.filter(source => !source.startsWith("'nonce-"))
         const directive = key as keyof ContentSecurityPolicyValue
         if (directive === 'script-src') {
