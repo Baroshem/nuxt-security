@@ -5,6 +5,7 @@ import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
 import { defuReplaceArray } from './utils'
+import { xssMethods } from "./runtime/utils/methods"
 import type {
   ModuleOptions,
   NuxtSecurityRouteRules
