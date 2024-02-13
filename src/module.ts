@@ -110,6 +110,9 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (nuxt.options.security.xssValidator) {
+      if (nuxt.options.security.xssValidator.methods) {
+        xssMethods.push(...nuxt.options.security.xssValidator.methods)
+      }
       addServerHandler({
         handler: normalize(
           resolve(runtimeDir, 'server/middleware/xssValidator')
