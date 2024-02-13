@@ -71,15 +71,15 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
   if (!headerValue) {
     return false
   }
+  const directives = []
   // Detect if we are in one of the three cases for object format, and objectify them
   if (optionKey === 'contentSecurityPolicy') {
-    const directives = headerValue.split(';').reduce((values, directive) => {
-      directive = directive.trim()
-      if (directive) {
-        values.push(directive)
+    for (const directive in headerValue.split(';')) {
+      const trim = directive.trim()
+      if (trim) {
+        directives.push(trim)
       }
-      return values
-    }, [])
+    }
     const objectForm = {} as ContentSecurityPolicyValue
     for (const directive of directives) {
       const [type, ...sources] = directive.split(' ').map(token => token.trim()) as [keyof ContentSecurityPolicyValue, ...any]          
@@ -92,13 +92,12 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     return objectForm
   }
   else if (optionKey === 'strictTransportSecurity') {
-    const directives = headerValue.split(';').reduce((values, directive) => {
-      directive = directive.trim()
-      if (directive) {
-        values.push(directive)
+    for (const directive in headerValue.split(';')) {
+      const trim = directive.trim()
+      if (trim) {
+        directives.push(trim)
       }
-      return values
-    }, [])
+    }
     const objectForm = {} as StrictTransportSecurityValue
     for (const directive of directives) {
       const [type, value] = directive.split('=').map(token => token.trim())
@@ -112,13 +111,12 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     return objectForm
   }
   else if (optionKey === 'permissionsPolicy') {
-    const directives = headerValue.split(',').reduce((values, directive) => {
-      directive = directive.trim()
-      if (directive) {
-        values.push(directive)
+    for (const directive in headerValue.split(',')) {
+      const trim = directive.trim()
+      if (trim) {
+        directives.push(trim)
       }
-      return values
-    }, [])
+    }
     const objectForm = {} as PermissionsPolicyValue
     for (const directive of directives) {
       const [type, value] = directive.split('=').map(token => token.trim()) as [keyof PermissionsPolicyValue, string]
