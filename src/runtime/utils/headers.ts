@@ -66,7 +66,7 @@ export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclud
         } else {
           const stringifiedSources = (typeof sources === 'string')
             ? sources
-            : (sources as string[]).reduce((values, curr) => values + ' ' + curr.trim(), '')
+            : (sources as string[]).reduce((values, curr) => values + ' ' + curr.trim() + ' ', '')
           cspStr += `${key} ${stringifiedSources}; `
         }
       }
