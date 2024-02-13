@@ -23,7 +23,7 @@ export default defineNitroPlugin((nitroApp) => {
           const headerValue = headerStringFromObject(optionKey, optionValue)
           setResponseHeader(event, headerName, headerValue)
         }
-      })
+      }
     }
   })
 })
