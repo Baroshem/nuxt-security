@@ -49,7 +49,34 @@ export default defineNitroPlugin((nitroApp) => {
 
   // Insert hashes in the CSP meta tag for both the script-src and the style-src policies
   function generateCspRules(csp: ContentSecurityPolicyValue, nonce?: string) {
-    const generatedCsp = Object.fromEntries(Object.entries(csp).map(([key, value]) => {
+    for (const key in csp) {
+      const value = csp[key]
+      if (typeof value !== 'boolean') {
+        const sources = (typeof value === 'string') ? value.split(' ').reduce((values, value) => {
+          value = value.trim()
+          if (value) {
+            values.push(value)
+          }
+          return values
+        }, []) : value
+        const modifiedSources = sources.reduce((sources, source) => {
+          let tempSource;
+          if (source === "'nonce-{{nonce}}'") {
+            tempSource = nonce ? `'nonce-${nonce}'` : ''
+          } else if !source.startsWith("'nonce-") {
+            tempSource = nonce
+          }
+          if (tempSource) {
+            sources.push(tempSource)
+          }
+        }, [])
+        const directive = key as keyof ContentSecurityPolicyValue
+        csp[directive]=modifiedSources
+      }
+    }
+    const generatedCsp = csp as ContentSecurityPolicyValue
+    return headerStringFromObject('contentSecurityPolicy', generatedCsp)
+    /*const generatedCsp = Object.fromEntries(Object.entries(csp).map(([key, value]) => {
       // Return boolean values unchanged
       if (typeof value === 'boolean') {
         return [key, value]
@@ -70,6 +97,6 @@ export default defineNitroPlugin((nitroApp) => {
       const directive = key as keyof ContentSecurityPolicyValue
       return [directive, modifiedSources]
     })) as ContentSecurityPolicyValue
-    return headerStringFromObject('contentSecurityPolicy', generatedCsp)
+    return headerStringFromObject('contentSecurityPolicy', generatedCsp)*/
   }
 })
