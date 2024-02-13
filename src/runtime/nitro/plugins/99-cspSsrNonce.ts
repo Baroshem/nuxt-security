@@ -63,7 +63,7 @@ export default defineNitroPlugin((nitroApp) => {
           let tempSource;
           if (source === "'nonce-{{nonce}}'") {
             tempSource = nonce ? `'nonce-${nonce}'` : ''
-          } else if !source.startsWith("'nonce-") {
+          } else if (!source.startsWith("'nonce-")) {
             tempSource = nonce
           }
           if (tempSource) {
