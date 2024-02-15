@@ -1,6 +1,6 @@
 import { FilterXSS } from 'xss'
 import { defineEventHandler, createError, getQuery, readBody, getRouteRules } from '#imports'
-import { xssMethods } from "../../utils/methods"
+
 export default defineEventHandler(async (event) => {
   const { security } = getRouteRules(event)
 
@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     const xssValidator = new FilterXSS(security.xssValidator)
 
     if (event.node.req.socket.readyState !== 'readOnly') {
-      if (xssMethods.includes(event.node.req.method!)) {
+      if (security.xssValidator.methods.includes(event.node.req.method!)) {
         const valueToFilter =
           event.node.req.method === 'GET'
             ? getQuery(event)
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
           ) { return }
           const stringifiedValue = JSON.stringify(valueToFilter)
           const processedValue = xssValidator.process(
-            JSON.stringify(valueToFilter)
+            stringifiedValue
           )
           if (processedValue !== stringifiedValue) {
             const badRequestError = {
