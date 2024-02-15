@@ -1,6 +1,6 @@
 import { getNameFromKey, headerStringFromObject} from "../../utils/headers"
 import { createRouter} from "radix3"
-import { defineNitroPlugin } from '#imports'
+import { defineNitroPlugin, setHeader, removeResponseHeader} from "#imports"
 import { OptionKey } from "~/src/module"
 
 export default defineNitroPlugin((nitroApp) => {
