@@ -5,7 +5,6 @@ import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
 import { defuReplaceArray } from './utils'
-import { xssMethods } from "./runtime/utils/methods"
 import type {
   ModuleOptions,
   NuxtSecurityRouteRules
@@ -111,9 +110,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (nuxt.options.security.xssValidator) {
-      if (nuxt.options.security.xssValidator.methods) {
-        xssMethods.push(...nuxt.options.security.xssValidator.methods)
-      }
       addServerHandler({
         handler: normalize(
           resolve(runtimeDir, 'server/middleware/xssValidator')
