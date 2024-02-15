@@ -17,6 +17,7 @@ export type RateLimiter = {
 
 export type XssValidator = {
   whiteList?: Record<string, any>;
+  escapeHtml?: boolean;
   stripIgnoreTag?: boolean;
   stripIgnoreTagBody?: boolean;
   css?: Record<string, any> | boolean;
