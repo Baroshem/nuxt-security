@@ -845,9 +845,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(head).toBeDefined()
 
     const content = head!.match(/<meta http-equiv="Content-Security-Policy" content="(.*?)">/)?.[1]
-    expect(content).toBeDefined()
-    const contentHashes = content!.match(/'sha256-(.*?)'/)
-    expect(contentHashes).toBeNull()
+    expect(content).toBeUndefined()
   })
 
   it('injects CSP hashes on a deeply-enabled route', async () => {
@@ -892,7 +890,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
   it ('does not overwrite middleware headers when false', async () => {
     const res = await fetch('/preserve-middleware')
     expect(res.status).toBe(200)
-    
+
     const { headers } = res
     const csp = headers.get('content-security-policy')
     expect(csp).toBeDefined()
@@ -905,7 +903,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
   it ('overwrites middleware headers when not false', async () => {
     const res = await fetch('/preserve-middleware/deep/page')
     expect(res.status).toBe(200)
-    
+
     const { headers } = res
     const csp = headers.get('content-security-policy')
     expect(csp).toBeDefined()
@@ -918,7 +916,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
   it ('removes deprecated standard headers when false', async () => {
     const res = await fetch('/remove-deprecated')
     expect(res.status).toBe(200)
-    
+
     const { headers } = res
     const csp = headers.get('content-security-policy')
     expect(csp).toBeDefined()

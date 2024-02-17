@@ -1,5 +1,4 @@
 export default defineNuxtConfig({
-
   modules: ['../../../src/module'],
 
   // Per route configuration
@@ -8,7 +7,7 @@ export default defineNuxtConfig({
       prerender: true
     },
     '/inline-script': {
-      prerender: true,
+      prerender: true
     },
     '/inline-style': {
       prerender: true
@@ -27,8 +26,10 @@ export default defineNuxtConfig({
     },
     '/no-meta-tag': {
       prerender: true,
-      ssg: {
-        meta: false
+      security: {
+        ssg: {
+          meta: false
+        }
       }
     }
   },
@@ -42,6 +43,5 @@ export default defineNuxtConfig({
       hashScripts: true,
       hashStyles: true
     }
-  },
-
+  }
 })
