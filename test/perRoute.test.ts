@@ -890,7 +890,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
   })
 
   it('injects CSP meta on a deeply-enabled route', async () => {
-    const res = await fetch('/csp-hash/deep/enabled')
+    const res = await fetch('/csp-meta/deep/enabled')
     // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
     /*
     const cspHeaderValue = res.headers.get('content-security-policy')
