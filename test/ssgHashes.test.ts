@@ -114,7 +114,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 External style 
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 External style
     expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes + 1) // + 1 vue modulepreload
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
@@ -170,9 +170,9 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(metaTag).toBeNull()
     expect(csp).toBeUndefined()
     expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes - 1) // No vue on no-meta-tag page
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
-    expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
-    expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
-    expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
+    expect(inlineScriptHashes).toBe(0)
+    expect(externalScriptHashes).toBe(0)
+    expect(inlineStyleHashes).toBe(0)
+    expect(externalStyleHashes).toBe(0)
   })
 })
