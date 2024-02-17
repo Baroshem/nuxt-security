@@ -845,7 +845,9 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(head).toBeDefined()
 
     const content = head!.match(/<meta http-equiv="Content-Security-Policy" content="(.*?)">/)?.[1]
-    expect(content).toBeUndefined()
+    expect(content).toBeDefined()
+    const contentHashes = content!.match(/'sha256-(.*?)'/)
+    expect(contentHashes).toBeNull()
   })
 
   it('injects CSP hashes on a deeply-enabled route', async () => {
@@ -867,6 +869,42 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
     const hashes = content!.match(/'sha256-(.*?)'/)
     expect(hashes).toHaveLength(2)
+  })
+
+  it('does not inject CSP meta on a deeply-disabled route', async () => {
+    const res = await fetch('/csp-meta/deep/disabled')
+    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
+    /*
+    const cspHeaderValue = res.headers.get('content-security-policy')
+    expect(cspHeaderValue).toBeDefined()
+    */
+
+    const text = await res.text()
+    const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
+    expect(head).toBeDefined()
+
+    const content = head!.match(
+      /<meta http-equiv="Content-Security-Policy" content="(.*?)">/
+    )?.[1]
+    expect(content).toBeUndefined()
+  })
+
+  it('injects CSP meta on a deeply-enabled route', async () => {
+    const res = await fetch('/csp-hash/deep/enabled')
+    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
+    /*
+    const cspHeaderValue = res.headers.get('content-security-policy')
+    expect(cspHeaderValue).toBeDefined()
+    */
+
+    const text = await res.text()
+    const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
+    expect(head).toBeDefined()
+
+    const content = head!.match(
+      /<meta http-equiv="Content-Security-Policy" content="(.*?)">/
+    )?.[1]
+    expect(content).toBeDefined()
   })
 
   it('does not inject SRI attributes on a deeply-disabled route', async () => {
