@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
           ) { return }
           const stringifiedValue = JSON.stringify(valueToFilter)
           const processedValue = xssValidator.process(
-            stringifiedValue
+            JSON.stringify(valueToFilter)
           )
           if (processedValue !== stringifiedValue) {
             const badRequestError = {
