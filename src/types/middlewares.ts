@@ -16,6 +16,9 @@ export type RateLimiter = {
 };
 
 export type XssValidator = {
+  /** Array of uppercase methods for which the validator will be invoked. 
+  @default ['GET', 'POST']
+  */
   methods?: Array<Uppercase<string>>;
   whiteList?: Record<string, any>;
   stripIgnoreTag?: boolean;
