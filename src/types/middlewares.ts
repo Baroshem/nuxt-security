@@ -21,6 +21,7 @@ export type XssValidator = {
   */
   methods?: Array<HTTPMethod>;
   whiteList?: Record<string, any>;
+  escapeHtml?: boolean;
   stripIgnoreTag?: boolean;
   stripIgnoreTagBody?: boolean;
   css?: Record<string, any> | boolean;
