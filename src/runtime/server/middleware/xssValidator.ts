@@ -1,14 +1,18 @@
-import { FilterXSS } from 'xss'
+import { FilterXSS, IFilterXSSOptions } from 'xss'
 import { defineEventHandler, createError, getQuery, readBody, getRouteRules } from '#imports'
 
 export default defineEventHandler(async (event) => {
   const { security } = getRouteRules(event)
 
   if (security?.xssValidator) {
-    const xssValidator = new FilterXSS(security.xssValidator)
+    const filterOpt: IFilterXSSOptions = { ...security.xssValidator, escapeHtml: undefined }
+    if (security.xssValidator.escapeHtml === false) { // No html escaping (by default "<" is replaced by "&lt;" and ">" by "&gt;")
+      filterOpt.escapeHtml = (value: string) => value
+    }
+    const xssValidator = new FilterXSS(filterOpt)
 
     if (event.node.req.socket.readyState !== 'readOnly') {
-      if (['POST', 'GET'].includes(event.node.req.method!)) {
+      if (security.xssValidator.methods.includes(event.node.req.method!)) {
         const valueToFilter =
           event.node.req.method === 'GET'
             ? getQuery(event)

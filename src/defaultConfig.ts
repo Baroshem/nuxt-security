@@ -55,6 +55,7 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
     ...defaultThrowErrorValue
   },
   xssValidator: {
+    methods: ['GET', 'POST'],
     ...defaultThrowErrorValue
   },
   corsHandler: {
