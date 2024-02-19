@@ -1,11 +1,9 @@
 export default defineNuxtConfig({
-  modules: [
-    '../../../src/module'
-  ],
+  modules: ['../../../src/module'],
   routeRules: {
     '/**': {
       headers: {
-        'foo': 'bar',
+        foo: 'bar',
         'Referrer-Policy': 'no-referrer-when-downgrade'
       }
     },
@@ -19,7 +17,7 @@ export default defineNuxtConfig({
         headers: {
           crossOriginOpenerPolicy: 'same-origin-allow-popups'
         }
-      },
+      }
     },
     '/ignore-specific/**': {
       security: {
@@ -34,7 +32,7 @@ export default defineNuxtConfig({
         headers: {
           crossOriginResourcePolicy: false,
           crossOriginOpenerPolicy: undefined,
-          crossOriginEmbedderPolicy: 'credentialless',
+          crossOriginEmbedderPolicy: 'credentialless'
         }
       }
     },
@@ -42,7 +40,7 @@ export default defineNuxtConfig({
       security: {
         headers: {
           crossOriginResourcePolicy: 'same-site',
-          crossOriginOpenerPolicy: false,
+          crossOriginOpenerPolicy: false
         }
       }
     },
@@ -51,9 +49,10 @@ export default defineNuxtConfig({
         'Cross-Origin-Resource-Policy': 'cross-origin',
         'Strict-Transport-Security': 'max-age=1; preload;',
         'Permissions-Policy': 'fullscreen=*, camera=(self)',
-        'Content-Security-Policy': "script-src 'self' https:; media-src 'none';",
-        'foo': 'baz',
-        'foo2': 'baz2'
+        'Content-Security-Policy':
+          "script-src 'self' https:; media-src 'none';",
+        foo: 'baz',
+        foo2: 'baz2'
       }
     },
     '/resolve-conflict/**': {
@@ -63,8 +62,8 @@ export default defineNuxtConfig({
         'Cross-Origin-Embedder-Policy': 'unsafe-none',
         'Strict-Transport-Security': 'max-age=1; preload;',
         'Permissions-Policy': 'fullscreen=*',
-        'foo': 'baz',
-        'foo2': 'baz2'
+        foo: 'baz',
+        foo2: 'baz2'
       },
       security: {
         headers: {
@@ -118,9 +117,9 @@ export default defineNuxtConfig({
         },
         //@ts-ignore - Intentional as we test backwards compatibility with a deprecated syntax
         'Content-Security-Policy': {
-          "base-uri": false,
-          "script-src": "'self'",
-          "img-src": ['https:']
+          'base-uri': false,
+          'script-src': "'self'",
+          'img-src': ['https:']
         }
       }
     },
@@ -198,7 +197,7 @@ export default defineNuxtConfig({
         nonce: false,
         headers: {
           contentSecurityPolicy: {
-            "script-src": ["'nonce-{{nonce}}'"]
+            'script-src': ["'nonce-{{nonce}}'"]
           }
         }
       }
@@ -214,13 +213,41 @@ export default defineNuxtConfig({
       }
     },
     '/csp-hash/deep/disabled': {
-      prerender: true
+      prerender: true,
+      security: {
+        ssg: {
+          meta: true,
+          hashScripts: false
+        }
+      }
     },
     '/csp-hash/deep/enabled': {
       prerender: true,
       security: {
         ssg: {
+          meta: true,
           hashScripts: true
+        }
+      }
+    },
+    '/csp-meta/**': {
+      security: {
+        ssg: false
+      }
+    },
+    '/csp-meta/deep/disabled': {
+      prerender: true,
+      security: {
+        ssg: {
+          meta: false,
+        }
+      }
+    },
+    '/csp-meta/deep/enabled': {
+      prerender: true,
+      security: {
+        ssg: {
+          meta: true,
         }
       }
     },
@@ -254,15 +281,20 @@ export default defineNuxtConfig({
       },
       security: {
         headers: {
-          contentSecurityPolicy: false,
+          contentSecurityPolicy: false
         }
       }
-    }, 
+    }
   },
   security: {
     headers: {
       contentSecurityPolicy: {
-        "script-src": ["'self'", 'https:', "'unsafe-inline'", "'strict-dynamic'"]
+        'script-src': [
+          "'self'",
+          'https:',
+          "'unsafe-inline'",
+          "'strict-dynamic'"
+        ]
       }
     }
   }
