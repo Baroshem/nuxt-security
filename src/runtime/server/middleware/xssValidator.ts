@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     const xssValidator = new FilterXSS(filterOpt)
 
     if (event.node.req.socket.readyState !== 'readOnly') {
-      if (['POST', 'GET'].includes(event.node.req.method!)) {
+      if (security.xssValidator.methods.includes(event.node.req.method!)) {
         const valueToFilter =
           event.node.req.method === 'GET'
             ? getQuery(event)
