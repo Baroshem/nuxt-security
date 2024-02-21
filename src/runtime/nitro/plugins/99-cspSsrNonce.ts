@@ -49,6 +49,7 @@ export default defineNitroPlugin((nitroApp) => {
 
   // Insert hashes in the CSP meta tag for both the script-src and the style-src policies
   function generateCspRules(csp: ContentSecurityPolicyValue, nonce?: string) {
+    const genCsp = Object.create(null)
     for (const key in csp) {
       const value = csp[key]
       if (typeof value !== 'boolean') {
@@ -72,10 +73,10 @@ export default defineNitroPlugin((nitroApp) => {
           }
         }
         const directive = key as keyof ContentSecurityPolicyValue
-        csp[directive]=modifiedSources
+        genCsp[directive]=modifiedSources
       }
     }
-    const generatedCsp = csp as ContentSecurityPolicyValue
+    const generatedCsp = genCsp as ContentSecurityPolicyValue
     return headerStringFromObject('contentSecurityPolicy', generatedCsp)
   }
 })
