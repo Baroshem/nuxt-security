@@ -35,9 +35,9 @@ export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclud
         if (key === 'upgrade-insecure-requests') {
           cspStr += 'upgrade-insecure-requests; '
         } else {
-          const stringifiedSources = (typeof sources === 'string')
-            ? sources
-            : (sources as string[]).reduce((values, curr) => values + ' ' + curr.trim() + ' ', '')
+          const stringifiedSources = (typeof value === 'string')
+            ? value
+            : (value as string[]).reduce((values, curr) => values + ' ' + curr.trim() + ' ', '')
           cspStr += `${key} ${stringifiedSources}; `
         }
       }
