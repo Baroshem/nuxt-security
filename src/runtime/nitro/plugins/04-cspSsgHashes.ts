@@ -113,9 +113,9 @@ export default defineNitroPlugin((nitroApp) => {
       const value = csp[key]
       if (typeof value !== 'boolean') {
         const sources = (typeof value === 'string') ? value.split(' ').reduce((values, value) => {
-          value = value.trim()
-          if (value) {
-            values.push(value)
+          const temp = value.trim()
+          if (temp) {
+            values.push(temp)
           }
           return values
         }, []) : value
