@@ -55,6 +55,7 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
     ...defaultThrowErrorValue
   },
   xssValidator: {
+    methods: ['GET', 'POST'],
     ...defaultThrowErrorValue
   },
   corsHandler: {
@@ -82,6 +83,7 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
     exclude: [/node_modules/, /\.git/]
   },
   ssg: {
+    meta: true,
     hashScripts: true,
     hashStyles: false
   },

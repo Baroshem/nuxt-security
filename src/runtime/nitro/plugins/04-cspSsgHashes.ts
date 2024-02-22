@@ -101,8 +101,10 @@ export default defineNitroPlugin((nitroApp) => {
     // Generate CSP rules
     const csp = security.headers.contentSecurityPolicy
     const headerValue = generateCspRules(csp, scriptHashes, styleHashes)
-    // Insert CSP in the http meta tag
-    cheerios.head.push(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`))
+    // Insert CSP in the http meta tag if meta is true
+    if (security.ssg?.meta) {
+      cheerios.head.push(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`))
+    }
     // Update rules in HTTP header
     setResponseHeader(event, 'Content-Security-Policy', headerValue)
   })
