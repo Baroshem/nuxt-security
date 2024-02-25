@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { setup, fetch } from '@nuxt/test-utils'
+import exp from 'node:constants'
 
 describe('[nuxt-security] SSG support of CSP', async () => {
   await setup({
@@ -174,5 +175,28 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(externalScriptHashes).toBe(0)
     expect(inlineStyleHashes).toBe(0)
     expect(externalStyleHashes).toBe(0)
+  })
+
+  it('does not deliver frame-ancestors via meta', async () => {
+    const notSsgPage = await fetch('/not-ssg')
+    expect(notSsgPage).toBeDefined()
+    const headers = notSsgPage.headers
+    expect(headers).toBeDefined()
+    const headerCsp = headers.get('content-security-policy')
+    expect(headerCsp).toBeDefined()
+    expect(headerCsp).not.toBeNull()
+    const headerFrameAncestors = headerCsp!.split(';').map(policy => policy.trim()).find(policy => policy.startsWith('frame-ancestors'))
+    expect(headerFrameAncestors).toBe("frame-ancestors 'self'")
+
+
+    const ssgPage = await fetch('/')
+    expect(ssgPage).toBeDefined()
+    const body = await ssgPage.text()
+    expect(body).toBeDefined()
+    const { csp: metaCsp } = extractDataFromBody(body)
+    expect(metaCsp).toBeDefined()
+    expect(metaCsp).not.toBeNull()
+    const metaFrameAncestors = metaCsp!.split(';').find(policy => policy.trim().startsWith('frame-ancestors'))
+    expect(metaFrameAncestors).toBeUndefined()
   })
 })
