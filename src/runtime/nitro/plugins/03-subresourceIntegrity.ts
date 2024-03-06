@@ -19,10 +19,11 @@ export default defineNitroPlugin((nitroApp) => {
     //
     // - Conversely, if we are in a standalone SSR server pre-built by nuxi build
     //   Then we don't have a .nuxt build directory anymore
-    //   But we did save the /integrity directory into the server assets
+    //   But we did save the /integrity directory into the server assets    
     const prerendering = isPrerendering(event)
-    const storageBase = prerendering ? 'build' : 'assets'
-    const sriHashes: Record<string, string> = await useStorage(storageBase).getItem('integrity:sriHashes.json') || {}
+    const storageBase = prerendering ? 'build' : 'assets'   
+    const sriHashesRaw = await useStorage(storageBase).getItemRaw<Uint8Array>('integrity:sriHashes.json')
+    const sriHashes: Record<string, string> = sriHashesRaw ? JSON.parse(new TextDecoder().decode(sriHashesRaw)) : {}
     
     // Scan all relevant sections of the NuxtRenderHtmlContext
     // Note: integrity can only be set on scripts and on links with rel preload, modulepreload and stylesheet
