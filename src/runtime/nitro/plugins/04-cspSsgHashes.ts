@@ -112,33 +112,36 @@ export default defineNitroPlugin((nitroApp) => {
 
   // Insert hashes in the CSP meta tag for both the script-src and the style-src policies
   function generateCspRules(csp: ContentSecurityPolicyValue, scriptHashes: Set<string>, styleHashes: Set<string>) {
-    const generatedCsp = <ContentSecurityPolicyValue>Object.fromEntries(
-      Object.entries(csp)
-      .map(([key, value]) => {
-        // Return boolean values unchanged
-        if (typeof value === 'boolean') {
-          return [key, value]
+    const generatedCsp = <ContentSecurityPolicyValue>Object.create(null)
+    for (const key in csp) {
+      if (<keyof ContentSecurityPolicyValue>key === 'frame-ancestors') { continue }
+      const value = csp[key]
+      if (typeof value === 'boolean') {
+        generatedCsp[key] = value
+        continue
+      }
+      const sources = (typeof value === 'string') ? value.split(' ').reduce((values, value) => {
+        const temp = value.trim()
+        if (temp) {
+          values.push(temp)
         }
-
-        // Make sure nonce placeholders are eliminated
-        const sources = (typeof value === 'string') ? value.split(' ').map(token => token.trim()).filter(token => token) : value
-        const modifiedSources = sources.filter(source => !source.startsWith("'nonce-"))
-
-        const directive = <keyof ContentSecurityPolicyValue>key
-        // Add hashes to script and style
+        return values
+      }, []) : value
+      const modifiedSources = sources.filter(source => !source.startsWith("'nonce-"))
+      const directive = <keyof ContentSecurityPolicyValue>key
+      // Add hashes to script and style
         if (directive === 'script-src') {
           modifiedSources.push(...scriptHashes)
-          return [directive, modifiedSources]
+          generatedCsp[directive] = modifiedSources
+          continue
         } else if (directive === 'style-src') {
           modifiedSources.push(...styleHashes)
-          return [directive, modifiedSources]
+          generatedCsp[directive] = modifiedSources
+          continue
         } else {
-          return [directive, modifiedSources]
+          generatedCsp[directive] = modifiedSources
         }
-      })
-      // Remove frame-ancestors from the CSP when delivered in the meta tag
-      .filter(([key]) => <keyof ContentSecurityPolicyValue>key !== 'frame-ancestors')
-    )
+    }
     return headerStringFromObject('contentSecurityPolicy', generatedCsp)
   }
 })

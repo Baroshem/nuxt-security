@@ -7,7 +7,8 @@ export default defineNitroPlugin((nitroApp) => {
     const { security } = getRouteRules(event)
     if (security?.headers) {
       const { headers } = security
-      Object.entries(headers).forEach(([key, optionValue]) => {
+      for (const key in headers) {
+        const optionValue = headers[key]
         const optionKey = key as OptionKey
         const headerName = getNameFromKey(optionKey)
         if (optionValue === false) {
@@ -22,7 +23,7 @@ export default defineNitroPlugin((nitroApp) => {
           const headerValue = headerStringFromObject(optionKey, optionValue)
           setResponseHeader(event, headerName, headerValue)
         }
-      })
+      }
     }
   })
 })
