@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
         const valueToFilter =
           event.node.req.method === 'GET'
             ? getQuery(event)
-            : event.node.req.headers['content-type'].includes(
+            : event.node.req.headers['content-type']?.includes(
                 'multipart/form-data'
               )
             ? await readMultipartFormData(event)

@@ -7,7 +7,7 @@ describe('[nuxt-security] Cross Site Scripting', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/xss', import.meta.url))
   })
 
-  it('should return 400 Bad request when passing a script in query or body', async () => {
+  it('should return 400 Bad Request when passing a script in query or body', async () => {
     const res = await fetch('/?test=<script>alert(1)</script>')
 
     expect(res.status).toBe(400)
@@ -26,7 +26,7 @@ describe('[nuxt-security] Cross Site Scripting', async () => {
     formData.append('field1', 'value1')
     formData.append('field2', 'value2')
 
-    const res = await fetch('/test', {
+    const res = await fetch('/', {
       method: 'POST',
       body: formData
     })
