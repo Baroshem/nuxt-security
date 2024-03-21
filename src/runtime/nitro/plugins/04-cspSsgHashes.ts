@@ -101,36 +101,44 @@ export default defineNitroPlugin((nitroApp) => {
     // Generate CSP rules
     const csp = security.headers.contentSecurityPolicy
     const headerValue = generateCspRules(csp, scriptHashes, styleHashes)
-    // Insert CSP in the http meta tag
-    cheerios.head.push(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`))
+    // Insert CSP in the http meta tag if meta is true
+
+    if (security.ssg && security.ssg.meta) {
+      cheerios.head.push(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`, null, false))
+    }
     // Update rules in HTTP header
     setResponseHeader(event, 'Content-Security-Policy', headerValue)
   })
 
   // Insert hashes in the CSP meta tag for both the script-src and the style-src policies
   function generateCspRules(csp: ContentSecurityPolicyValue, scriptHashes: Set<string>, styleHashes: Set<string>) {
-    const genCsp = Object.create(null)
-    for (const key in csp) {
-      const value = csp[key]
-      if (typeof value !== 'boolean') {
-        const sources = (typeof value === 'string') ? value.split(' ').reduce((values, value) => {
-          const temp = value.trim()
-          if (temp) {
-            values.push(temp)
-          }
-          return values
-        }, []) : value
+    const generatedCsp = <ContentSecurityPolicyValue>Object.fromEntries(
+      Object.entries(csp)
+      .map(([key, value]) => {
+        // Return boolean values unchanged
+        if (typeof value === 'boolean') {
+          return [key, value]
+        }
+
+        // Make sure nonce placeholders are eliminated
+        const sources = (typeof value === 'string') ? value.split(' ').map(token => token.trim()).filter(token => token) : value
         const modifiedSources = sources.filter(source => !source.startsWith("'nonce-"))
-        const directive = key as keyof ContentSecurityPolicyValue
+
+        const directive = <keyof ContentSecurityPolicyValue>key
+        // Add hashes to script and style
         if (directive === 'script-src') {
           modifiedSources.push(...scriptHashes)
+          return [directive, modifiedSources]
         } else if (directive === 'style-src') {
           modifiedSources.push(...styleHashes)
+          return [directive, modifiedSources]
+        } else {
+          return [directive, modifiedSources]
         }
-        genCsp[directive] = modifiedSources
-      }
-    }
-    const generatedCsp = genCsp as ContentSecurityPolicyValue
+      })
+      // Remove frame-ancestors from the CSP when delivered in the meta tag
+      .filter(([key]) => <keyof ContentSecurityPolicyValue>key !== 'frame-ancestors')
+    )
     return headerStringFromObject('contentSecurityPolicy', generatedCsp)
   }
 })

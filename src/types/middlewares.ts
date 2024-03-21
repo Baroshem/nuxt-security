@@ -16,7 +16,12 @@ export type RateLimiter = {
 };
 
 export type XssValidator = {
+  /** Array of methods for which the validator will be invoked. 
+  @default ['GET', 'POST']
+  */
+  methods?: Array<HTTPMethod>;
   whiteList?: Record<string, any>;
+  escapeHtml?: boolean;
   stripIgnoreTag?: boolean;
   stripIgnoreTagBody?: boolean;
   css?: Record<string, any> | boolean;
@@ -32,7 +37,7 @@ export type BasicAuth = {
   message: string;
 }
 
-export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'POST' | string;
+export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'PUT' | 'TRACE' | 'OPTIONS' | 'CONNECT' | 'HEAD';
 
 // Cannot use the H3CorsOptions from `h3` as it breaks the build process for some reason :(
 export type CorsOptions = {

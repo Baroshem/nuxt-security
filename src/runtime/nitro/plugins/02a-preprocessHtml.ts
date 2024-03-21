@@ -20,6 +20,7 @@ export default defineNitroPlugin((nitroApp) => {
           xml: {
             // Disable `xmlMode` to parse HTML with htmlparser2.
             xmlMode: false,
+            decodeEntities: false
           },
         }, false)
       })
