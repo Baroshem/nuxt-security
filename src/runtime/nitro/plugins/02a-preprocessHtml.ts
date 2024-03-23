@@ -13,17 +13,9 @@ export default defineNitroPlugin((nitroApp) => {
 
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
-    const cheerios = {} as Record<Section, ReturnType<typeof cheerio.load>[]>
+    const cheerios = {} as Record<Section, string[]>
     for (const section of sections) {
-      cheerios[section] = html[section].map(element => {
-        return cheerio.load(element, {
-          xml: {
-            // Disable `xmlMode` to parse HTML with htmlparser2.
-            xmlMode: false,
-            decodeEntities: false
-          },
-        }, false)
-      })
+      cheerios[section] = html[section]
     }
     event.context.cheerios = cheerios
   })
