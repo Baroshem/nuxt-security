@@ -5,6 +5,7 @@ import { headerStringFromObject } from '../../utils/headers'
 import { generateHash } from '../../utils/hashes'
 import { isPrerendering } from '../utils'
 
+const INLINE_SCRIPT_RE = /<script[^>]+>(.+)<\/script>/g
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
@@ -32,9 +33,14 @@ export default defineNitroPlugin((nitroApp) => {
       // Scan all relevant sections of the NuxtRenderHtmlContext
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
       for (const section of sections) {
-        cheerios[section].forEach($ => {
-          // Parse all script tags
+        for (const $ of cheerios[section]) {
           if (hashScripts) {
+            if (event.context.cache.scripts.has($)){
+              scriptHashes.add(`'${event.context.cache.scripts.get($)}'`)
+              continue;
+            }
+            //scriptHashes.add(`'${generateHash($.match(, hashAlgorithm)}'`)
+          // Parse all script tags
             $('script').each((i, script) => {
               const scriptText = $(script).text()
               const scriptAttrs = $(script).attr()
@@ -43,13 +49,9 @@ export default defineNitroPlugin((nitroApp) => {
               if (!src && scriptText) {
                 // Hash inline scripts with content
                 scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
-              } else if (src && integrity) {
-                // Whitelist external scripts with integrity
-                scriptHashes.add(`'${integrity}'`)
               }
             })
           }
-
           // Parse all style tags
           if (hashStyles) {
             $('style').each((i, style) => {
@@ -94,7 +96,7 @@ export default defineNitroPlugin((nitroApp) => {
               }
             }
           })
-        })
+        }
       }
     }
 
