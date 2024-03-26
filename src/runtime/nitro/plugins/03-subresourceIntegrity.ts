@@ -2,8 +2,8 @@ import { useStorage, defineNitroPlugin, getRouteRules } from '#imports'
 import { isPrerendering } from '../utils'
 import { type CheerioAPI } from 'cheerio'
 
-const SCRIPT_RE = /<script((?=[^>]+src="[\w:.-\\/]+")(?![^>]+integrity="[\w-]+")[^>]+)\/>/g
-const LINK_RE = /<link((?=[^>]+rel="(?:stylesheet|preload|modulepreload)")(?=[^>]+href="[\w:\\.-/]+")(?![^>]+integrity="[\w-]+")[^>]+)\/>/g
+const SCRIPT_RE = /<script((?=[^>]+src="([\w:.-\\/]+)")(?![^>]+integrity="[\w-]+")[^>]+)(?:\/>|><\/script>)/g
+const LINK_RE = /<link((?=[^>]+rel="(?:stylesheet|preload|modulepreload)")(?=[^>]+href="([\w:\\.-/]+)")(?![^>]+integrity="[\w-]+")[^>]+)>/g
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', async (html, { event }) => {
@@ -33,43 +33,20 @@ export default defineNitroPlugin((nitroApp) => {
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
     const cheerios = event.context.cheerios as Record<Section, CheerioAPI[]>
     for (const section of sections) {
-      cheerios[section].forEach($ => {
-        // Add integrity to all relevant script tags
-        $('script').each((i, script) => {
-          const scriptAttrs = $(script).attr()
-          const src = scriptAttrs?.src
-          const integrity = scriptAttrs?.integrity
-          // Only add integrity to external scripts that do not already have one
-          if (src && !integrity) {
-            // Get the integrity hash from our static database
-            const hash = sriHashes[src]
-            // Set the integrity hash in HTML if found
-            if (hash) {
-              $(script).attr('integrity', hash)
-            }
-          }
-        })
-        // Add integrity to all relevant link tags
-        $('link').each((i, link) => {
-          const linkAttrs = $(link).attr()
-          const rel = linkAttrs?.rel
-          // HTML standard defines only 3 rel values for valid integrity attributes on links : stylesheet, preload and modulepreload
-          // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-integrity
-          if (rel === 'stylesheet' || rel === 'preload' || rel === 'modulepreload') {
-            const href = linkAttrs?.href
-            const integrity = linkAttrs?.integrity
-            // Only add integrity to resources that do not already have one
-            if (href && !integrity) {
-              // Get the integrity hash from our static database
-              const hash = sriHashes[href]
-              // Set the integrity hash in HTML if found
-              if (hash) {
-                $(link).attr('integrity', hash)
-              }
-            }
-          }
-        })
+      cheerios[section]=cheerios[section].map($=>$.replace(SCRIPT_RE,(match, rest, src)=>{
+        const hash = sriHashes[src]
+        if (hash) {
+          return `<script integrity="${hash}"${rest}></script>`
+        }
+        return match
+      })).map($=>$.replace(LINK_RE,(match, rest, href)=>{
+        const hash = sriHashes[href]
+        if (hash) {
+          return `<link integrity="${hash}"${rest}>`
+        }
+        return match
       })
+      )
     }
   })
 })
