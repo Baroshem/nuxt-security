@@ -2,6 +2,8 @@ import { useStorage, defineNitroPlugin, getRouteRules } from '#imports'
 import { isPrerendering } from '../utils'
 import { type CheerioAPI } from 'cheerio'
 
+const SCRIPT_RE = /<script((?=[^>]+src="[^"]+")(?![^>]+integrity="[\w-]+")[^>]+)\/>/g
+const LINK_RE = /<link((?=[^>]+rel="(?:stylesheet|preload|modulepreload)")(?=[^>]+href="[\w:\\.]+")(?![^>]+integrity="[\w-]+")[^>]+)\/>/g
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', async (html, { event }) => {
