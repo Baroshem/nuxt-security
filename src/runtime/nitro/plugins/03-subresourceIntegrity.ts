@@ -33,20 +33,27 @@ export default defineNitroPlugin((nitroApp) => {
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
     const cheerios = event.context.cheerios as Record<Section, CheerioAPI[]>
     for (const section of sections) {
-      cheerios[section]=cheerios[section].map($=>$.replace(SCRIPT_RE,(match, rest, src)=>{
-        const hash = sriHashes[src]
-        if (hash) {
-          return `<script integrity="${hash}"${rest}></script>`
+      cheerios[section]=cheerios[section].map($=>{
+        $ = $.replace(SCRIPT_RE,(match, rest, src)=>{
+          const hash = sriHashes[src]
+          if (hash) {
+            const integrityScript = `<script integrity="${hash}"${rest}></script>`
+            event.context.cache.scripts.set(src, hash)
+            return integrityScript
+          }
+          return match
+        })
+        $ = $.replace(LINK_RE,(match, rest, href)=>{
+          const hash = sriHashes[href]
+          if (hash) {
+            const integrityLink = `<link integrity="${hash}"${rest}>`
+            event.context.cache.links.set(href, hash)
+            return integrityLink
+          }
+          return match
         }
-        return match
-      })).map($=>$.replace(LINK_RE,(match, rest, href)=>{
-        const hash = sriHashes[href]
-        if (hash) {
-          return `<link integrity="${hash}"${rest}>`
-        }
-        return match
+        return $
       })
-      )
     }
   })
 })
