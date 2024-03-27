@@ -5,7 +5,16 @@ import { headerStringFromObject } from '../../utils/headers'
 import { generateHash } from '../../utils/hashes'
 import { isPrerendering } from '../utils'
 
+/*
+FOLLOWING PATTERN NOT IN USE:
+Placeholder until a proper caching strategy is though of:
+/<script((?=[^>]+src="([\w:.-\/]+)")(?:(?![^>]+integrity="[\w-]+")|(?=[^>]+integrity="([\w-])"))[^>]+)(?:\/>|><\/script>)/g
+Allows to obtain integrity from both scripts with integrity and those without (useful for 03)
+*/
+
 const INLINE_SCRIPT_RE = /<script[^>]+>(.+)<\/script>/g
+const SCRIPT_RE = /<script((?=[^>]+src="([\w:.-\\/]+)")(?![^>]+integrity="[\w-]+")[^>]+)(?:\/>|><\/script>)/g
+const LINK_RE = /<link((?=[^>]+rel="(?:stylesheet|preload|modulepreload)")(?=[^>]+href="([\w:\\.-/]+)")(?![^>]+integrity="[\w-]+")[^>]+)>/g
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
@@ -33,12 +42,10 @@ export default defineNitroPlugin((nitroApp) => {
       // Scan all relevant sections of the NuxtRenderHtmlContext
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
       for (const section of sections) {
-        for (const $ of cheerios[section]) {
+        cheerios[section] = cheerios[section].map($=>{
           if (hashScripts) {
-            if (event.context.cache.scripts.has($)){
-              scriptHashes.add(`'${event.context.cache.scripts.get($)}'`)
-              continue;
-            }
+             $ = $.replace(SCRIPT_RE,(match, rest, src)=>{})
+               
             //scriptHashes.add(`'${generateHash($.match(, hashAlgorithm)}'`)
           // Parse all script tags
             $('script').each((i, script) => {
