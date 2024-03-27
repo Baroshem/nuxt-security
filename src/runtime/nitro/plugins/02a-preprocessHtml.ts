@@ -12,8 +12,8 @@ export default defineNitroPlugin((nitroApp) => {
     }
     event.context.cheerios = html
     event.context.cache = { 
-      scripts: new WeakMap(),
-      links: new WeakMap(),
+      scripts: new Map(),
+      links: new Map(),
     }
   })
 })
