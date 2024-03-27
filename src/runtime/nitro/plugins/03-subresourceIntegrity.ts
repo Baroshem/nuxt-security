@@ -51,7 +51,7 @@ export default defineNitroPlugin((nitroApp) => {
             return integrityLink
           }
           return match
-        }
+        })
         return $
       })
     }
