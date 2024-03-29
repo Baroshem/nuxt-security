@@ -12,8 +12,8 @@ Placeholder until a proper caching strategy is though of:
 Allows to obtain integrity from both scripts with integrity and those without (useful for 03)
 */
 
-const INLINE_SCRIPT_RE = /<script[^>]+>(.+)<\/script>/g
-const SCRIPT_RE = /<script((?=[^>]+src="([\w:.-\\/]+)")(?![^>]+integrity="[\w-]+")[^>]+)(?:\/>|><\/script>)/g
+const INLINE_SCRIPT_RE = /<script(?![^>]*?src="[\w:.-\\/]+")>(.*?)<\/script>/g
+const SCRIPT_RE = /<script(?=[^>]+src="[\w:.-\\/]+")(?=[^>]+integrity="([\w-]+)")[^>]+(?:\/>|><\/script>)/g
 const LINK_RE = /<link((?=[^>]+rel="(?:stylesheet|preload|modulepreload)")(?=[^>]+href="([\w:\\.-/]+)")(?![^>]+integrity="[\w-]+")[^>]+)>/g
 
 export default defineNitroPlugin((nitroApp) => {
@@ -44,8 +44,14 @@ export default defineNitroPlugin((nitroApp) => {
       for (const section of sections) {
         cheerios[section] = cheerios[section].map($=>{
           if (hashScripts) {
-             $ = $.replace(SCRIPT_RE,(match, rest, src)=>{})
-               
+             $ = $.replace(INLINE_SCRIPT_RE,(match, scriptText)=>{
+               scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
+               return match
+             })
+             $ = $.replace(SCRIPT_RE, (match, integrity)=>{
+               scriptHashes.add(`'${integrity}'`)
+               return match
+             })
             //scriptHashes.add(`'${generateHash($.match(, hashAlgorithm)}'`)
           // Parse all script tags
             $('script').each((i, script) => {
