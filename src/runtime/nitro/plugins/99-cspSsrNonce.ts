@@ -30,7 +30,7 @@ export default defineNitroPlugin((nitroApp) => {
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
       const cheerios = event.context.cheerios as Record<Section, CheerioAPI[]>
       for (const section of sections) {
-        cheerios[section] = cheerioes[section].map($ => {
+        cheerios[section] = cheerios[section].map($ => {
           // Add nonce to all link tags
           $ = $.replace(LINK_RE, (match, rest)=>{
             return "<link nonce="+ nonce + rest
