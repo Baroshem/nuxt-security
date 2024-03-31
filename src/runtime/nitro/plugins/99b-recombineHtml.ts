@@ -16,10 +16,7 @@ export default defineNitroPlugin((nitroApp) => {
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
     const cheerios = event.context.cheerios as Record<Section, CheerioAPI[]>
     for (const section of sections) {
-      html[section] = cheerios[section].map($ => {
-        const html = $.html()
-        return html
-      })
+      html[section] = cheerios[section]
     }
   })
 })
