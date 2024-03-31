@@ -57,11 +57,12 @@ export default defineNitroPlugin((nitroApp) => {
           }
           // Parse all style tags
           if (hashStyles) {
-            $ = $.replace(STYLE_RE, (math, styleText)=>{
+            $ = $.replace(STYLE_RE, (match, styleText)=>{
               if (styleText) {
                 // Hash inline styles with content
                 styleHashes.add(`'${generateHash(styleText, hashAlgorithm)}'`)
               }
+              return match
             })
           }
 
