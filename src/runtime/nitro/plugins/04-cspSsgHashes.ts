@@ -96,7 +96,8 @@ export default defineNitroPlugin((nitroApp) => {
             }
             return match
           })
-        }
+          return $
+        })
       }
     }
 
