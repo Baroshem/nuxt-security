@@ -43,6 +43,7 @@ export default defineNitroPlugin((nitroApp) => {
           $ = $.replace(STYLE_RE, (match, rest)=>{
             return "<style nonce="+ nonce + rest
           })
+          return $
         })
       }
     }
