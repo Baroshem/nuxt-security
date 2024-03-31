@@ -12,9 +12,10 @@ Placeholder until a proper caching strategy is though of:
 Allows to obtain integrity from both scripts with integrity and those without (useful for 03)
 */
 
-const INLINE_SCRIPT_RE = /<script(?![^>]*?src="[\w:.-\\/]+")>(.*?)<\/script>/g
-const SCRIPT_RE = /<script(?=[^>]+src="[\w:.-\\/]+")(?=[^>]+integrity="([\w-]+)")[^>]+(?:\/>|><\/script>)/g
-const LINK_RE = /<link((?=[^>]+rel="(?:stylesheet|preload|modulepreload)")(?=[^>]+href="([\w:\\.-/]+)")(?![^>]+integrity="[\w-]+")[^>]+)>/g
+const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc="[\w:.-\\/]+")[^>]*>(.*?)<\/script>/g
+const STYLE_RE = /<style[^>]*>(.*?)<\/style>/g
+const SCRIPT_RE = /<script(?=[^>]+\bsrc="[\w:.-\\/]+")(?=[^>]+\bintegrity="([\w-]+)")[^>]+(?:\/>|><\/script>)/g
+const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]+\bintegrity="([\w-]+)")(?=[^>]+\bas="(\w+)")[^>]+>/g
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
@@ -44,6 +45,7 @@ export default defineNitroPlugin((nitroApp) => {
       for (const section of sections) {
         cheerios[section] = cheerios[section].map($=>{
           if (hashScripts) {
+            // Parse all script tags
              $ = $.replace(INLINE_SCRIPT_RE,(match, scriptText)=>{
                scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
                return match
@@ -52,23 +54,10 @@ export default defineNitroPlugin((nitroApp) => {
                scriptHashes.add(`'${integrity}'`)
                return match
              })
-            //scriptHashes.add(`'${generateHash($.match(, hashAlgorithm)}'`)
-          // Parse all script tags
-            $('script').each((i, script) => {
-              const scriptText = $(script).text()
-              const scriptAttrs = $(script).attr()
-              const src = scriptAttrs?.src
-              const integrity = scriptAttrs?.integrity
-              if (!src && scriptText) {
-                // Hash inline scripts with content
-                scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
-              }
-            })
           }
           // Parse all style tags
           if (hashStyles) {
-            $('style').each((i, style) => {
-              const styleText = $(style).text()
+            $ = $.replace(STYLE_RE, (math, styleText)=>{
               if (styleText) {
                 // Hash inline styles with content
                 styleHashes.add(`'${generateHash(styleText, hashAlgorithm)}'`)
@@ -77,12 +66,9 @@ export default defineNitroPlugin((nitroApp) => {
           }
 
           // Parse all link tags
-          $('link').each((i, link) => {
-            const linkAttrs = $(link).attr()
-            const integrity = linkAttrs?.integrity
+          $ = $.replace(LINK_RE, (match, rel, integrity, as)=>{
             // Whitelist links to external resources with integrity
             if (integrity) {
-              const rel = linkAttrs?.rel
               // HTML standard defines only 3 rel values for valid integrity attributes on links : stylesheet, preload and modulepreload
               // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-integrity
               if (rel === 'stylesheet' && hashStyles) {
@@ -92,7 +78,6 @@ export default defineNitroPlugin((nitroApp) => {
                 // Fetch standard defines the destination (https://fetch.spec.whatwg.org/#destination-table)
                 // This table is the official mapping between HTML and CSP
                 // We only support script-src for now, but we could populate other policies in the future
-                const as = linkAttrs.as
                 switch (as) {
                   case 'script':
                   case 'audioworklet':
@@ -108,6 +93,7 @@ export default defineNitroPlugin((nitroApp) => {
                 scriptHashes.add(`'${integrity}'`)
               }
             }
+            return match
           })
         }
       }
