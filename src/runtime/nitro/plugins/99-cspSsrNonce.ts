@@ -1,7 +1,7 @@
 import { defineNitroPlugin, getRouteRules, setResponseHeader } from '#imports'
 import { type CheerioAPI } from 'cheerio'
 import { isPrerendering } from '../utils'
-import { H3Event } from "h3"
+import type { H3Event } from "h3"
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
