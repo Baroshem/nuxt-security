@@ -4,9 +4,9 @@ import type { ContentSecurityPolicyValue } from '~/src/module'
 import { headerStringFromObject } from '../../utils/headers'
 import { isPrerendering } from '../utils'
 
-const LINK_RE = /<link([^>]*?)>/g
-const SCRIPT_RE = /<script([^>]*?)>/g
-const STYLE_RE = /<style([^>]*?)>/g
+const LINK_RE = /<link([^>]*?>)/g
+const SCRIPT_RE = /<script([^>]*?>)/g
+const STYLE_RE = /<style([^>]*?>)/g
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Exit in SSG mode
@@ -33,15 +33,15 @@ export default defineNitroPlugin((nitroApp) => {
         cheerios[section] = cheerios[section].map($ => {
           // Add nonce to all link tags
           $ = $.replace(LINK_RE, (match, rest)=>{
-            return "<link nonce="+ nonce + rest
+            return `<link nonce="${nonce}"` + rest
           })
           // Add nonce to all script tags
           $ = $.replace(SCRIPT_RE, (match, rest)=>{
-            return "<script nonce="+ nonce + rest
+            return `<script nonce="${nonce}"` + rest
           })
           // Add nonce to all style tags
           $ = $.replace(STYLE_RE, (match, rest)=>{
-            return "<style nonce="+ nonce + rest
+            return `<style nonce="${nonce}"` + rest
           })
           return $
         })
