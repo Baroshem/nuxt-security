@@ -12,9 +12,9 @@ Placeholder until a proper caching strategy is though of:
 Allows to obtain integrity from both scripts with integrity and those without (useful for 03)
 */
 
-const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc="[\w:.-\\/]+")[^>]*>(.*?)<\/script>/g
+const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc="[\w:.\-\\/]+")[^>]*>(.*?)<\/script>/g
 const STYLE_RE = /<style[^>]*>(.*?)<\/style>/g
-const SCRIPT_RE = /<script(?=[^>]+\bsrc="[\w:.-\\/]+")(?=[^>]+\bintegrity="([\w-]+)")[^>]+(?:\/>|><\/script>)/g
+const SCRIPT_RE = /<script(?=[^>]+\bsrc="[\w:.\-\\/]+")(?=[^>]+\bintegrity="([\w-]+)")[^>]+(?:\/>|><\/script>)/g
 const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]+\bintegrity="([\w-]+)")(?=[^>]+\bas="(\w+)")[^>]+>/g
 
 export default defineNitroPlugin((nitroApp) => {
