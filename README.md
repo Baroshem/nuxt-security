@@ -32,14 +32,6 @@ Install the module:
 npx nuxi@latest module add security
 ```
 
-Add the module in the `modules` array in `nuxt.config.ts`:
-
-```js
-export default defineNuxtConfig({
-  modules: ["nuxt-security"],
-})
-```
-
 And that's it! The module will now register route rules and server middlewares globally so that your application will be more secured.
 
 ## Configuration
