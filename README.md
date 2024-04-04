@@ -29,17 +29,7 @@ Automatically configure your app to follow OWASP security patterns and principle
 Install the module:
 
 ```sh
-npm i -D nuxt-security
-yarn add -D nuxt-security
-pnpm add -D nuxt-security
-```
-
-Add the module in the `modules` array in `nuxt.config.ts`:
-
-```js
-export default defineNuxtConfig({
-  modules: ["nuxt-security"],
-})
+npx nuxi@latest module add security
 ```
 
 And that's it! The module will now register route rules and server middlewares globally so that your application will be more secured.
