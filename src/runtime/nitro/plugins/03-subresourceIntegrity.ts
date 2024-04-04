@@ -22,8 +22,8 @@ export default defineNitroPlugin((nitroApp) => {
     //   But we did save the /integrity directory into the server assets    
     const prerendering = isPrerendering(event)
     const storageBase = prerendering ? 'build' : 'assets'   
-    const sriHashesRaw = await useStorage(storageBase).getItemRaw<Uint8Array>('integrity:sriHashes.json')
-    const sriHashes: Record<string, string> = sriHashesRaw ? JSON.parse(new TextDecoder().decode(sriHashesRaw)) : {}
+    const sriHashes = await useStorage(storageBase).getItem<Record<string, string>>('integrity:sriHashes.json') || {}
+
     
     // Scan all relevant sections of the NuxtRenderHtmlContext
     // Note: integrity can only be set on scripts and on links with rel preload, modulepreload and stylesheet
