@@ -5,7 +5,7 @@ export default defineNuxtConfig({
 
   // Per route configuration
   routeRules: {
-    secret: {
+    '/secret': {
       security: {
         rateLimiter: false
       },

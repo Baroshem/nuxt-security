@@ -1,6 +1,4 @@
-import { fileURLToPath } from 'node:url'
-import { resolve, normalize } from 'pathe'
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
@@ -48,8 +46,9 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'security'
   },
   async setup (options, nuxt) {
-    const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
-    nuxt.options.build.transpile.push(runtimeDir)
+    const resolver = createResolver(import.meta.url)
+    const runtimeDir = resolver.resolve('./runtime')
+    nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
     nuxt.options.security = defuReplaceArray(
       { ...options, ...nuxt.options.security },
       {
@@ -63,8 +62,6 @@ export default defineNuxtModule<ModuleOptions>({
     if (securityOptions.removeLoggers) {
       addVitePlugin(viteRemove(securityOptions.removeLoggers))
     }
-
-    registerSecurityNitroPlugins(nuxt, securityOptions)
 
     nuxt.options.runtimeConfig.private = defu(
       nuxt.options.runtimeConfig.private,
@@ -85,27 +82,26 @@ export default defineNuxtModule<ModuleOptions>({
 
     // PER ROUTE OPTIONS
     setGlobalSecurityRoute(nuxt, securityOptions)
-    mergeSecurityPerRoute(nuxt)
+    //mergeSecurityPerRoute(nuxt)
 
+
+/*
     addServerHandler({
-      handler: normalize(
-        resolve(runtimeDir, 'server/middleware/cspNonceHandler')
-      )
+      handler: resolver.resolve('./runtime/server/middleware/cspNonceHandler')
     })
+ 
+    */
 
     if (nuxt.options.security.requestSizeLimiter) {
       addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/requestSizeLimiter')
-        )
+        handler: resolver.resolve('./runtime/server/middleware/requestSizeLimiter')
       })
     }
 
     if (nuxt.options.security.rateLimiter) {
+      registerStorageDriver(nuxt, securityOptions)
       addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/rateLimiter')
-        )
+        handler: resolver.resolve('./runtime/server/middleware/rateLimiter')
       })
     }
 
@@ -113,24 +109,53 @@ export default defineNuxtModule<ModuleOptions>({
       // Remove potential duplicates
       nuxt.options.security.xssValidator.methods = Array.from(new Set(nuxt.options.security.xssValidator.methods))
       addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/xssValidator')
-        )
+        handler: resolver.resolve('./runtime/server/middleware/xssValidator')
       })
     }
 
     if (nuxt.options.security.corsHandler) {
       addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/corsHandler')
-        )
+        handler: resolver.resolve('./runtime/server/middleware/corsHandler')
       })
     }
     
 
     if(nuxt.options.security.runtimeHooks) {
-      addServerPlugin(resolve(runtimeDir, 'nitro/plugins/00-context'))
+      addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-context'))
     }
+
+    if (securityOptions.hidePoweredBy) {
+      nuxt.options.nitro.externals = nuxt.options.nitro.externals || {}
+      nuxt.options.nitro.externals.inline = nuxt.options.nitro.externals.inline || []
+      nuxt.options.nitro.externals.inline.push(runtimeDir)
+      addServerPlugin(resolver.resolve('./runtime/nitro/plugins/01-hidePoweredBy'))
+    }
+
+    // Register nitro plugin to enable Security Headers
+    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02-securityHeaders'))
+
+    // Pre-process HTML into DOM tree
+    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02a-preprocessHtml'))
+
+    // Register nitro plugin to enable Subresource Integrity
+    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/03-subresourceIntegrity'))
+
+    // Register nitro plugin to enable CSP Hashes for SSG
+    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/04-cspSsgHashes'))
+
+    // Register nitro plugin to enable CSP Headers presets for SSG
+    // TEMPORARILY DISABLED AS NUXT 3.9.3 PREVENTS IMPORTING @NUXT/KIT IN NITRO PLUGINS
+    /*
+    addServerPlugin(resolve('./runtime/nitro/plugins/05-cspSsgPresets'))
+    */
+
+    // Nitro plugin to enable CSP Nonce for SSR
+    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99-cspSsrNonce'))
+
+
+    // Recombine HTML from DOM tree
+    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99b-recombineHtml'))
+
 
     const allowedMethodsRestricterConfig = nuxt.options.security
     .allowedMethodsRestricter
@@ -139,9 +164,7 @@ export default defineNuxtModule<ModuleOptions>({
       !Object.values(allowedMethodsRestricterConfig).includes('*')
     ) {
       addServerHandler({
-        handler: normalize(
-          resolve(runtimeDir, 'server/middleware/allowedMethodsRestricter')
-        )
+        handler: resolver.resolve('./runtime/server/middleware/allowedMethodsRestricter')
       })
     }
 
@@ -151,18 +174,19 @@ export default defineNuxtModule<ModuleOptions>({
     if (basicAuthConfig && ((basicAuthConfig as any)?.enabled || (basicAuthConfig as any)?.value?.enabled)) {
       addServerHandler({
         route: (basicAuthConfig as any).route || '',
-        handler: normalize(resolve(runtimeDir, 'server/middleware/basicAuth'))
+        handler: resolver.resolve('./runtime/server/middleware/basicAuth')
       })
     }
     
     // Calculates SRI hashes at build time
     nuxt.hook('nitro:build:before', hashBundledAssets)
 
-
+    // Import composables
     nuxt.hook('imports:dirs', (dirs) => {
-      dirs.push(normalize(resolve(runtimeDir, 'composables')))
+      dirs.push(resolver.resolve('./runtime/composables'))
     })
 
+    // Import CSURF module
     const csrfConfig = nuxt.options.security.csrf
     if (csrfConfig) {
       if (Object.keys(csrfConfig).length) {
@@ -176,8 +200,14 @@ export default defineNuxtModule<ModuleOptions>({
 // Adds the global security options to all routes
 function setGlobalSecurityRoute(nuxt: Nuxt, securityOptions: ModuleOptions) {
   nuxt.options.nitro.routeRules = defuReplaceArray(
-    { '/**': { security: securityOptions }},
-    nuxt.options.nitro.routeRules
+    { 
+      '/**': { security: securityOptions }
+    },
+    nuxt.options.nitro.routeRules,
+    {
+      '/api/**' : { security: { headers: false } as { headers: false } },
+      '/_nuxt/**' : { security : { headers: false } as { headers: false } }
+    },
   )
 }
 
@@ -253,10 +283,8 @@ function mergeSecurityPerRoute(nuxt: Nuxt) {
 }
 
 
-function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions) {
+function registerStorageDriver(nuxt: Nuxt, securityOptions: ModuleOptions) {
   nuxt.hook('nitro:config', (config) => {
-    config.plugins = config.plugins || []
-
     if (securityOptions.rateLimiter) {
       // setup unstorage
       const driver = (securityOptions.rateLimiter).driver
@@ -273,99 +301,14 @@ function registerSecurityNitroPlugins(nuxt: Nuxt, securityOptions: ModuleOptions
         )
       }
     }
-
-    // Register nitro plugin to replace default 'X-Powered-By' header with custom one that does not indicate what is the framework underneath the app.
-    if (securityOptions.hidePoweredBy) {
-      config.externals = config.externals || {}
-      config.externals.inline = config.externals.inline || []
-      config.externals.inline.push(
-        normalize(fileURLToPath(new URL('./runtime', import.meta.url)))
-      )
-      config.plugins.push(
-        normalize(
-          fileURLToPath(
-            new URL('./runtime/nitro/plugins/01-hidePoweredBy', import.meta.url)
-          )
-        )
-      )
-    }
-
-    // Register nitro plugin to enable Security Headers
-    config.plugins.push(
-      normalize(
-        fileURLToPath(
-          new URL('./runtime/nitro/plugins/02-securityHeaders', import.meta.url)
-        )
-      )
-    )
-
-    // Pre-process HTML into DOM tree
-    config.plugins.push(
-      normalize(
-        fileURLToPath(
-          new URL('./runtime/nitro/plugins/02a-preprocessHtml', import.meta.url)
-        )
-      )
-    )
-
-    // Register nitro plugin to enable Subresource Integrity
-    config.plugins.push(
-      normalize(
-        fileURLToPath(
-          new URL('./runtime/nitro/plugins/03-subresourceIntegrity', import.meta.url)
-        )
-      )
-    )
-
-    // Register nitro plugin to enable CSP Hashes for SSG
-    config.plugins.push(
-      normalize(
-        fileURLToPath(
-          new URL('./runtime/nitro/plugins/04-cspSsgHashes', import.meta.url)
-        )
-      )
-    )
-
-    // Register nitro plugin to enable CSP Headers presets for SSG
-    // TEMPORARILY DISABLED AS NUXT 3.9.3 PREVENTS IMPORTING @NUXT/KIT IN NITRO PLUGINS
-    /*
-    config.plugins.push(
-      normalize(
-        fileURLToPath(
-          new URL('./runtime/nitro/plugins/05-cspSsgPresets', import.meta.url)
-        )
-      )
-    )
-    */
-
-    // Nitro plugin to enable CSP Nonce for SSR
-    config.plugins.push(
-      normalize(
-        fileURLToPath(
-          new URL('./runtime/nitro/plugins/99-cspSsrNonce', import.meta.url)
-        )
-      )
-    )
-
-
-    // Recombine HTML from DOM tree
-    config.plugins.push(
-      normalize(
-        fileURLToPath(
-          new URL('./runtime/nitro/plugins/99b-recombineHtml', import.meta.url)
-        )
-      )
-    )
   })
 
   // Make sure our nitro plugins will be applied last
   // After all other third-party modules that might have loaded their own nitro plugins
   nuxt.hook('nitro:init', nitro => {
-    const securityPluginsPrefix = normalize(
-      fileURLToPath(
-        new URL('./runtime/nitro/plugins', import.meta.url)
-      )
-    )
+    const resolver = createResolver(import.meta.url)
+    const securityPluginsPrefix = resolver.resolve('./runtime/nitro/plugins')
+
     // SSR: Reorder plugins in Nitro options
     nitro.options.plugins.sort((a, b) => {
       if (a.startsWith(securityPluginsPrefix)) {

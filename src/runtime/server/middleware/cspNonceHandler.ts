@@ -3,9 +3,10 @@ import { getRouteRules, defineEventHandler } from '#imports'
 
 export default defineEventHandler((event) => {
   const { security } = getRouteRules(event)
+  console.log('serverMiddleware', event.path, event)
 
   if (security?.nonce) {
     const nonce = crypto.randomBytes(16).toString('base64')
-    event.context.nonce = nonce
+    //event.context.nonce = nonce
   }
 })

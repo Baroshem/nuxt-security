@@ -6,7 +6,7 @@ export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (_, {event}) => {
     const { security } = getRouteRules(event)
     if (security?.headers) {
-      const { headers } = security
+      const headers = event.context.security.headers
       Object.entries(headers).forEach(([key, optionValue]) => {
         const optionKey = key as OptionKey
         const headerName = getNameFromKey(optionKey)

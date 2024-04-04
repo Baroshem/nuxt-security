@@ -1,3 +1,3 @@
-export default defineEventHandler((event) => {
-  console.log('test')
+export default defineEventHandler(async (event) => {
+  console.log('api test', event.path, event)
 })
