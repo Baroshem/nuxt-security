@@ -57,7 +57,7 @@
     "defu": "^6.1.1",
     "nuxt-csurf": "^1.5.1",
     "pathe": "^1.0.0",
-    "unplugin-remove": "^1.0.0",
+    "unplugin-remove": "^1.0.2",
     "xss": "^1.0.14"
   },
   "devDependencies": {
