@@ -1,3 +1,5 @@
+import type { NuxtSecurityRouteRules } from ".";
+
 export type CrossOriginResourcePolicyValue = 'same-site' | 'same-origin' | 'cross-origin';
 
 export type CrossOriginOpenerPolicyValue = 'unsafe-none' | 'same-origin-allow-popups' | 'same-origin';
@@ -248,7 +250,8 @@ export interface SecurityHeaders {
 declare module 'h3' {
   interface H3EventContext {
     security: {
-      headers: SecurityHeaders
+      rules: Partial<NuxtSecurityRouteRules>;
+      nonce?: string;
     }
   }
 }

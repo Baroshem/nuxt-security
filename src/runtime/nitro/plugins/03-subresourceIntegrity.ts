@@ -6,8 +6,8 @@ import { type CheerioAPI } from 'cheerio'
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', async (html, { event }) => {
     // Exit if SRI not enabled for this route
-    const { security } = getRouteRules(event)
-    if (!security?.sri) {
+    const { rules } = event.context.security
+    if (!rules?.sri) {
       return
     }
 

@@ -6,8 +6,8 @@ export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
 
     // Exit if no need to parse HTML for this route
-    const { security } = getRouteRules(event)
-    if (!security?.sri && (!security?.headers || !security.headers.contentSecurityPolicy)) {
+    const { rules } = event.context.security
+    if (!rules?.sri && (!rules?.headers || !rules.headers.contentSecurityPolicy)) {
       return
     }
 

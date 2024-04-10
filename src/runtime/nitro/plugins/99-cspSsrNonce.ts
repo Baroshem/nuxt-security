@@ -11,16 +11,16 @@ export default defineNitroPlugin((nitroApp) => {
     }
 
     // Exit if no CSP defined
-    const { security } = getRouteRules(event)
-    if (!security?.headers || !security.headers.contentSecurityPolicy) {
+    const { rules } = event.context.security
+    if (!rules?.headers || !rules.headers.contentSecurityPolicy) {
       return
     }
 
     let nonce: string | undefined;
 
     // Parse HTML if nonce is enabled for this route
-    if (security.nonce) {
-      nonce = event.context.nonce as string
+    if (rules.nonce) {
+      nonce = event.context.security.nonce
       // Scan all relevant sections of the NuxtRenderHtmlContext
       type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]

@@ -7,7 +7,12 @@ export default defineNuxtConfig({
   routeRules: {
     '/secret': {
       security: {
-        rateLimiter: false
+        rateLimiter: false,
+        headers: {
+          strictTransportSecurity: {
+            preload: true
+          }
+        }
       },
       headers: {
         'X-XSS-Protection': '1'
@@ -24,6 +29,7 @@ export default defineNuxtConfig({
       tokensPerInterval: 10,
       interval: 10000
     },
-    runtimeHooks: true
+    runtimeHooks: true,
+    removeLoggers: false
   }
 })

@@ -81,7 +81,7 @@ export default defineNuxtModule<ModuleOptions>({
 
 
     // PER ROUTE OPTIONS
-    setGlobalSecurityRoute(nuxt, securityOptions)
+    //setGlobalSecurityRoute(nuxt, securityOptions)
     //mergeSecurityPerRoute(nuxt)
 
 
@@ -135,13 +135,13 @@ export default defineNuxtModule<ModuleOptions>({
     // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02-securityHeaders'))
 
     // Pre-process HTML into DOM tree
-    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02a-preprocessHtml'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02a-preprocessHtml'))
 
     // Register nitro plugin to enable Subresource Integrity
-    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/03-subresourceIntegrity'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/03-subresourceIntegrity'))
 
     // Register nitro plugin to enable CSP Hashes for SSG
-    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/04-cspSsgHashes'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/04-cspSsgHashes'))
 
     // Register nitro plugin to enable CSP Headers presets for SSG
     // TEMPORARILY DISABLED AS NUXT 3.9.3 PREVENTS IMPORTING @NUXT/KIT IN NITRO PLUGINS
@@ -150,11 +150,11 @@ export default defineNuxtModule<ModuleOptions>({
     */
 
     // Nitro plugin to enable CSP Nonce for SSR
-    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99-cspSsrNonce'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99-cspSsrNonce'))
 
 
     // Recombine HTML from DOM tree
-    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99b-recombineHtml'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99b-recombineHtml'))
 
 
     const allowedMethodsRestricterConfig = nuxt.options.security
@@ -204,10 +204,10 @@ function setGlobalSecurityRoute(nuxt: Nuxt, securityOptions: ModuleOptions) {
       '/**': { security: securityOptions }
     },
     nuxt.options.nitro.routeRules,
-    {
+    /*{
       '/api/**' : { security: { headers: false } as { headers: false } },
       '/_nuxt/**' : { security : { headers: false } as { headers: false } }
-    },
+    },*/
   )
 }
 
