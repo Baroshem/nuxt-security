@@ -1,4 +1,4 @@
-import { defineNitroPlugin, getRouteRules, setResponseHeader } from '#imports'
+import { defineNitroPlugin, getRouteRules, setResponseHeader, getResponseHeaders } from '#imports'
 import { type CheerioAPI } from 'cheerio'
 import { isPrerendering } from '../utils'
 import type { H3Event } from "h3"
