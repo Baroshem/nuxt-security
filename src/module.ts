@@ -119,20 +119,14 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
     
+    // Register nitro plugin to add security context to Nitro context
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-context'))
 
-    if(nuxt.options.security.runtimeHooks) {
-      addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-context'))
-    }
-
-    if (securityOptions.hidePoweredBy) {
-      nuxt.options.nitro.externals = nuxt.options.nitro.externals || {}
-      nuxt.options.nitro.externals.inline = nuxt.options.nitro.externals.inline || []
-      nuxt.options.nitro.externals.inline.push(runtimeDir)
-      addServerPlugin(resolver.resolve('./runtime/nitro/plugins/01-hidePoweredBy'))
-    }
+    // Register nitro plugin to hide X-Powered-By header
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/01-hidePoweredBy'))
 
     // Register nitro plugin to enable Security Headers
-    // addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02-securityHeaders'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02-securityHeaders'))
 
     // Pre-process HTML into DOM tree
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02a-preprocessHtml'))

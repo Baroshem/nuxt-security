@@ -31,29 +31,20 @@ export interface ModuleOptions {
   sri: boolean
 }
 
-export type NuxtSecurityRouteRules = Pick<ModuleOptions,
-  'headers' |
-  'requestSizeLimiter' |
-  'rateLimiter' |
-  'xssValidator' |
-  'corsHandler' |
-  'allowedMethodsRestricter' |
-  'nonce' |
-  'sri' |
-  'ssg'>
+export type NuxtSecurityRouteRules = Partial<ModuleOptions>
 
-  declare module 'nitropack' {
-    interface NitroRuntimeHooks {
-      'nuxt-security:headers': (config: {
-        /**
-         * The route for which the headers are being configured
-         */
-        route: string,
-        /**
-         * The headers configuration for the route
-         */
-        headers: SecurityHeaders
-      }) => void
-      'nuxt-security:ready': () => void
-    }
-  } 
+declare module 'nitropack' {
+  interface NitroRuntimeHooks {
+    'nuxt-security:headers': (config: {
+      /**
+       * The route for which the headers are being configured
+       */
+      route: string,
+      /**
+       * The headers configuration for the route
+       */
+      headers: SecurityHeaders
+    }) => void
+    'nuxt-security:ready': () => void
+  }
+} 

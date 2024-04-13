@@ -6,5 +6,7 @@ import { getRequestHeader } from '#imports'
  * @returns boolean
  */
 export function isPrerendering(event: H3Event): boolean {
-  return !!getRequestHeader(event, 'x-nitro-prerender')
+  const isPrerendering = !!getRequestHeader(event, 'x-nitro-prerender')
+  console.log('isPrerendering', isPrerendering, import.meta.prerender)
+  return isPrerendering
 }
