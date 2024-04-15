@@ -22,12 +22,8 @@ export default defineNitroPlugin((nitroApp) => {
         }
       })
     }
-    console.log('render:response', event.path, headers, response.headers)
   })
 
-  nitroApp.hooks.hook('beforeResponse', (event) => {
-    console.log('beforeResponse', event.path, event.context.security.rules.headers)
-  })
 })
 
 function insertNonceInCsp(csp: ContentSecurityPolicyValue, nonce?: string) {

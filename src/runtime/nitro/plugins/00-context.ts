@@ -31,8 +31,16 @@ export default defineNitroPlugin((nitroApp) => {
     securityOptions,
     securityRouteRules['/**']
   )
-  //securityRouteRules['/api/**'] = { headers: false }
-  //securityRouteRules['/_nuxt/**'] = { headers: false }
+  /*
+  securityRouteRules['/api/**'] = defuReplaceArray(
+    { headers: false },
+    securityRouteRules['/api/**']
+  )
+  securityRouteRules['/_nuxt/**'] = defuReplaceArray(
+    { headers: false },
+    securityRouteRules['/_nuxt/**']
+  )
+  */
 
 
   // Then insert route specific security headers
@@ -41,13 +49,15 @@ export default defineNitroPlugin((nitroApp) => {
     const { security } = rule
     if (security) {
       const { headers } = security
+      let securityHeaders
       if (headers) {
-        const securityHeaders = backwardsCompatibleSecurity(headers)
-        securityRouteRules[route] = defuReplaceArray(
-          { headers: securityHeaders },
-          securityRouteRules[route],
-        )
+        securityHeaders = backwardsCompatibleSecurity(headers)
       }
+      securityRouteRules[route] = defuReplaceArray(
+        { headers: securityHeaders },
+        security,
+        securityRouteRules[route],
+      )
     }
   }
 
@@ -66,9 +76,8 @@ export default defineNitroPlugin((nitroApp) => {
 
 
   nitroApp.hooks.hook('request', (event) => {
-
     const matcher = toRouteMatcher(router)
-    const matches = matcher.matchAll(event.path)
+    const matches = matcher.matchAll(event.path.split('?')[0])
     const rules: Partial<NuxtSecurityRouteRules> = defuReplaceArray({}, ...matches.reverse())
 
     event.context.security = { rules }

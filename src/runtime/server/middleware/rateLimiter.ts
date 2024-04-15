@@ -10,10 +10,10 @@ type StorageItem = {
 const storage = useStorage<StorageItem>('#storage-driver')
 
 export default defineEventHandler(async (event) => {
-  const { security } = getRouteRules(event)
+  const { rules } = event.context.security
 
-  if (security?.rateLimiter) {
-    const { rateLimiter } = security
+  if (rules?.rateLimiter) {
+    const { rateLimiter } = rules
     const ip = getIP(event)
 
     let storageItem = await storage.getItem(ip) as StorageItem
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
           statusMessage: 'Too Many Requests'
         }
 
-        if (security.rateLimiter.headers) {
+        if (rules.rateLimiter.headers) {
           setResponseHeader(event, 'x-ratelimit-remaining', 0)
           setResponseHeader(event, 'x-ratelimit-limit', rateLimiter.tokensPerInterval)
           setResponseHeader(event, 'x-ratelimit-reset', timeForInterval)

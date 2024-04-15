@@ -4,19 +4,19 @@ import {
   createError,
   getQuery,
   readBody,
+  readMultipartFormData,
   getRouteRules
 } from '#imports'
 import { HTTPMethod } from '~/src/module'
 
 export default defineEventHandler(async (event) => {
-  const { security } = getRouteRules(event)
-
-  if (security?.xssValidator) {
+  const { rules } = event.context.security
+  if (rules?.xssValidator) {
     const filterOpt: IFilterXSSOptions = {
-      ...security.xssValidator,
+      ...rules.xssValidator,
       escapeHtml: undefined
     }
-    if (security.xssValidator.escapeHtml === false) {
+    if (rules.xssValidator.escapeHtml === false) {
       // No html escaping (by default "<" is replaced by "&lt;" and ">" by "&gt;")
       filterOpt.escapeHtml = (value: string) => value
     }
@@ -24,8 +24,8 @@ export default defineEventHandler(async (event) => {
 
     if (event.node.req.socket.readyState !== 'readOnly') {
       if (
-        security.xssValidator.methods &&
-        security.xssValidator.methods.includes(
+        rules.xssValidator.methods &&
+        rules.xssValidator.methods.includes(
           event.node.req.method! as HTTPMethod
         )
       ) {
@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
               statusCode: 400,
               statusMessage: 'Bad Request'
             }
-            if (security.xssValidator.throwError === false) {
+            if (rules.xssValidator.throwError === false) {
               return badRequestError
             }
 

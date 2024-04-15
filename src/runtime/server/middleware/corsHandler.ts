@@ -2,10 +2,10 @@ import { getRouteRules, defineEventHandler, handleCors } from '#imports'
 import type { H3CorsOptions } from 'h3'
 
 export default defineEventHandler((event) => {
-  const { security } = getRouteRules(event)
+  const { rules } = event.context.security
 
-  if (security?.corsHandler) {
-    const { corsHandler } = security
+  if (rules?.corsHandler) {
+    const { corsHandler } = rules
     handleCors(event, corsHandler as H3CorsOptions)
   }
 

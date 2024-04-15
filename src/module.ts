@@ -47,7 +47,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup (options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const runtimeDir = resolver.resolve('./runtime')
+    
     nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
     nuxt.options.security = defuReplaceArray(
       { ...options, ...nuxt.options.security },
@@ -58,6 +58,8 @@ export default defineNuxtModule<ModuleOptions>({
     const securityOptions = nuxt.options.security
     // Disabled module when `enabled` is set to `false`
     if (!securityOptions.enabled) { return }
+
+    registerStorageDriver(nuxt, securityOptions)
 
     if (securityOptions.removeLoggers) {
       addVitePlugin(viteRemove(securityOptions.removeLoggers))
@@ -78,46 +80,6 @@ export default defineNuxtModule<ModuleOptions>({
         ...securityOptions
       }
     )
-
-
-    // PER ROUTE OPTIONS
-    //setGlobalSecurityRoute(nuxt, securityOptions)
-    //mergeSecurityPerRoute(nuxt)
-
-
-/*
-    addServerHandler({
-      handler: resolver.resolve('./runtime/server/middleware/cspNonceHandler')
-    })
- 
-    */
-
-    if (nuxt.options.security.requestSizeLimiter) {
-      addServerHandler({
-        handler: resolver.resolve('./runtime/server/middleware/requestSizeLimiter')
-      })
-    }
-
-    if (nuxt.options.security.rateLimiter) {
-      registerStorageDriver(nuxt, securityOptions)
-      addServerHandler({
-        handler: resolver.resolve('./runtime/server/middleware/rateLimiter')
-      })
-    }
-
-    if (nuxt.options.security.xssValidator) {
-      // Remove potential duplicates
-      nuxt.options.security.xssValidator.methods = Array.from(new Set(nuxt.options.security.xssValidator.methods))
-      addServerHandler({
-        handler: resolver.resolve('./runtime/server/middleware/xssValidator')
-      })
-    }
-
-    if (nuxt.options.security.corsHandler) {
-      addServerHandler({
-        handler: resolver.resolve('./runtime/server/middleware/corsHandler')
-      })
-    }
     
     // Register nitro plugin to add security context to Nitro context
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-context'))
@@ -146,22 +108,29 @@ export default defineNuxtModule<ModuleOptions>({
     // Nitro plugin to enable CSP Nonce for SSR
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99-cspSsrNonce'))
 
-
     // Recombine HTML from DOM tree
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99b-recombineHtml'))
 
+    addServerHandler({
+      handler: resolver.resolve('./runtime/server/middleware/requestSizeLimiter')
+    })
 
-    const allowedMethodsRestricterConfig = nuxt.options.security
-    .allowedMethodsRestricter
-    if (
-      allowedMethodsRestricterConfig &&
-      !Object.values(allowedMethodsRestricterConfig).includes('*')
-    ) {
-      addServerHandler({
-        handler: resolver.resolve('./runtime/server/middleware/allowedMethodsRestricter')
-      })
-    }
+    addServerHandler({
+      handler: resolver.resolve('./runtime/server/middleware/corsHandler')
+    })
 
+    addServerHandler({
+      handler: resolver.resolve('./runtime/server/middleware/allowedMethodsRestricter')
+    })
+
+    addServerHandler({
+      handler: resolver.resolve('./runtime/server/middleware/rateLimiter')
+    })
+
+    addServerHandler({
+      handler: resolver.resolve('./runtime/server/middleware/xssValidator')
+    })
+    
     // Register basicAuth middleware that is disabled by default
     const basicAuthConfig = nuxt.options.runtimeConfig.private
       .basicAuth as unknown as BasicAuth
@@ -190,91 +159,6 @@ export default defineNuxtModule<ModuleOptions>({
     }  
   }
 })
-
-// Adds the global security options to all routes
-function setGlobalSecurityRoute(nuxt: Nuxt, securityOptions: ModuleOptions) {
-  nuxt.options.nitro.routeRules = defuReplaceArray(
-    { 
-      '/**': { security: securityOptions }
-    },
-    nuxt.options.nitro.routeRules,
-    /*{
-      '/api/**' : { security: { headers: false } as { headers: false } },
-      '/_nuxt/**' : { security : { headers: false } as { headers: false } }
-    },*/
-  )
-}
-
-// Merges the standard headers into the security options
-function mergeSecurityPerRoute(nuxt: Nuxt) {
-  for (const route in nuxt.options.nitro.routeRules) {
-    const rule = nuxt.options.nitro.routeRules[route]
-    const { security, headers: standardHeaders } = rule
-
-    // STEP 1 - DETECT STANDARD HEADERS THAT MAY OVERLAP WITH SECURITY HEADERS
-    // Lookup standard radix headers
-    // Detect if they belong to one of the SecurityHeaders
-    // And convert them into object format
-    const standardHeadersAsObject: SecurityHeaders = {}
-
-    if (standardHeaders) {
-      Object.entries(standardHeaders).forEach(([headerName, headerValue])  => {
-        const optionKey = getKeyFromName(headerName)
-        if (optionKey) {
-          if (typeof headerValue === 'string') {
-            // Normally, standard radix headers should be supplied as string
-            const objectValue: any = headerObjectFromString(optionKey, headerValue)
-            standardHeadersAsObject[optionKey] = objectValue
-          } else {
-            // Here we ensure backwards compatibility 
-            // Because in the pre-rc1 syntax, standard headers could also be supplied in object format
-            standardHeadersAsObject[optionKey] = headerValue
-            standardHeaders[headerName] = headerStringFromObject(optionKey, headerValue)
-          }
-        }
-      })
-    }
-
-    // STEP 2 - ENSURE BACKWARDS COMPATIBILITY OF SECURITY HEADERS
-    // Lookup the Security headers, normally they should be in object format
-    // However detect if they were supplied in string format
-    // And convert them into object format
-    const securityHeadersAsObject: SecurityHeaders = {}
-
-    if (security?.headers) {
-      const { headers: securityHeaders } = security
-      Object.entries(securityHeaders).forEach(([key, value]) => {
-        const optionKey = key as OptionKey
-        if ((optionKey === 'contentSecurityPolicy' || optionKey === 'permissionsPolicy' || optionKey === 'strictTransportSecurity') && (typeof value === 'string')) {
-          // Altough this does not make sense in post-rc1 typescript definitions
-          // It was possible before rc1 though, so let's ensure backwards compatibility here
-          const objectValue: any = headerObjectFromString(optionKey, value)
-          securityHeadersAsObject[optionKey] = objectValue
-        } else if (value === '') {
-          securityHeadersAsObject[optionKey] = false
-        } else {
-          securityHeadersAsObject[optionKey] = value
-        }
-      })
-    }
-
-    // STEP 3 - MERGE RESULT INTO SECURITY RULE
-    // Security headers have priority
-    const mergedHeadersAsObject = defuReplaceArray(
-      securityHeadersAsObject,
-      standardHeadersAsObject
-    )
-    if (Object.keys(mergedHeadersAsObject).length) {
-      nuxt.options.nitro.routeRules[route] = defuReplaceArray(
-        { security: {
-            headers: mergedHeadersAsObject
-          }
-        },
-        rule
-      )
-    }
-  }
-}
 
 
 function registerStorageDriver(nuxt: Nuxt, securityOptions: ModuleOptions) {
