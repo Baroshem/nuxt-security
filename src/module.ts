@@ -183,8 +183,10 @@ function registerStorageDriver(nuxt: Nuxt, securityOptions: ModuleOptions) {
 
   // Make sure our nitro plugins will be applied last
   // After all other third-party modules that might have loaded their own nitro plugins
-  /*
+  
   nuxt.hook('nitro:init', nitro => {
+
+    
     const resolver = createResolver(import.meta.url)
     const securityPluginsPrefix = resolver.resolve('./runtime/nitro/plugins')
 
@@ -222,6 +224,6 @@ function registerStorageDriver(nuxt: Nuxt, securityOptions: ModuleOptions) {
         }
       })
     })
+    
   })
-  */
 }
