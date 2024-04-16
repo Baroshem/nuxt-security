@@ -8,6 +8,7 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
     crossOriginOpenerPolicy: 'same-origin',
     crossOriginEmbedderPolicy: 'require-corp',
     contentSecurityPolicy: {
+      //'default-src' : ["'none'"],
       'base-uri': ["'none'"],
       'font-src': ["'self'", 'https:', 'data:'],
       'form-action': ["'self'"],

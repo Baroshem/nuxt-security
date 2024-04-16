@@ -89,7 +89,6 @@ export default defineNitroPlugin((nitroApp) => {
     }
   })
   
-
   nitroApp.hooks.callHook('nuxt-security:ready')
 })
 

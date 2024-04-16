@@ -1,5 +1,7 @@
- 
+
 export default defineEventHandler((event) => {
-    console.log('server api', event.path, event.context.security.rules.headers?.contentSecurityPolicy)
-    return "runtime-hooks"
+  const { headers } = event.context.security.rules
+  return {
+    csp: headers ? headers.contentSecurityPolicy : undefined
+  }
 })
