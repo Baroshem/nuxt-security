@@ -67,6 +67,7 @@ export default defineNitroPlugin((nitroApp) => {
 
 
   nitroApp.hooks.hook('nuxt-security:headers', ({ route, headers }) => {
+    console.log('hooking', route, headers)
     securityRouteRules[route] = defuReplaceArray(
       { headers },
       securityRouteRules[route]
