@@ -1,9 +1,9 @@
 import { defineEventHandler, handleCors } from '#imports'
 import type { H3CorsOptions } from 'h3'
-import { resolveSecurityRules } from '../../composables/context'
+import { resolveSecurityRules } from '../../nitro/utils/context'
 
-export default defineEventHandler((event) => {
-  const rules = resolveSecurityRules(event)
+export default defineEventHandler(async(event) => {
+  const rules = await resolveSecurityRules(event)
 
   if (rules?.corsHandler) {
     const { corsHandler } = rules

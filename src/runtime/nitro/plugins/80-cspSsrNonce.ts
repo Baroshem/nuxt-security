@@ -1,28 +1,26 @@
 import { defineNitroPlugin } from '#imports'
 import { type CheerioAPI } from 'cheerio'
-import { isPrerendering } from '../utils'
-import { resolveSecurityRules } from '../../composables/context'
+//import { isPrerendering } from '../utils'
+import { resolveSecurityRules } from '../utils/context'
 
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', (html, { event }) => {
+  nitroApp.hooks.hook('render:html', async(html, { event }) => {
     // Exit in SSG mode
-    if (isPrerendering(event)) {
+    if (import.meta.prerender) {
       return
     }
 
     // Exit if no CSP defined
-    const rules = resolveSecurityRules(event)
+    const rules = await resolveSecurityRules(event)
     // const { rules } = event.context.security
     if (!rules?.headers || !rules.headers.contentSecurityPolicy) {
       return
     }
 
-    let nonce: string | undefined;
-
     // Parse HTML if nonce is enabled for this route
     if (rules.nonce) {
-      nonce = event.context.security.nonce
+      const nonce = event.context.security.nonce
       // Scan all relevant sections of the NuxtRenderHtmlContext
       type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
@@ -38,8 +36,5 @@ export default defineNitroPlugin((nitroApp) => {
         })
       }
     }
-
   })
-
-  
 })

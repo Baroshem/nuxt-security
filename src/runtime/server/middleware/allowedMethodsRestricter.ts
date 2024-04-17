@@ -1,9 +1,9 @@
 import { defineEventHandler, createError } from '#imports'
 import { HTTPMethod } from '~/src/module'
-import { resolveSecurityRules } from '../../composables/context'
+import { resolveSecurityRules } from '../../nitro/utils/context'
 
-export default defineEventHandler((event) => {
-  const rules = resolveSecurityRules(event)
+export default defineEventHandler(async(event) => {
+  const rules = await resolveSecurityRules(event)
 
   if (rules?.allowedMethodsRestricter) {
     const { allowedMethodsRestricter } = rules

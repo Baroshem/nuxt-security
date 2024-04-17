@@ -3,19 +3,19 @@ import * as cheerio from 'cheerio'
 import type { ContentSecurityPolicyValue } from '~/src/module'
 import { headerStringFromObject } from '../../utils/headers'
 import { generateHash } from '../../utils/hashes'
-import { isPrerendering } from '../utils'
-import { resolveSecurityRules } from '../../composables/context'
+//import { isPrerendering } from '../utils'
+import { resolveSecurityRules } from '../utils/context'
 
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', (html, { event }) => {
+  nitroApp.hooks.hook('render:html', async(html, { event }) => {
     // Exit in SSR mode
-    if (!isPrerendering(event)) {
+    if (!import.meta.prerender) {
       return
     }
 
     // Exit if no CSP defined
-    const rules = resolveSecurityRules(event)
+    const rules = await resolveSecurityRules(event)
     if (!rules?.headers || !rules.headers.contentSecurityPolicy) {
       return
     }

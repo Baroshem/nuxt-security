@@ -1,5 +1,3 @@
-import { defineEventHandler } from "#imports"
-
 export default defineEventHandler((event) => {
   const time = new Date().toISOString()
   return {

@@ -46,6 +46,7 @@ declare module 'nitropack' {
       headers: SecurityHeaders
     }) => void
     'nuxt-security:ready': () => void
+    'nuxt-security:rules': (rules: NuxtSecurityRouteRules) => void
   }
 }
 

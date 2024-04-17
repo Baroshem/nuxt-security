@@ -1,13 +1,13 @@
 import { useStorage, defineNitroPlugin } from '#imports'
-import { isPrerendering } from '../utils'
+//import { isPrerendering } from '../utils'
 import { type CheerioAPI } from 'cheerio'
-import { resolveSecurityRules } from '../../composables/context'
+import { resolveSecurityRules } from '../utils/context'
 
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', async (html, { event }) => {
     // Exit if SRI not enabled for this route
-    const rules = resolveSecurityRules(event)
+    const rules = await resolveSecurityRules(event)
     // const { rules } = event.context.security
     if (!rules?.sri) {
       return
@@ -22,7 +22,7 @@ export default defineNitroPlugin((nitroApp) => {
     // - Conversely, if we are in a standalone SSR server pre-built by nuxi build
     //   Then we don't have a .nuxt build directory anymore
     //   But we did save the /integrity directory into the server assets    
-    const prerendering = isPrerendering(event)
+    const prerendering = !!import.meta.prerender
     const storageBase = prerendering ? 'build' : 'assets'   
     const sriHashes = await useStorage(storageBase).getItem<Record<string, string>>('integrity:sriHashes.json') || {}
 

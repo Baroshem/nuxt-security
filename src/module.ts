@@ -1,4 +1,4 @@
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
@@ -148,9 +148,12 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.hook('nitro:build:before', hashBundledAssets)
 
     // Import composables
+    addImportsDir(resolver.resolve('./runtime/composables'))
+    /*
     nuxt.hook('imports:dirs', (dirs) => {
       dirs.push(resolver.resolve('./runtime/composables'))
     })
+    */
 
     // Import CSURF module
     const csrfConfig = nuxt.options.security.csrf
