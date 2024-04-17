@@ -1,20 +1,13 @@
-import { getNameFromKey, headerStringFromObject, headerObjectFromString, getKeyFromName } from "../../utils/headers"
-import { createRouter, toRouteMatcher } from "radix3"
-import { defineNitroPlugin, setResponseHeader, removeResponseHeader, getRouteRules, useRuntimeConfig } from "#imports"
-import { ContentSecurityPolicyValue, OptionKey, SecurityHeaders, NuxtSecurityRouteRules } from "~/src/module"
+import { defineNitroPlugin, useRuntimeConfig } from "#imports"
+import { NuxtSecurityRouteRules } from "../../../types"
 import { defuReplaceArray } from "../../../utils"
-import crypto from 'node:crypto'
-import type { H3Event } from "h3"
-import { Nuxt } from "@nuxt/schema"
-import defu from "defu"
-
-
+import { OptionKey, SecurityHeaders } from "../../../types/headers"
+import { getKeyFromName, headerObjectFromString } from "../../utils/headers"
 
 export default defineNitroPlugin((nitroApp) => {
 
   const config = useRuntimeConfig()
-
-  const securityRouteRules: Record<string, Partial<NuxtSecurityRouteRules>> = {}
+  const securityRouteRules: Record<string, NuxtSecurityRouteRules> = {}
 
   // First insert standard route rules headers
   for (const route in config.nitro.routeRules) {
@@ -31,18 +24,7 @@ export default defineNitroPlugin((nitroApp) => {
     securityOptions,
     securityRouteRules['/**']
   )
-  /*
-  securityRouteRules['/api/**'] = defuReplaceArray(
-    { headers: false },
-    securityRouteRules['/api/**']
-  )
-  securityRouteRules['/_nuxt/**'] = defuReplaceArray(
-    { headers: false },
-    securityRouteRules['/_nuxt/**']
-  )
-  */
-
-
+  
   // Then insert route specific security headers
   for (const route in config.nitro.routeRules) {
     const rule = config.nitro.routeRules[route]
@@ -61,31 +43,15 @@ export default defineNitroPlugin((nitroApp) => {
     }
   }
 
-  const router = createRouter<Partial<NuxtSecurityRouteRules>>({
-    routes: securityRouteRules,
-  })
-
-
   nitroApp.hooks.hook('nuxt-security:headers', ({ route, headers }) => {
     securityRouteRules[route] = defuReplaceArray(
       { headers },
       securityRouteRules[route]
     )
-    router.insert(route, securityRouteRules[route])
   })
 
-
   nitroApp.hooks.hook('request', (event) => {
-    const matcher = toRouteMatcher(router)
-    const matches = matcher.matchAll(event.path.split('?')[0])
-    const rules: Partial<NuxtSecurityRouteRules> = defuReplaceArray({}, ...matches.reverse())
-
-    event.context.security = { rules }
-
-    if (rules.nonce) {
-      const nonce = crypto.randomBytes(16).toString('base64')
-      event.context.security.nonce = nonce
-    }
+    event.context.security = { routeRules: securityRouteRules }
   })
   
   nitroApp.hooks.callHook('nuxt-security:ready')
@@ -138,5 +104,3 @@ function backwardsCompatibleSecurity(securityHeaders?: SecurityHeaders) {
       return undefined
     }
 }
-
-

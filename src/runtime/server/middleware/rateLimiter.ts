@@ -1,6 +1,7 @@
 import type { H3Event } from 'h3'
-import { defineEventHandler, getRequestHeader, createError, setResponseHeader, getRouteRules, useStorage } from '#imports'
+import { defineEventHandler, getRequestHeader, createError, setResponseHeader, useStorage } from '#imports'
 import type { RateLimiter } from '~/src/module'
+import { resolveSecurityRules } from '../../composables/context'
 
 type StorageItem = {
   value: number,
@@ -10,7 +11,7 @@ type StorageItem = {
 const storage = useStorage<StorageItem>('#storage-driver')
 
 export default defineEventHandler(async (event) => {
-  const { rules } = event.context.security
+  const rules = resolveSecurityRules(event)
 
   if (rules?.rateLimiter) {
     const { rateLimiter } = rules

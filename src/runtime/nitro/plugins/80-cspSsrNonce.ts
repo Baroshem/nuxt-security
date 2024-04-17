@@ -1,6 +1,7 @@
-import { defineNitroPlugin, getRouteRules, setResponseHeader, getResponseHeaders } from '#imports'
+import { defineNitroPlugin } from '#imports'
 import { type CheerioAPI } from 'cheerio'
 import { isPrerendering } from '../utils'
+import { resolveSecurityRules } from '../../composables/context'
 
 
 export default defineNitroPlugin((nitroApp) => {
@@ -11,7 +12,8 @@ export default defineNitroPlugin((nitroApp) => {
     }
 
     // Exit if no CSP defined
-    const { rules } = event.context.security
+    const rules = resolveSecurityRules(event)
+    // const { rules } = event.context.security
     if (!rules?.headers || !rules.headers.contentSecurityPolicy) {
       return
     }

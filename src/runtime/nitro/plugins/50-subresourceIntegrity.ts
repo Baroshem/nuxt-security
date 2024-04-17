@@ -1,12 +1,14 @@
-import { useStorage, defineNitroPlugin, getRouteRules } from '#imports'
+import { useStorage, defineNitroPlugin } from '#imports'
 import { isPrerendering } from '../utils'
 import { type CheerioAPI } from 'cheerio'
+import { resolveSecurityRules } from '../../composables/context'
 
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', async (html, { event }) => {
     // Exit if SRI not enabled for this route
-    const { rules } = event.context.security
+    const rules = resolveSecurityRules(event)
+    // const { rules } = event.context.security
     if (!rules?.sri) {
       return
     }

@@ -1,8 +1,9 @@
-import { getRouteRules, defineEventHandler, handleCors } from '#imports'
+import { defineEventHandler, handleCors } from '#imports'
 import type { H3CorsOptions } from 'h3'
+import { resolveSecurityRules } from '../../composables/context'
 
 export default defineEventHandler((event) => {
-  const { rules } = event.context.security
+  const rules = resolveSecurityRules(event)
 
   if (rules?.corsHandler) {
     const { corsHandler } = rules

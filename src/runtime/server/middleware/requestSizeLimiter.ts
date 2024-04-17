@@ -1,9 +1,10 @@
-import { defineEventHandler, getRequestHeader, createError, getRouteRules } from '#imports'
+import { defineEventHandler, getRequestHeader, createError } from '#imports'
+import { resolveSecurityRules } from '../../composables/context'
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 
 export default defineEventHandler((event) => {
-  const { rules } = event.context.security
+  const rules = resolveSecurityRules(event)
 
   if (rules?.requestSizeLimiter) {
     if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {

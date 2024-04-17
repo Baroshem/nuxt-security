@@ -32,7 +32,7 @@ declare module 'nuxt/schema' {
 
 declare module 'nitropack' {
   interface NitroRouteConfig {
-    security?: Partial<NuxtSecurityRouteRules>;
+    security?: NuxtSecurityRouteRules;
   }
 }
 
@@ -81,35 +81,38 @@ export default defineNuxtModule<ModuleOptions>({
       }
     )
     
-    // Register nitro plugin to add security context to Nitro context
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-context'))
+    // Register nitro plugin to add security route rules to Nitro context
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-router'))
+
+    // Register nitro plugin to add nonce
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/10-nonce'))
 
     // Register nitro plugin to hide X-Powered-By header
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/01-hidePoweredBy'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/20-hidePoweredBy'))
 
     // Register nitro plugin to enable Security Headers
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02-securityHeaders'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/30-securityHeaders'))
 
     // Pre-process HTML into DOM tree
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/02a-preprocessHtml'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/40-preprocessHtml'))
 
     // Register nitro plugin to enable Subresource Integrity
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/03-subresourceIntegrity'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/50-subresourceIntegrity'))
 
     // Register nitro plugin to enable CSP Hashes for SSG
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/04-cspSsgHashes'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/60-cspSsgHashes'))
 
     // Register nitro plugin to enable CSP Headers presets for SSG
     // TEMPORARILY DISABLED AS NUXT 3.9.3 PREVENTS IMPORTING @NUXT/KIT IN NITRO PLUGINS
     /*
-    addServerPlugin(resolve('./runtime/nitro/plugins/05-cspSsgPresets'))
+    addServerPlugin(resolve('./runtime/nitro/plugins/70-cspSsgPresets'))
     */
 
     // Nitro plugin to enable CSP Nonce for SSR
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99-cspSsrNonce'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/80-cspSsrNonce'))
 
     // Recombine HTML from DOM tree
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/99b-recombineHtml'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/90-recombineHtml'))
 
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/requestSizeLimiter')
@@ -184,9 +187,7 @@ function registerStorageDriver(nuxt: Nuxt, securityOptions: ModuleOptions) {
   // Make sure our nitro plugins will be applied last
   // After all other third-party modules that might have loaded their own nitro plugins
   
-  nuxt.hook('nitro:init', nitro => {
-
-    
+  nuxt.hook('nitro:init', nitro => {    
     const resolver = createResolver(import.meta.url)
     const securityPluginsPrefix = resolver.resolve('./runtime/nitro/plugins')
 

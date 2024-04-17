@@ -1,8 +1,9 @@
-import { getRouteRules, defineEventHandler, createError } from '#imports'
+import { defineEventHandler, createError } from '#imports'
 import { HTTPMethod } from '~/src/module'
+import { resolveSecurityRules } from '../../composables/context'
 
 export default defineEventHandler((event) => {
-  const { rules } = event.context.security
+  const rules = resolveSecurityRules(event)
 
   if (rules?.allowedMethodsRestricter) {
     const { allowedMethodsRestricter } = rules

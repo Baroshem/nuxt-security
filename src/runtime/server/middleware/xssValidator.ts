@@ -5,12 +5,13 @@ import {
   getQuery,
   readBody,
   readMultipartFormData,
-  getRouteRules
 } from '#imports'
 import { HTTPMethod } from '~/src/module'
+import { resolveSecurityRules } from '../../composables/context'
 
 export default defineEventHandler(async (event) => {
-  const { rules } = event.context.security
+  const rules = resolveSecurityRules(event)
+
   if (rules?.xssValidator) {
     const filterOpt: IFilterXSSOptions = {
       ...rules.xssValidator,

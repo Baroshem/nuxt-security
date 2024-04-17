@@ -47,4 +47,13 @@ declare module 'nitropack' {
     }) => void
     'nuxt-security:ready': () => void
   }
-} 
+}
+
+declare module 'h3' {
+  interface H3EventContext {
+    security: {
+      routeRules?: Record<string, NuxtSecurityRouteRules>;
+      nonce?: string;
+    }
+  }
+}
