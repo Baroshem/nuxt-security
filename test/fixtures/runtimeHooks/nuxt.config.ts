@@ -16,7 +16,7 @@ export default defineNuxtConfig({
       crossOriginResourcePolicy: 'cross-origin',
       contentSecurityPolicy: {
         'frame-ancestors': ['*','weird-value.com'],
-        'script-src': ["'unsafe-inline'", '*'],
+        'script-src': ["'unsafe-inline'", '*', "'nonce-{{nonce}}'"],
       },
     },
   }

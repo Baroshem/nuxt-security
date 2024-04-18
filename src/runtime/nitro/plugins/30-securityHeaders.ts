@@ -1,15 +1,13 @@
 import { defineNitroPlugin, setResponseHeader, removeResponseHeader } from '#imports'
 import { ContentSecurityPolicyValue, type OptionKey } from '../../../types/headers'
 import { getNameFromKey, headerStringFromObject } from '../../utils/headers'
-import { resolveSecurityRules } from '../utils/context'
+import { resolveSecurityRules } from '../utils'
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:response', async(response, { event }) => {
-    const rules = await resolveSecurityRules(event)
+  nitroApp.hooks.hook('render:response', (response, { event }) => {
+    const rules = resolveSecurityRules(event)
     const headers = { ...rules.headers }
-    // const { rules } = event.context.security
     const nonce = event.context.security?.nonce
-    // const headers = { ...event.context.security.rules.headers }
     
     if (headers && headers.contentSecurityPolicy) {
       const csp = headers.contentSecurityPolicy

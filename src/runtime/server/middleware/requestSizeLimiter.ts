@@ -1,10 +1,10 @@
 import { defineEventHandler, getRequestHeader, createError } from '#imports'
-import { resolveSecurityRules } from '../../nitro/utils/context'
+import { resolveSecurityRules } from '../../nitro/utils'
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 
-export default defineEventHandler(async(event) => {
-  const rules = await resolveSecurityRules(event)
+export default defineEventHandler((event) => {
+  const rules = resolveSecurityRules(event)
 
   if (rules?.requestSizeLimiter) {
     if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {

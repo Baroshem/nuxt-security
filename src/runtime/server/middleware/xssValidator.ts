@@ -7,10 +7,10 @@ import {
   readMultipartFormData,
 } from '#imports'
 import { HTTPMethod } from '~/src/module'
-import { resolveSecurityRules } from '../../nitro/utils/context'
+import { resolveSecurityRules } from '../../nitro/utils'
 
-export default defineEventHandler(async (event) => {
-  const rules = await resolveSecurityRules(event)
+export default defineEventHandler(async(event) => {
+  const rules = resolveSecurityRules(event)
 
   if (rules?.xssValidator) {
     const filterOpt: IFilterXSSOptions = {

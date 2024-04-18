@@ -1,18 +1,18 @@
 import { defineNitroPlugin } from '#imports'
 import { type CheerioAPI } from 'cheerio'
 //import { isPrerendering } from '../utils'
-import { resolveSecurityRules } from '../utils/context'
+import { resolveSecurityRules } from '../utils'
 
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', async(html, { event }) => {
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Exit in SSG mode
     if (import.meta.prerender) {
       return
     }
 
     // Exit if no CSP defined
-    const rules = await resolveSecurityRules(event)
+    const rules = resolveSecurityRules(event)
     // const { rules } = event.context.security
     if (!rules?.headers || !rules.headers.contentSecurityPolicy) {
       return

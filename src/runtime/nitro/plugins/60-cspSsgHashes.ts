@@ -4,18 +4,18 @@ import type { ContentSecurityPolicyValue } from '~/src/module'
 import { headerStringFromObject } from '../../utils/headers'
 import { generateHash } from '../../utils/hashes'
 //import { isPrerendering } from '../utils'
-import { resolveSecurityRules } from '../utils/context'
+import { resolveSecurityRules } from '../utils'
 
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', async(html, { event }) => {
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Exit in SSR mode
     if (!import.meta.prerender) {
       return
     }
 
     // Exit if no CSP defined
-    const rules = await resolveSecurityRules(event)
+    const rules = resolveSecurityRules(event)
     if (!rules?.headers || !rules.headers.contentSecurityPolicy) {
       return
     }

@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3'
 import { defineEventHandler, getRequestHeader, createError, setResponseHeader, useStorage } from '#imports'
 import type { RateLimiter } from '~/src/module'
-import { resolveSecurityRules } from '../../nitro/utils/context'
+import { resolveSecurityRules } from '../../nitro/utils'
 
 type StorageItem = {
   value: number,
@@ -10,8 +10,8 @@ type StorageItem = {
 
 const storage = useStorage<StorageItem>('#storage-driver')
 
-export default defineEventHandler(async (event) => {
-  const rules = await resolveSecurityRules(event)
+export default defineEventHandler(async(event) => {
+  const rules = resolveSecurityRules(event)
 
   if (rules?.rateLimiter) {
     const { rateLimiter } = rules

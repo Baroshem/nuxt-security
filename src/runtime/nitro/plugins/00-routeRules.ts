@@ -43,18 +43,22 @@ export default defineNitroPlugin((nitroApp) => {
     }
   }
 
+  // TO DO : DEPRECATE IN FAVOR OF NUXT-SECURITY:ROUTERULES HOOK
   nitroApp.hooks.hook('nuxt-security:headers', ({ route, headers }) => {
     securityRouteRules[route] = defuReplaceArray(
       { headers },
       securityRouteRules[route]
     )
   })
+  nitroApp.hooks.callHook('nuxt-security:ready')
 
-  nitroApp.hooks.hook('request', (event) => {
+  // NEW HOOK HAS ABILITY TO CONFIGURE ALL SECURITY OPTIONS FOR EACH ROUTE
+  nitroApp.hooks.callHook('nuxt-security:routeRules', securityRouteRules)
+
+
+  nitroApp.hooks.hook('request', async(event) => {
     event.context.security = { routeRules: securityRouteRules }
   })
-  
-  nitroApp.hooks.callHook('nuxt-security:ready')
 })
 
 function standardToSecurity(standardHeaders?: Record<string, any>) {

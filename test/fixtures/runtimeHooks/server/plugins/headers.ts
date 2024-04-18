@@ -3,10 +3,10 @@ export default defineNitroPlugin((nitroApp) => {
 
     // CSP will be set to the static values provided here
     nitroApp.hooks.callHook('nuxt-security:headers', {
-      route: '/static',
+      route: '/headers-static',
       headers: {
         contentSecurityPolicy: {
-          "script-src": ["'self'", "'unsafe-inline'", "static-value.com"],
+          "script-src": ["'self'", "static-value.com"],
         }
       }
     })
@@ -14,7 +14,7 @@ export default defineNitroPlugin((nitroApp) => {
     // CSP will be set to the dynamic values fetched from the API
     const { headers } = await $fetch('/api/runtime-headers')
     nitroApp.hooks.callHook('nuxt-security:headers', {
-      route: '/dynamic', 
+      route: '/headers-dynamic', 
       headers
     })
   })

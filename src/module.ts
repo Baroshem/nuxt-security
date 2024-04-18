@@ -82,7 +82,7 @@ export default defineNuxtModule<ModuleOptions>({
     )
     
     // Register nitro plugin to add security route rules to Nitro context
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-router'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-routeRules'))
 
     // Register nitro plugin to add nonce
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/10-nonce'))
