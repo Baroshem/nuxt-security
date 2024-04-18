@@ -5,7 +5,7 @@ import { resolveSecurityRules } from '../../nitro/utils'
 export default defineEventHandler((event) => {
   const rules = resolveSecurityRules(event)
 
-  if (rules?.allowedMethodsRestricter) {
+  if (rules.enabled && rules.allowedMethodsRestricter) {
     const { allowedMethodsRestricter } = rules
 
     const allowedMethods = allowedMethodsRestricter.methods

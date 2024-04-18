@@ -15,11 +15,20 @@ export default defineNuxtConfig({
         }
       },
       headers: {
-        'X-XSS-Protection': '1'
+        'X-XSS-Protection': '1',
+        'Foo': 'Bar'
       }
     },
     '/about': {
       prerender: true
+    },
+    '/preserve': {
+      security: {
+        headers: {
+          contentSecurityPolicy: false,
+          referrerPolicy: false
+        }
+      }
     }
   },
 

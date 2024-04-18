@@ -3,6 +3,7 @@ import { tryUseNuxt, useNitro } from '@nuxt/kit'
 import { defu } from 'defu'
 
 
+
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (_, { event }) => {
     // Exit if Nitro not available

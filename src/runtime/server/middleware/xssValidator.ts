@@ -12,7 +12,7 @@ import { resolveSecurityRules } from '../../nitro/utils'
 export default defineEventHandler(async(event) => {
   const rules = resolveSecurityRules(event)
 
-  if (rules?.xssValidator) {
+  if (rules.enabled && rules.xssValidator) {
     const filterOpt: IFilterXSSOptions = {
       ...rules.xssValidator,
       escapeHtml: undefined

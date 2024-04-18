@@ -13,7 +13,7 @@ const storage = useStorage<StorageItem>('#storage-driver')
 export default defineEventHandler(async(event) => {
   const rules = resolveSecurityRules(event)
 
-  if (rules?.rateLimiter) {
+  if (rules.enabled && rules.rateLimiter) {
     const { rateLimiter } = rules
     const ip = getIP(event)
 

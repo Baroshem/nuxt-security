@@ -1,4 +1,4 @@
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNuxt } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
@@ -19,6 +19,7 @@ import {
 } from './defaultConfig'
 import { headerObjectFromString, getKeyFromName, headerStringFromObject } from './runtime/utils/headers'
 import { hashBundledAssets } from './runtime/utils/hashes'
+import { useNitro } from '@nuxt/kit'
 
 declare module 'nuxt/schema' {
   interface NuxtOptions {
@@ -105,7 +106,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Register nitro plugin to enable CSP Headers presets for SSG
     // TEMPORARILY DISABLED AS NUXT 3.9.3 PREVENTS IMPORTING @NUXT/KIT IN NITRO PLUGINS
     /*
-    addServerPlugin(resolve('./runtime/nitro/plugins/70-cspSsgPresets'))
+    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/70-cspSsgPresets'))
     */
 
     // Nitro plugin to enable CSP Nonce for SSR
@@ -162,7 +163,7 @@ export default defineNuxtModule<ModuleOptions>({
         await installModule('nuxt-csurf', csrfConfig)
       }
       await installModule('nuxt-csurf')
-    }  
+    }
   }
 })
 

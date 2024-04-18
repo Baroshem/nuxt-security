@@ -2,6 +2,7 @@ import type { ModuleOptions as CsrfOptions } from 'nuxt-csurf'
 import type { Options as RemoveOptions } from 'unplugin-remove/types'
 import type { SecurityHeaders } from './headers'
 import type { AllowedHTTPMethods, BasicAuth, RateLimiter, RequestSizeLimiter, XssValidator, CorsOptions } from './middlewares'
+import type { CheerioAPI } from 'cheerio'
 
 export type Ssg = {
   meta?: boolean;
@@ -50,11 +51,13 @@ declare module 'nitropack' {
   }
 }
 
+type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
 declare module 'h3' {
   interface H3EventContext {
     security: {
       routeRules?: Record<string, NuxtSecurityRouteRules>;
       nonce?: string;
+      cheerios?: Record<Section, CheerioAPI[]>;
     }
   }
 }

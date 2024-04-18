@@ -16,7 +16,7 @@ export default defineNitroPlugin((nitroApp) => {
 
     // Exit if no CSP defined
     const rules = resolveSecurityRules(event)
-    if (!rules?.headers || !rules.headers.contentSecurityPolicy) {
+    if (!rules.enabled || !rules.headers || !rules.headers.contentSecurityPolicy) {
       return
     }
 
@@ -24,7 +24,7 @@ export default defineNitroPlugin((nitroApp) => {
     const styleHashes: Set<string> = new Set()
     const hashAlgorithm = 'sha256'
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
-    const cheerios = event.context.cheerios as Record<Section, ReturnType<typeof cheerio.load>[]>
+    const cheerios = event.context.security.cheerios!
 
     // Parse HTML if SSG is enabled for this route
     if (rules.ssg) {
