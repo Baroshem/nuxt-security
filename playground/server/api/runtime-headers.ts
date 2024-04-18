@@ -1,12 +1,13 @@
 export default defineEventHandler((event) => {
   const time = new Date().toISOString()
   return {
+    // The (deprecated) headers hook can modify headers but not the other options
     headers: {
       contentSecurityPolicy: {
-        'script-src': ["'self'", "'unsafe-inline'", "'nonce-{{nonce}}'", time] 
+        'script-src': [time] 
         // Time is not a valid CSP value, but it's just an example to verify that it's set once and not re-evaluated
-        // Nonce is provided in valid placeholder format, and it's set to be replaced with the proper nonce value
-      },
-    }
+      }
+    },
+    hidePoweredBy: false // The new routeRules hook can modify any option. This will show the server name.
   }
 })
