@@ -1,5 +1,5 @@
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(() => {
   const headers = {
     contentSecurityPolicy: {
       "script-src": ["'self'", '*.dynamic-value.com'],

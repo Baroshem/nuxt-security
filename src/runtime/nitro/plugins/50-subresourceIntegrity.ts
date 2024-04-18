@@ -1,6 +1,4 @@
 import { useStorage, defineNitroPlugin } from '#imports'
-//import { isPrerendering } from '../utils'
-import { type CheerioAPI } from 'cheerio'
 import { resolveSecurityRules } from '../utils'
 
 

@@ -5,7 +5,7 @@
 <script setup>
 const formData = new FormData()
 formData.append('test', 'test')
-const { data } = useFetch('/api/test', {
+useFetch('/api/test', {
   method: 'POST',
   body: formData
 })

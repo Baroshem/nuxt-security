@@ -1,4 +1,4 @@
-export default defineEventHandler((event) => {
+export default defineEventHandler(() => {
   const time = new Date().toISOString()
   return {
     // The (deprecated) headers hook can modify headers but not the other options
