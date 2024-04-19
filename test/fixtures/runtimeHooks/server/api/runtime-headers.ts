@@ -2,8 +2,8 @@
 export default defineEventHandler(() => {
   const headers = {
     contentSecurityPolicy: {
-      "script-src": ["'self'", '*.dynamic-value.com'],
+      "script-src": ["'self'", '*.dynamic-value.com', "'nonce-{{nonce}}'"],
     }
   }
-  return { headers, nonce: true }
+  return { headers, hidePoweredBy: false }
 })

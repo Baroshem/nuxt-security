@@ -20,7 +20,7 @@ export default defineNuxtConfig({
       }
     },
     '/about': {
-      prerender: true
+      swr: true
     },
     '/preserve': {
       security: {

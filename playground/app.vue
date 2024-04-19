@@ -3,12 +3,6 @@
 </template>
 
 <script setup>
-const formData = new FormData()
-formData.append('test', 'test')
-useFetch('/api/test', {
-  method: 'POST',
-  body: formData
-})
 // Permissions Policy Example
 
 onMounted(async () => {

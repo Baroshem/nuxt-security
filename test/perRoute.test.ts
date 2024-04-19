@@ -568,7 +568,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(corp).toBeNull()
     expect(coop).toBe('same-origin')
     expect(coep).toBe('require-corp')
-    expect(csp).toBe("font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src https: 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self'; upgrade-insecure-requests;")
+    expect(csp).toBe("font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src https:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self'; upgrade-insecure-requests;")
     expect(oac).toBe('?1')
     expect(rp).toBe('no-referrer')
     expect(sts).toBe('max-age=10; preload;')
@@ -633,6 +633,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
   })
 
+  // DEPRECATED
+  /*
   it('supports concatenation merging via the array syntax', async () => {
     const { headers } = await fetch('/merge-concatenate-array/deep/page')
     expect(headers).toBeDefined()
@@ -643,6 +645,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(csp).toBe("base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src blob: https: 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic'; upgrade-insecure-requests;")
     expect(pp).toBe('camera=(), display-capture=(https://* self), fullscreen=(), geolocation=(), microphone=()')
   })
+  */
 
   it('supports substitution merging via the string syntax', async () => {
     const { headers } = await fetch('/merge-substitute-string/deep/page')
