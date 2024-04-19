@@ -20,7 +20,10 @@ export default defineNuxtConfig({
       }
     },
     '/about': {
-      swr: true
+      prerender: true
+    },
+    '/swr': {
+      swr: 60
     },
     '/preserve': {
       security: {
@@ -41,7 +44,6 @@ export default defineNuxtConfig({
       tokensPerInterval: 1000,
       interval: 10000
     },
-    runtimeHooks: true,
     removeLoggers: false
   }
 })
