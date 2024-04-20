@@ -1,4 +1,4 @@
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, addServerImportsDir } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
@@ -44,39 +44,44 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
     
     nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
+
+    // First merge module options with default options
     nuxt.options.security = defuReplaceArray(
       { ...options, ...nuxt.options.security },
       {
         ...defaultSecurityConfig(nuxt.options.devServer.url)
       }
     )
-    const securityOptions = nuxt.options.security
-    // Disabled module when `enabled` is set to `false`
-    if (!securityOptions.enabled) { return }
 
-    registerStorageDriver(nuxt, securityOptions)
-
-    if (securityOptions.removeLoggers) {
-      addVitePlugin(viteRemove(securityOptions.removeLoggers))
-    }
-
+    // Then transfer basicAuth to private runtimeConfig
     nuxt.options.runtimeConfig.private = defu(
       nuxt.options.runtimeConfig.private,
       {
-        basicAuth: securityOptions.basicAuth
+        basicAuth: nuxt.options.security.basicAuth
       }
     )
+    delete (nuxt.options.security as any).basicAuth
 
-    delete (securityOptions as any).basicAuth
-
+    // Lastly, merge runtimeConfig with module options
     nuxt.options.runtimeConfig.security = defu(
       nuxt.options.runtimeConfig.security,
       {
-        ...securityOptions
+        ...nuxt.options.security
       }
     )
+
+    // At this point we have all security options merged into runtimeConfig
+    const securityOptions = nuxt.options.runtimeConfig.security
+
+    // Disable module when `enabled` is set to `false`
+    if (!securityOptions.enabled) { return }
+
+    // Register Vite transform plugin to remove loggers
+    if (securityOptions.removeLoggers) {
+      addVitePlugin(viteRemove(securityOptions.removeLoggers))
+    }
     
-    // Register nitro plugin to add security route rules to Nitro context
+    // Register nitro plugin to manage security rules at the level of each route
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-routeRules'))
 
     // Register nitro plugin to add nonce
@@ -109,82 +114,92 @@ export default defineNuxtModule<ModuleOptions>({
     // Recombine HTML from DOM tree
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/90-recombineHtml'))
 
+    // Register hook that will reorder nitro plugins to be applied last
+    reorderNitroPlugins(nuxt)
+
+    // Register request size limiter middleware
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/requestSizeLimiter')
     })
 
+    // Register CORS middleware
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/corsHandler')
     })
 
+    // Register allowed methods restricter middleware
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/allowedMethodsRestricter')
     })
 
+    // Register rate limiter middleware
+    registerRateLimiterStorage(nuxt, securityOptions)
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/rateLimiter')
     })
-
+    
+    // Register XSS validator middleware
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/xssValidator')
     })
     
     // Register basicAuth middleware that is disabled by default
-    const basicAuthConfig = nuxt.options.runtimeConfig.private
-      .basicAuth as unknown as BasicAuth
-    if (basicAuthConfig && ((basicAuthConfig as any)?.enabled || (basicAuthConfig as any)?.value?.enabled)) {
+    const basicAuthConfig = nuxt.options.runtimeConfig.private.basicAuth
+    if (basicAuthConfig && (basicAuthConfig.enabled || (basicAuthConfig as any)?.value?.enabled)) {
       addServerHandler({
         route: (basicAuthConfig as any).route || '',
         handler: resolver.resolve('./runtime/server/middleware/basicAuth')
       })
     }
-    
-    // Calculates SRI hashes at build time
-    nuxt.hook('nitro:build:before', hashBundledAssets)
+
+    // Import CSURF module
+    if (securityOptions.csrf) {
+      if (Object.keys(securityOptions.csrf).length) {
+        await installModule('nuxt-csurf', securityOptions.csrf)
+      } else {
+        await installModule('nuxt-csurf')
+      }
+    }
+
+    // Import server utils
+    addServerImportsDir(resolver.resolve('./runtime/server/utils'))
 
     // Import composables
     addImportsDir(resolver.resolve('./runtime/composables'))
-    /*
-    nuxt.hook('imports:dirs', (dirs) => {
-      dirs.push(resolver.resolve('./runtime/composables'))
-    })
-    */
 
-    // Import CSURF module
-    const csrfConfig = nuxt.options.security.csrf
-    if (csrfConfig) {
-      if (Object.keys(csrfConfig).length) {
-        await installModule('nuxt-csurf', csrfConfig)
-      }
-      await installModule('nuxt-csurf')
-    }
+    // Calculates SRI hashes at build time
+    nuxt.hook('nitro:build:before', hashBundledAssets)
   }
 })
 
-
-function registerStorageDriver(nuxt: Nuxt, securityOptions: ModuleOptions) {
+/**
+ * 
+ * Register storage driver for the rate limiter
+ */
+function registerRateLimiterStorage(nuxt: Nuxt, securityOptions: ModuleOptions) {
   nuxt.hook('nitro:config', (config) => {
-    if (securityOptions.rateLimiter) {
-      // setup unstorage
-      const driver = (securityOptions.rateLimiter).driver
-      if (driver) {
-        const { name, options } = driver
-        config.storage = defu(
-          config.storage,
-          {
-            '#storage-driver': {
-              driver: name,
-              options
-            }
-          }
-        )
+    const driver = defu(
+      securityOptions.rateLimiter ? securityOptions.rateLimiter.driver : undefined,
+      { name: 'lruCache' }
+    )
+    const { name, options } = driver
+    config.storage = defu(
+      config.storage,
+      {
+        '#rate-limiter-storage': {
+          driver: name,
+          options
+        }
       }
-    }
+    )
   })
+}
 
-  // Make sure our nitro plugins will be applied last
-  // After all other third-party modules that might have loaded their own nitro plugins
-  
+/**
+ * Make sure our nitro plugins will be applied last,
+ * After all other third-party modules that might have loaded their own nitro plugins
+ */
+function reorderNitroPlugins(nuxt: Nuxt) {  
   nuxt.hook('nitro:init', nitro => {    
     const resolver = createResolver(import.meta.url)
     const securityPluginsPrefix = resolver.resolve('./runtime/nitro/plugins')
@@ -223,6 +238,5 @@ function registerStorageDriver(nuxt: Nuxt, securityOptions: ModuleOptions) {
         }
       })
     })
-    
   })
 }

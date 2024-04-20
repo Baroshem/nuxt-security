@@ -7,7 +7,10 @@ export default defineNuxtConfig({
   routeRules: {
     '/secret': {
       security: {
-        rateLimiter: false,
+        rateLimiter: {
+          tokensPerInterval:1000,
+          interval: 1000,
+        },
         headers: {
           strictTransportSecurity: {
             preload: true
@@ -25,6 +28,11 @@ export default defineNuxtConfig({
     '/swr': {
       swr: 60
     },
+    '/api/**': {
+      security: {
+        rateLimiter: false
+      }
+    },
     '/preserve': {
       security: {
         headers: {
@@ -41,8 +49,9 @@ export default defineNuxtConfig({
       xXSSProtection: '0'
     },
     rateLimiter: {
-      tokensPerInterval: 1000,
-      interval: 10000
+      tokensPerInterval: 3,
+      interval: 30000,
+      headers: true
     },
     removeLoggers: false
   }

@@ -10,24 +10,10 @@ export type Ssg = {
   hashStyles?: boolean;
 };
 
-export type NuxtSecurityRouteRules = Partial<{
-  headers: SecurityHeaders | false;
-  requestSizeLimiter: RequestSizeLimiter | false;
-  rateLimiter: RateLimiter | false;
-  xssValidator: XssValidator | false;
-  corsHandler: CorsOptions | false;
-  allowedMethodsRestricter: AllowedHTTPMethods | false;
-  hidePoweredBy: boolean;
-  enabled: boolean;
-  nonce: boolean;
-  ssg: Ssg | false;
-  sri: boolean
-}>
-
 export interface ModuleOptions {
   headers: SecurityHeaders | false;
   requestSizeLimiter: RequestSizeLimiter | false;
-  rateLimiter: RateLimiter | false;
+  rateLimiter: RateLimiter;
   xssValidator: XssValidator | false;
   corsHandler: CorsOptions | false;
   allowedMethodsRestricter: AllowedHTTPMethods | false;
@@ -41,24 +27,8 @@ export interface ModuleOptions {
   removeLoggers: RemoveOptions | false;
 }
 
-/*
-export type ModuleOptions = {
-  headers: SecurityHeaders | false;
-  requestSizeLimiter: RequestSizeLimiter | false;
-  rateLimiter: RateLimiter | false;
-  xssValidator: XssValidator | false;
-  corsHandler: CorsOptions | false;
-  allowedMethodsRestricter: AllowedHTTPMethods | false;
-  hidePoweredBy: boolean;
-  basicAuth: BasicAuth | false;
-  enabled: boolean;
-  csrf: CsrfOptions | boolean;
-  nonce: boolean;
-  removeLoggers: RemoveOptions | false;
-  ssg: Ssg | false;
-  sri: boolean
-}
-*/
+export type NuxtSecurityRouteRules = Partial<Omit<ModuleOptions, 'csrf' | 'basicAuth' | 'rateLimiter'> & { rateLimiter: Omit<RateLimiter, 'driver'> | false }>
+
 
 declare module 'nitropack' {
   interface NitroRuntimeHooks {
