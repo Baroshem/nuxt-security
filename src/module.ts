@@ -3,16 +3,10 @@ import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
 import { defuReplaceArray } from './utils'
-import type {
-  ModuleOptions,
-  NuxtSecurityRouteRules
-} from './types/index'
-import type {
-  BasicAuth
-} from './types/middlewares'
-import {
-  defaultSecurityConfig
-} from './defaultConfig'
+import type { ModuleOptions, NuxtSecurityRouteRules } from './types/index'
+import type { BasicAuth } from './types/middlewares'
+import { defaultSecurityConfig } from './defaultConfig'
+import type { CheerioAPI } from 'cheerio'
 import { hashBundledAssets } from './runtime/utils/hashes'
 
 declare module 'nuxt/schema' {
@@ -28,6 +22,40 @@ declare module 'nuxt/schema' {
 declare module 'nitropack' {
   interface NitroRouteConfig {
     security?: NuxtSecurityRouteRules;
+  }
+  interface NitroRuntimeHooks {
+    /**
+     * @deprecated
+     */
+    'nuxt-security:headers': (config: {
+      /**
+       * The route for which the headers are being configured
+       */
+      route: string,
+      /**
+       * The headers configuration for the route
+       */
+      headers: NuxtSecurityRouteRules['headers']
+    }) => void
+    /**
+     * @deprecated
+     */
+    'nuxt-security:ready': () => void
+    /**
+     * Runtime hook to configure security rules for each route 
+     */
+    'nuxt-security:routeRules': (routeRules: Record<string, NuxtSecurityRouteRules>) => void
+  }
+}
+
+type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
+declare module 'h3' {
+  interface H3EventContext {
+    security: {
+      routeRules?: Record<string, NuxtSecurityRouteRules>;
+      nonce?: string;
+      cheerios?: Record<Section, CheerioAPI[]>;
+    }
   }
 }
 

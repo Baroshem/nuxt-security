@@ -9,11 +9,10 @@ export default defineNuxtConfig({
     }
   },
   routeRules: {
-    test: {
+    '/test': {
       security: {
         rateLimiter: {
           tokensPerInterval: 10,
-          interval: 'hour'
         }
       }
     }
