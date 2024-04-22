@@ -15,6 +15,7 @@
     "nuxt": "^3.11.2"
   },
   "resolutions": {
+    "string-width": "4.2.3",
     "pinceau": "0.15.4",
     "mdast-util-gfm-table": "2.0.0"
   }
