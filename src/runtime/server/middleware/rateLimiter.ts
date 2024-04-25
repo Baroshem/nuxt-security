@@ -1,7 +1,8 @@
 import type { H3Event } from 'h3'
 import { defineEventHandler, createError, setResponseHeader, useStorage, getRequestIP } from '#imports'
 import type { RateLimiter } from '~/src/module'
-import { resolveSecurityRoute, resolveSecurityRules } from '../../nitro/utils'
+import { resolveSecurityRoute, resolveSecurityRules } from '../../nitro/context'
+
 
 type StorageItem = {
   value: number,
@@ -17,11 +18,11 @@ export default defineEventHandler(async(event) => {
   }
 
   const rules = resolveSecurityRules(event)
+  const route = resolveSecurityRoute(event)
 
   if (rules.enabled && rules.rateLimiter) {
     const { rateLimiter } = rules
     const ip = getIP(event)
-    const route = getRoute(event)
     const url = ip + route
 
     let storageItem = await storage.getItem(url) as StorageItem
@@ -85,7 +86,3 @@ function getIP (event: H3Event) {
   return ip
 }
 
-function getRoute(event: H3Event) {
-  const route = resolveSecurityRoute(event) || ''
-  return route
-}

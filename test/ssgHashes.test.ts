@@ -29,7 +29,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     return { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes }
   }
 
-  it('sets CSP in SSG mode', async () => {
+  it('sets CSP via meta in SSG mode', async () => {
     const res = await fetch('/')
 
     const body = await res.text()
@@ -45,6 +45,25 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
+  })
+
+  it('also sets CSP via headers for pre-rendered pages', async () => {
+    const res = await fetch('/')
+
+    const headers = res.headers
+    const headerCsp = headers.get('content-security-policy')
+
+    const body = await res.text()
+    const { csp: metaCsp } = extractDataFromBody(body)
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(body).toBeDefined()
+    expect(metaCsp).toBeDefined()
+    expect(headerCsp).toBeDefined()
+    // Frame ancestors are not injected in meta tag
+    const strippedHeaderCsp = headerCsp!.replace("frame-ancestors 'self'; ", '')
+    expect(strippedHeaderCsp).toBe(metaCsp)
   })
 
   it('sets script-src for inline scripts', async () => {

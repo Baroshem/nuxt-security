@@ -835,13 +835,11 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
   it('does not inject CSP hashes on a deeply-disabled route', async () => {
     const res = await fetch('/csp-hash/deep/disabled')
-    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
-    /*
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
     const headerHashes = cspHeaderValue!.match(/'sha256-(.*?)'/)
     expect(headerHashes).toBeNull()
-    */
+
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
@@ -855,13 +853,10 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
   it('injects CSP hashes on a deeply-enabled route', async () => {
     const res = await fetch('/csp-hash/deep/enabled')
-    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
-    /*
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
     const headerHashes = cspHeaderValue!.match(/'sha256-(.*?)'/)
     expect(headerHashes).toHaveLength(2)
-    */
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
@@ -876,11 +871,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
   it('does not inject CSP meta on a deeply-disabled route', async () => {
     const res = await fetch('/csp-meta/deep/disabled')
-    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
-    /*
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
-    */
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
@@ -894,11 +886,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
   it('injects CSP meta on a deeply-enabled route', async () => {
     const res = await fetch('/csp-meta/deep/enabled')
-    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
-    /*
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
-    */
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
@@ -966,7 +955,6 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(rp).toBeDefined()
     expect(rp).toBeNull()
   })
-
 })
 
 

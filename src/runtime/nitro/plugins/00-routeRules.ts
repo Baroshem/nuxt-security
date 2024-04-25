@@ -1,30 +1,30 @@
-import { defineNitroPlugin, useRuntimeConfig } from "#imports"
-import { NuxtSecurityRouteRules } from "../../../types"
+import { defineNitroPlugin, useRuntimeConfig, useStorage } from "#imports"
 import { defuReplaceArray } from "../utils"
 import { OptionKey, SecurityHeaders } from "../../../types/headers"
 import { getKeyFromName, headerObjectFromString } from "../../utils/headers"
+import { getAppSecurityOptions } from '../context'
 
-export default defineNitroPlugin((nitroApp) => {
-
+/**
+ * This plugin merges all security options into the global security context
+ */
+export default defineNitroPlugin(async(nitroApp) => {
+  const appSecurityOptions = getAppSecurityOptions()
   const runtimeConfig = useRuntimeConfig()
-  const securityRouteRules: Record<string, NuxtSecurityRouteRules> = {}
-
   // First insert standard route rules headers
   for (const route in runtimeConfig.nitro.routeRules) {
     const rule = runtimeConfig.nitro.routeRules[route]
     const { headers } = rule
     const securityHeaders = standardToSecurity(headers)
     if (securityHeaders) {
-      securityRouteRules[route] = { headers: securityHeaders }
+      appSecurityOptions[route] = { headers: securityHeaders }
     }
   }
 
-
   // Then insert global security config
   const securityOptions = runtimeConfig.security
-  securityRouteRules['/**'] = defuReplaceArray(
+  appSecurityOptions['/**'] = defuReplaceArray(
     securityOptions,
-    securityRouteRules['/**']
+    appSecurityOptions['/**']
   )
 
   // Then insert route specific security headers
@@ -34,30 +34,28 @@ export default defineNitroPlugin((nitroApp) => {
     if (security) {
       const { headers } = security
       const securityHeaders = backwardsCompatibleSecurity(headers)
-      securityRouteRules[route] = defuReplaceArray(
+      appSecurityOptions[route] = defuReplaceArray(
         { headers: securityHeaders },
         security,
-        securityRouteRules[route],
+        appSecurityOptions[route],
       )
     }
   }
 
   // TO DO : DEPRECATE IN FAVOR OF NUXT-SECURITY:ROUTERULES HOOK
   nitroApp.hooks.hook('nuxt-security:headers', ({ route, headers }) => {
-    securityRouteRules[route] = defuReplaceArray(
+    appSecurityOptions[route] = defuReplaceArray(
       { headers },
-      securityRouteRules[route]
+      appSecurityOptions[route]
     )
   })
-  nitroApp.hooks.callHook('nuxt-security:ready')
 
   // NEW HOOK HAS ABILITY TO CONFIGURE ALL SECURITY OPTIONS FOR EACH ROUTE
-  nitroApp.hooks.callHook('nuxt-security:routeRules', securityRouteRules)
-
-
-  nitroApp.hooks.hook('request', async(event) => {
-    event.context.security = { routeRules: securityRouteRules }
+  nitroApp.hooks.hook('nuxt-security:ready', async() => {
+    await nitroApp.hooks.callHook('nuxt-security:routeRules', appSecurityOptions)
   })
+
+  await nitroApp.hooks.callHook('nuxt-security:ready')
 })
 
 /**

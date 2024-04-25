@@ -7,7 +7,7 @@ import {
   readMultipartFormData,
 } from '#imports'
 import { HTTPMethod } from '~/src/module'
-import { resolveSecurityRules } from '../../nitro/utils'
+import { resolveSecurityRules } from '../../nitro/context'
 
 export default defineEventHandler(async(event) => {
   const rules = resolveSecurityRules(event)
