@@ -12,7 +12,7 @@ export type Ssg = {
 export interface ModuleOptions {
   headers: SecurityHeaders | false;
   requestSizeLimiter: RequestSizeLimiter | false;
-  rateLimiter: RateLimiter;
+  rateLimiter: RateLimiter | false;
   xssValidator: XssValidator | false;
   corsHandler: CorsOptions | false;
   allowedMethodsRestricter: AllowedHTTPMethods | false;

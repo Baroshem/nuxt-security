@@ -88,6 +88,5 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
     hashScripts: true,
     hashStyles: false
   },
-  sri: true,
-  //runtimeHooks: true
+  sri: true
 })
