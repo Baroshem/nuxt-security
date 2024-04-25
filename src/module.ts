@@ -195,8 +195,15 @@ export default defineNuxtModule<ModuleOptions>({
     // Import composables
     addImportsDir(resolver.resolve('./runtime/composables'))
 
-    // Calculates SRI hashes at build time
-    nuxt.hook('nitro:build:before', hashBundledAssets)
+    // Record SRI Hashes in the Virtual File System at build time
+    let sriHashes: Record<string, string> = {}
+    nuxt.options.nitro.virtual = defu(
+      { '#sri-hashes': () => `export default ${JSON.stringify(sriHashes)}` },
+      nuxt.options.nitro.virtual
+    )
+    nuxt.hook('nitro:build:before', async(nitro) => {
+      sriHashes = await hashBundledAssets(nitro)
+    })
   }
 })
 

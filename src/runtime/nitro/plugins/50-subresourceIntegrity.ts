@@ -1,29 +1,16 @@
-import { useStorage, defineNitroPlugin } from '#imports'
+import { defineNitroPlugin } from '#imports'
 import { resolveSecurityRules } from '../utils'
-
+//@ts-expect-error : we are importing from the virtual file system
+import sriHashes from '#sri-hashes'
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', async(html, { event }) => {
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Exit if SRI not enabled for this route
     const rules = resolveSecurityRules(event)
     if (!rules.enabled || !rules.sri) {
       return
     }
 
-    // Retrieve the sriHases that we computed at build time
-    //
-    // - If we are in a pre-rendering step of nuxi generate
-    //   Then the /integrity directory does not exist in server assets
-    //   But it is still in the .nuxt build directory
-    //
-    // - Conversely, if we are in a standalone SSR server pre-built by nuxi build
-    //   Then we don't have a .nuxt build directory anymore
-    //   But we did save the /integrity directory into the server assets    
-    const prerendering = !!import.meta.prerender
-    const storageBase = prerendering ? 'build' : 'assets'   
-    const sriHashes = await useStorage(storageBase).getItem<Record<string, string>>('integrity:sriHashes.json') || {}
-
-    
     // Scan all relevant sections of the NuxtRenderHtmlContext
     // Note: integrity can only be set on scripts and on links with rel preload, modulepreload and stylesheet
     // However the SRI standard provides that other elements may be added to that list in the future
