@@ -1,7 +1,9 @@
 <template>
   <div>
     {{ data }}
-    <NuxtLink to="/about">Go to about page</NuxtLink>
+    <NuxtLink to="/about">
+      Go to about page
+    </NuxtLink>
   </div>
 </template>
 

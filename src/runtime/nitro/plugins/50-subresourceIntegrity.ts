@@ -1,13 +1,12 @@
-import { useStorage, defineNitroPlugin, getRouteRules } from '#imports'
-import { isPrerendering } from '../utils'
-import { type CheerioAPI } from 'cheerio'
+import { useStorage, defineNitroPlugin } from '#imports'
+import { resolveSecurityRules } from '../utils'
 
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', async (html, { event }) => {
+  nitroApp.hooks.hook('render:html', async(html, { event }) => {
     // Exit if SRI not enabled for this route
-    const { security } = getRouteRules(event)
-    if (!security?.sri) {
+    const rules = resolveSecurityRules(event)
+    if (!rules.enabled || !rules.sri) {
       return
     }
 
@@ -20,7 +19,7 @@ export default defineNitroPlugin((nitroApp) => {
     // - Conversely, if we are in a standalone SSR server pre-built by nuxi build
     //   Then we don't have a .nuxt build directory anymore
     //   But we did save the /integrity directory into the server assets    
-    const prerendering = isPrerendering(event)
+    const prerendering = !!import.meta.prerender
     const storageBase = prerendering ? 'build' : 'assets'   
     const sriHashes = await useStorage(storageBase).getItem<Record<string, string>>('integrity:sriHashes.json') || {}
 
@@ -30,7 +29,7 @@ export default defineNitroPlugin((nitroApp) => {
     // However the SRI standard provides that other elements may be added to that list in the future
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
-    const cheerios = event.context.cheerios as Record<Section, CheerioAPI[]>
+    const cheerios = event.context.security.cheerios!
     for (const section of sections) {
       cheerios[section].forEach($ => {
         // Add integrity to all relevant script tags

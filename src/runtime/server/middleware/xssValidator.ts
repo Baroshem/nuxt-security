@@ -4,20 +4,20 @@ import {
   createError,
   getQuery,
   readBody,
-  getRouteRules,
-  readMultipartFormData
+  readMultipartFormData,
 } from '#imports'
 import { HTTPMethod } from '~/src/module'
+import { resolveSecurityRules } from '../../nitro/utils'
 
-export default defineEventHandler(async (event) => {
-  const { security } = getRouteRules(event)
+export default defineEventHandler(async(event) => {
+  const rules = resolveSecurityRules(event)
 
-  if (security?.xssValidator) {
+  if (rules.enabled && rules.xssValidator) {
     const filterOpt: IFilterXSSOptions = {
-      ...security.xssValidator,
+      ...rules.xssValidator,
       escapeHtml: undefined
     }
-    if (security.xssValidator.escapeHtml === false) {
+    if (rules.xssValidator.escapeHtml === false) {
       // No html escaping (by default "<" is replaced by "&lt;" and ">" by "&gt;")
       filterOpt.escapeHtml = (value: string) => value
     }
@@ -25,8 +25,8 @@ export default defineEventHandler(async (event) => {
 
     if (event.node.req.socket.readyState !== 'readOnly') {
       if (
-        security.xssValidator.methods &&
-        security.xssValidator.methods.includes(
+        rules.xssValidator.methods &&
+        rules.xssValidator.methods.includes(
           event.node.req.method! as HTTPMethod
         )
       ) {
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
               statusCode: 400,
               statusMessage: 'Bad Request'
             }
-            if (security.xssValidator.throwError === false) {
+            if (rules.xssValidator.throwError === false) {
               return badRequestError
             }
 

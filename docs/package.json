@@ -10,11 +10,13 @@
   },
   "devDependencies": {
     "@nuxt-themes/docus": "^1.14.7",
+    "@nuxtjs/plausible": "^1.0.0",
     "@nuxtlabs/github-module": "^1.6.3",
-    "@nuxtjs/plausible": "^0.2.1",
-    "nuxt": "^3.8.0"
+    "nuxt": "^3.11.2"
   },
   "resolutions": {
-    "string-width": "4.2.3"
- }
+    "string-width": "4.2.3",
+    "pinceau": "0.15.4",
+    "mdast-util-gfm-table": "2.0.0"
+  }
 }

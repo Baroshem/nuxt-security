@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { setup, fetch, useTestContext } from '@nuxt/test-utils'
+import { setup, fetch } from '@nuxt/test-utils'
 
 describe('[nuxt-security] Hide Powered-By', async () => {
   await setup({

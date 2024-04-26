@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { setup, fetch } from '@nuxt/test-utils'
-import exp from 'node:constants'
 
 describe('[nuxt-security] SSG support of CSP', async () => {
   await setup({

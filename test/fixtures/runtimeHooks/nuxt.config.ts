@@ -1,8 +1,6 @@
-import MyModule from '../../../src/module'
-
 export default defineNuxtConfig({
   modules: [
-    MyModule
+    '../../../src/module'
   ],
   routeRules:{
     '/test': {
@@ -18,7 +16,7 @@ export default defineNuxtConfig({
       crossOriginResourcePolicy: 'cross-origin',
       contentSecurityPolicy: {
         'frame-ancestors': ['*','weird-value.com'],
-        'script-src': ["'unsafe-inline'", '*'],
+        'script-src': ["'unsafe-inline'", '*', "'nonce-{{nonce}}'"],
       },
     },
   }

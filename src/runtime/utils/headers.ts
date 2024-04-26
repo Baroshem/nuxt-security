@@ -26,15 +26,27 @@ export const KEYS_TO_NAMES: Record<OptionKey, HeaderName> = {
 
 const NAMES_TO_KEYS = Object.fromEntries(Object.entries(KEYS_TO_NAMES).map(([key, name]) => ([name, key]))) as Record<HeaderName, OptionKey>
 
+/**
+ * 
+ * Converts a valid OptionKey into its corresponding standard header name
+ */
 export function getNameFromKey(key: OptionKey) {
   return KEYS_TO_NAMES[key]
 }
 
+/**
+ * 
+ * Converts a standard header name to its corresponding OptionKey name, or undefined if not found 
+ */
 export function getKeyFromName(headerName: string) {
   const [, key] = Object.entries(NAMES_TO_KEYS).find(([name]) => name.toLowerCase() === headerName.toLowerCase()) || []
   return key
 }
 
+/**
+ * 
+ * Gigen a valid OptionKey, converts a header object value into its corresponding string format 
+ */
 export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclude<SecurityHeaders[OptionKey], undefined>) {
   // False value translates into empty header
   if (optionValue === false) {
@@ -86,6 +98,10 @@ export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclud
   }
 }
 
+/**
+ * 
+ * Given a valid OptionKey, converts a header value string into its corresponding object format
+ */
 export function headerObjectFromString(optionKey: OptionKey, headerValue: string) {
   // Empty string should remove header
   if (!headerValue) {

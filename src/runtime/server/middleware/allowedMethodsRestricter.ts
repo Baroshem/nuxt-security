@@ -1,13 +1,16 @@
-import { getRouteRules, defineEventHandler, createError } from '#imports'
+import { defineEventHandler, createError } from '#imports'
+import { HTTPMethod } from '~/src/module'
+import { resolveSecurityRules } from '../../nitro/utils'
 
 export default defineEventHandler((event) => {
-  const { security } = getRouteRules(event)
+  const rules = resolveSecurityRules(event)
 
-  if (security?.allowedMethodsRestricter) {
-  const { allowedMethodsRestricter } = security
+  if (rules.enabled && rules.allowedMethodsRestricter) {
+    const { allowedMethodsRestricter } = rules
 
     const allowedMethods = allowedMethodsRestricter.methods
-    if (allowedMethods !== '*' && !allowedMethods.includes(event.node.req.method!)) {
+
+    if (allowedMethods !== '*' && !allowedMethods.includes(event.node.req.method! as HTTPMethod)) {
       const methodNotAllowedError = {
         statusCode: 405,
         statusMessage: 'Method not allowed'

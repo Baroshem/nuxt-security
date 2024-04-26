@@ -1,7 +1,7 @@
 import { defineNitroPlugin, getResponseHeaders } from '#imports'
 import { tryUseNuxt, useNitro } from '@nuxt/kit'
 import { defu } from 'defu'
-import { isPrerendering } from '../utils'
+
 
 
 export default defineNitroPlugin((nitroApp) => {
@@ -11,7 +11,7 @@ export default defineNitroPlugin((nitroApp) => {
       return
     }
     // Exit in SSR mode
-    if (!isPrerendering(event)) {
+    if (!import.meta.prerender) {
       return
     }
 
