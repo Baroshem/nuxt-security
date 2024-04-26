@@ -1,6 +1,6 @@
 import { defineNitroPlugin, useRuntimeConfig } from "#imports"
 import { NuxtSecurityRouteRules } from "../../../types"
-import { defuReplaceArray } from "../../../utils"
+import { defuReplaceArray } from "../utils"
 import { OptionKey, SecurityHeaders } from "../../../types/headers"
 import { getKeyFromName, headerObjectFromString } from "../../utils/headers"
 
@@ -26,7 +26,7 @@ export default defineNitroPlugin((nitroApp) => {
     securityOptions,
     securityRouteRules['/**']
   )
-  
+
   // Then insert route specific security headers
   for (const route in runtimeConfig.nitro.routeRules) {
     const rule = runtimeConfig.nitro.routeRules[route]
@@ -61,7 +61,7 @@ export default defineNitroPlugin((nitroApp) => {
 })
 
 /**
- * Convert standard headers string format to security headers object format, returning undefined if no valid security header is found 
+ * Convert standard headers string format to security headers object format, returning undefined if no valid security header is found
  */
 function standardToSecurity(standardHeaders?: Record<string, any>) {
   if (!standardHeaders) {
@@ -78,7 +78,7 @@ function standardToSecurity(standardHeaders?: Record<string, any>) {
         const objectValue: any = headerObjectFromString(optionKey, headerValue)
         standardHeadersAsObject[optionKey] = objectValue
       } else {
-        // Here we ensure backwards compatibility 
+        // Here we ensure backwards compatibility
         // Because in the pre-rc1 syntax, standard headers could also be supplied in object format
         standardHeadersAsObject[optionKey] = headerValue
         //standardHeaders[headerName] = headerStringFromObject(optionKey, headerValue)
@@ -94,7 +94,7 @@ function standardToSecurity(standardHeaders?: Record<string, any>) {
 }
 
 /**
- * 
+ *
  * Ensure backwards compatibility with pre-rc1 syntax, returning undefined if no securityHeaders is passed
  */
 function backwardsCompatibleSecurity(securityHeaders?: SecurityHeaders | false) {
