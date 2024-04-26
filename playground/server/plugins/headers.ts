@@ -1,14 +1,10 @@
-
 export default defineNitroPlugin((nitroApp) => {
-    nitroApp.hooks.hook('nuxt-security:ready', () => {
-        nitroApp.hooks.callHook('nuxt-security:headers',
-        { 
-            route: '/api/runtime-hooks',
-            headers: {
-                contentSecurityPolicy: {
-                    "script-src": ["'self'", "'unsafe-inline'"],
-                }
-            }
-        })
-    })
+  nitroApp.hooks.hook('nuxt-security:ready', async() => {
+    const { headers } = await $fetch('/api/runtime-headers')
+    nitroApp.hooks.callHook('nuxt-security:headers',
+      {
+        route: '/runtime',
+        headers
+      })
+  })
 })

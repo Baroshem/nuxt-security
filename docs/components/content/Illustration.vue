@@ -227,7 +227,10 @@
         filterUnits="userSpaceOnUse"
         color-interpolation-filters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood
+          flood-opacity="0"
+          result="BackgroundImageFix"
+        />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -236,7 +239,10 @@
         />
         <feOffset dy="4" />
         <feGaussianBlur stdDeviation="2" />
-        <feComposite in2="hardAlpha" operator="out" />
+        <feComposite
+          in2="hardAlpha"
+          operator="out"
+        />
         <feColorMatrix
           type="matrix"
           values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.44 0"
@@ -262,7 +268,11 @@
         gradientUnits="userSpaceOnUse"
       >
         <stop stop-color="white" />
-        <stop offset="1" stop-color="white" stop-opacity="0" />
+        <stop
+          offset="1"
+          stop-color="white"
+          stop-opacity="0"
+        />
       </linearGradient>
       <linearGradient
         id="paint1_linear_1180_138"
@@ -273,7 +283,11 @@
         gradientUnits="userSpaceOnUse"
       >
         <stop stop-color="white" />
-        <stop offset="1" stop-color="white" stop-opacity="0" />
+        <stop
+          offset="1"
+          stop-color="white"
+          stop-opacity="0"
+        />
       </linearGradient>
       <linearGradient
         id="paint2_linear_1180_138"
@@ -284,10 +298,18 @@
         gradientUnits="userSpaceOnUse"
       >
         <stop stop-color="white" />
-        <stop offset="1" stop-color="white" stop-opacity="0" />
+        <stop
+          offset="1"
+          stop-color="white"
+          stop-opacity="0"
+        />
       </linearGradient>
       <clipPath id="clip0_1180_138">
-        <rect width="403" height="226" fill="white" />
+        <rect
+          width="403"
+          height="226"
+          fill="white"
+        />
       </clipPath>
     </defs>
   </svg>

@@ -1,25 +1,33 @@
 import type { H3Event } from 'h3'
-import { defineEventHandler, getRequestHeader, createError, setResponseHeader, getRouteRules, useStorage } from '#imports'
+import { defineEventHandler, createError, setResponseHeader, useStorage, getRequestIP } from '#imports'
 import type { RateLimiter } from '~/src/module'
+import { resolveSecurityRoute, resolveSecurityRules } from '../../nitro/utils'
 
 type StorageItem = {
   value: number,
   date: number
 }
 
-const storage = useStorage<StorageItem>('#storage-driver')
+const storage = useStorage<StorageItem>('#rate-limiter-storage')
 
-export default defineEventHandler(async (event) => {
-  const { security } = getRouteRules(event)
+export default defineEventHandler(async(event) => {
+  // Disable rate limiter in prerender mode
+  if (import.meta.prerender) { 
+    return 
+  }
 
-  if (security?.rateLimiter) {
-    const { rateLimiter } = security
+  const rules = resolveSecurityRules(event)
+
+  if (rules.enabled && rules.rateLimiter) {
+    const { rateLimiter } = rules
     const ip = getIP(event)
+    const route = getRoute(event)
+    const url = ip + route
 
-    let storageItem = await storage.getItem(ip) as StorageItem
+    let storageItem = await storage.getItem(url) as StorageItem
 
     if (!storageItem) {
-      await setStorageItem(rateLimiter, ip)
+      await setStorageItem(rateLimiter, url)
     } else {
       if (typeof storageItem !== 'object') { return }
 
@@ -27,8 +35,8 @@ export default defineEventHandler(async (event) => {
       const timeForInterval = storageItem.date + Number(rateLimiter.interval)
 
       if (Date.now() >= timeForInterval) {
-        await setStorageItem(rateLimiter, ip)
-        storageItem = await storage.getItem(ip) as StorageItem
+        await setStorageItem(rateLimiter, url)
+        storageItem = await storage.getItem(url) as StorageItem
       }
 
       const isLimited = timeSinceFirstRateLimit <= timeForInterval && storageItem.value === 0
@@ -39,7 +47,7 @@ export default defineEventHandler(async (event) => {
           statusMessage: 'Too Many Requests'
         }
 
-        if (security.rateLimiter.headers) {
+        if (rules.rateLimiter.headers) {
           setResponseHeader(event, 'x-ratelimit-remaining', 0)
           setResponseHeader(event, 'x-ratelimit-limit', rateLimiter.tokensPerInterval)
           setResponseHeader(event, 'x-ratelimit-reset', timeForInterval)
@@ -55,8 +63,8 @@ export default defineEventHandler(async (event) => {
 
       const newStorageItem: StorageItem = { value: storageItem.value - 1, date: newItemDate }
 
-      await storage.setItem(ip, newStorageItem)
-      const currentItem = await storage.getItem(ip)as StorageItem
+      await storage.setItem(url, newStorageItem)
+      const currentItem = await storage.getItem(url)as StorageItem
 
       if (currentItem && rateLimiter.headers) {
         setResponseHeader(event, 'x-ratelimit-remaining', currentItem.value)
@@ -67,27 +75,17 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-async function setStorageItem (rateLimiter: RateLimiter, ip: string) {
+async function setStorageItem(rateLimiter: Omit<RateLimiter, 'driver'>, url: string) {
   const rateLimitedObject: StorageItem = { value: rateLimiter.tokensPerInterval, date: Date.now() }
-  await storage.setItem(ip, rateLimitedObject)
+  await storage.setItem(url, rateLimitedObject)
 }
 
-// Taken and modified from https://github.com/timb-103/nuxt-rate-limit/blob/8a37846469c2f32f0e2ca6893a31baeec944d56c/src/runtime/server/utils/rate-limit.ts#L78
 function getIP (event: H3Event) {
-  const req = event?.node?.req
-  let xForwardedFor = getRequestHeader(event, 'x-forwarded-for')
-
-  if (xForwardedFor === '::1') {
-    xForwardedFor = '127.0.0.1'
-  }
-
-  const transformedXForwardedFor = xForwardedFor?.split(',')?.pop()?.trim() || ''
-  const remoteAddress = req?.socket?.remoteAddress || ''
-  let ip = transformedXForwardedFor || remoteAddress
-
-  if (ip) {
-    ip = ip.split(':')[0]
-  }
-
+  const ip = getRequestIP(event, { xForwardedFor: true }) || ''
   return ip
+}
+
+function getRoute(event: H3Event) {
+  const route = resolveSecurityRoute(event) || ''
+  return route
 }

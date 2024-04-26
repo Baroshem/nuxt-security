@@ -1,9 +1,10 @@
-import { defineNitroPlugin, getRouteRules, setResponseHeader } from '#imports'
+import { defineNitroPlugin, setResponseHeader } from '#imports'
 import * as cheerio from 'cheerio'
 import type { ContentSecurityPolicyValue } from '~/src/module'
 import { headerStringFromObject } from '../../utils/headers'
 import { generateHash } from '../../utils/hashes'
-import { isPrerendering } from '../utils'
+//import { isPrerendering } from '../utils'
+import { resolveSecurityRules } from '../utils'
 
 /*
 FOLLOWING PATTERN NOT IN USE:
@@ -20,13 +21,13 @@ const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Exit in SSR mode
-    if (!isPrerendering(event)) {
+    if (!import.meta.prerender) {
       return
     }
 
     // Exit if no CSP defined
-    const { security } = getRouteRules(event)
-    if (!security?.headers || !security.headers.contentSecurityPolicy) {
+    const rules = resolveSecurityRules(event)
+    if (!rules.enabled || !rules.headers || !rules.headers.contentSecurityPolicy) {
       return
     }
 
@@ -34,11 +35,11 @@ export default defineNitroPlugin((nitroApp) => {
     const styleHashes: Set<string> = new Set()
     const hashAlgorithm = 'sha256'
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
-    const cheerios = event.context.cheerios as Record<Section, ReturnType<typeof cheerio.load>[]>
+    const cheerios = event.context.security.cheerios!
 
     // Parse HTML if SSG is enabled for this route
-    if (security.ssg) {
-      const { hashScripts, hashStyles } = security.ssg
+    if (rules.ssg) {
+      const { hashScripts, hashStyles } = rules.ssg
 
       // Scan all relevant sections of the NuxtRenderHtmlContext
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
@@ -102,12 +103,12 @@ export default defineNitroPlugin((nitroApp) => {
     }
 
     // Generate CSP rules
-    const csp = security.headers.contentSecurityPolicy
+    const csp = rules.headers.contentSecurityPolicy
     const headerValue = generateCspRules(csp, scriptHashes, styleHashes)
     // Insert CSP in the http meta tag if meta is true
 
-    if (security.ssg && security.ssg.meta) {
-      cheerios.head.push(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`, null, false))
+    if (rules.ssg && rules.ssg.meta) {
+      cheerios.head.unshift(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`, null, false))
     }
     // Update rules in HTTP header
     setResponseHeader(event, 'Content-Security-Policy', headerValue)

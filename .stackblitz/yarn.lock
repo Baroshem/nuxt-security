@@ -4296,10 +4296,10 @@ nuxt-csurf@^1.5.1:
     defu "^6.1.4"
     uncsrf "^1.1.1"
 
-nuxt-security@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-1.3.2.tgz#0cd6bf1fa0f7e6f00875c8ccf2c99d201b12daf8"
-  integrity sha512-S585sJXWSiscne4BgixaWfT5uhY7ywEMxLY9e9y/Fbh8HeTIKPd7xSjPxh67FHqyO1yimwbgJcre3wdvRnicoQ==
+nuxt-security@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-1.4.2.tgz#8ebff7b36c42373192322f6c115e80195c8daa26"
+  integrity sha512-0rxruaiKcSXqZS9bEQuXTzUMfw3Jd73Kx+AtqT9mwsstTihPZjdaQ/125KLrnBKrH9gGSPXiCNo09TgBvgf5DQ==
   dependencies:
     "@nuxt/kit" "^3.11.2"
     basic-auth "^2.0.1"

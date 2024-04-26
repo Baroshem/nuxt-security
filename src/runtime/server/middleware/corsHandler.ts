@@ -1,11 +1,12 @@
-import { getRouteRules, defineEventHandler, handleCors } from '#imports'
+import { defineEventHandler, handleCors } from '#imports'
 import type { H3CorsOptions } from 'h3'
+import { resolveSecurityRules } from '../../nitro/utils'
 
 export default defineEventHandler((event) => {
-  const { security } = getRouteRules(event)
+  const rules = resolveSecurityRules(event)
 
-  if (security?.corsHandler) {
-    const { corsHandler } = security
+  if (rules.enabled && rules.corsHandler) {
+    const { corsHandler } = rules
     handleCors(event, corsHandler as H3CorsOptions)
   }
 

@@ -1,11 +1,12 @@
-import { defineEventHandler, getRequestHeader, createError, getRouteRules } from '#imports'
+import { defineEventHandler, getRequestHeader, createError } from '#imports'
+import { resolveSecurityRules } from '../../nitro/utils'
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 
 export default defineEventHandler((event) => {
-  const { security } = getRouteRules(event)
+  const rules = resolveSecurityRules(event)
 
-  if (security?.requestSizeLimiter) {
+  if (rules.enabled && rules.requestSizeLimiter) {
     if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {
       const contentLengthValue = getRequestHeader(event, 'content-length')
       const contentTypeValue = getRequestHeader(event, 'content-type')
@@ -13,15 +14,15 @@ export default defineEventHandler((event) => {
       const isFileUpload = contentTypeValue?.includes(FILE_UPLOAD_HEADER)
 
       const requestLimit = isFileUpload
-        ? security.requestSizeLimiter.maxUploadFileRequestInBytes
-        : security.requestSizeLimiter.maxRequestSizeInBytes
+        ? rules.requestSizeLimiter.maxUploadFileRequestInBytes
+        : rules.requestSizeLimiter.maxRequestSizeInBytes
 
       if (parseInt(contentLengthValue as string) >= requestLimit) {
         const payloadTooLargeError = {
           statusCode: 413,
           statusMessage: 'Payload Too Large'
         }
-        if (security.requestSizeLimiter.throwError === false) {
+        if (rules.requestSizeLimiter.throwError === false) {
           return payloadTooLargeError
         }
         throw createError(payloadTooLargeError)

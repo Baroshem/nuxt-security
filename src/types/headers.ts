@@ -243,12 +243,3 @@ export interface SecurityHeaders {
   xXSSProtection?: string | false;
   permissionsPolicy?: PermissionsPolicyValue | false;
 }
-
-
-declare module 'h3' {
-  interface H3EventContext {
-    security: {
-      headers: SecurityHeaders
-    }
-  }
-}
