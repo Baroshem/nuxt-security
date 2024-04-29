@@ -1,7 +1,7 @@
 import { createDefu } from 'defu'
 import { createHash } from 'node:crypto'
 import { existsSync } from 'node:fs'
-import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
 import type { Nitro } from 'nitropack'
 import { join } from 'pathe'
 
@@ -55,17 +55,7 @@ export async function hashBundledAssets(nitro: Nitro) {
     }
   }
 
-  // Save hashes in a /integrity directory within the .nuxt build for later use with SSG
-  const buildDir = nitro.options.buildDir
-  const integrityDir = join(buildDir, 'integrity')
-  if (!existsSync(integrityDir)) {
-    await mkdir(integrityDir)
-  }
-  const hashFilePath = join(integrityDir, 'sriHashes.json')
-  await writeFile(hashFilePath, JSON.stringify(sriHashes))
-
-  // Mount the /integrity directory into server assets for later use with SSR
-  nitro.options.serverAssets.push({ dir: integrityDir, baseName: 'integrity' })
+  return sriHashes
 }
 
 export function generateHash (content: Buffer | string, hashAlgorithm: string) {

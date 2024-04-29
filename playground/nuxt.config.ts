@@ -3,6 +3,7 @@ import { writeFile } from 'node:fs/promises'
 
 export default defineNuxtConfig({
   modules: ['../src/module'],
+  devtools: { enabled: true },
 
   // Per route configuration
   routeRules: {
@@ -47,6 +48,7 @@ export default defineNuxtConfig({
   // Global configuration
   security: {
     headers: {
+      crossOriginEmbedderPolicy: false,
       xXSSProtection: '0'
     },
     rateLimiter: {
