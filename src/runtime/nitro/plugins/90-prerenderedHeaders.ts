@@ -7,7 +7,7 @@ export default defineNitroPlugin(async(nitroApp) => {
   // Save prerendered headers when in SSG mode
   if (import.meta.prerender) {
     const prerenderedHeaders: Record<string, Record<string, string>> = {}
-    nitroApp.hooks.hook('render:html', async(_, { event }) => {
+    nitroApp.hooks.hook('render:html', (_, { event }) => {
       // We save the headers for the current path
       const headers = getResponseHeaders(event) as Record<string, string>
       const path = event.path.split('?')[0]
@@ -22,7 +22,7 @@ export default defineNitroPlugin(async(nitroApp) => {
   // Retrieve prerendered headers when in SSR mode
   else {
     const prerenderedHeaders = await useStorage('assets:nuxt-security').getItem<Record<string, Record<string, string>>>('headers.json') || {}
-    nitroApp.hooks.hook('beforeResponse', async(event) => {
+    nitroApp.hooks.hook('beforeResponse', (event) => {
       const path = event.path.split('?')[0]
       // We retrieve the headers for the current path
       if (prerenderedHeaders[path]) {

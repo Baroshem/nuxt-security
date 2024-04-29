@@ -1,4 +1,4 @@
-import { defineNitroPlugin, useRuntimeConfig, useStorage } from "#imports"
+import { defineNitroPlugin, useRuntimeConfig } from "#imports"
 import { defuReplaceArray } from "../utils"
 import { OptionKey, SecurityHeaders } from "../../../types/headers"
 import { getKeyFromName, headerObjectFromString } from "../../utils/headers"

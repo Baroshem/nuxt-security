@@ -1,4 +1,5 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import { writeFile } from 'node:fs/promises'
 
 export default defineNuxtConfig({
   modules: ['../src/module'],
@@ -57,8 +58,20 @@ export default defineNuxtConfig({
   },
 
   hooks: {
-    'nuxt-security:prerenderedHeaders': (prerenderedHeaders: any) => {
-      console.log('in nuxt-security:prerenderedHeaders hook', prerenderedHeaders)
+    'nuxt-security:prerenderedHeaders': async(prerenderedHeaders) => {
+      console.log('in prerenderedHeaders hook', prerenderedHeaders)
+      // Don't take this snippet for granted, this is just provided as a dummy example
+      let nginxText = ''
+      for (const path in prerenderedHeaders) {
+        nginxText += 'location ' + path + ' {\n'
+        const headersForPath = prerenderedHeaders[path]
+        for (const headerName in headersForPath) {
+          const headerValue = headersForPath[headerName]
+          nginxText += `  add_header ${headerName} "${headerValue}";\n`
+        }
+        nginxText += '}\n\n'
+      }
+      await writeFile('./.nuxt/server.headers', nginxText)
     }
   }
 })
