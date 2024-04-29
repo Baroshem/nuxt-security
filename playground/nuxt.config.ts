@@ -54,5 +54,11 @@ export default defineNuxtConfig({
       headers: true
     },
     removeLoggers: false
+  },
+
+  hooks: {
+    'nuxt-security:prerenderedHeaders': (prerenderedHeaders: any) => {
+      console.log('in nuxt-security:prerenderedHeaders hook', prerenderedHeaders)
+    }
   }
 })

@@ -1,6 +1,6 @@
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, addServerImportsDir, useNitro } from '@nuxt/kit'
 import { defu } from 'defu'
-import type { Nuxt } from '@nuxt/schema'
+import type { Nuxt, HookResult } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
 import { defuReplaceArray } from './utils'
 import type { ModuleOptions, NuxtSecurityRouteRules } from './types/index'
@@ -9,6 +9,7 @@ import { defaultSecurityConfig } from './defaultConfig'
 import type { CheerioAPI } from 'cheerio'
 import { hashBundledAssets } from './utils'
 
+
 declare module 'nuxt/schema' {
   interface NuxtOptions {
     security: ModuleOptions
@@ -16,6 +17,15 @@ declare module 'nuxt/schema' {
   interface RuntimeConfig {
     security: ModuleOptions,
     private: { basicAuth: BasicAuth | false, [key: string]: any }
+  }
+  interface NuxtHooks {
+    'nuxt-security:prerenderedHeaders': (prerenderedHeaders: Record<string, Record<string, string>>) => HookResult
+  }
+}
+
+declare module '@nuxt/schema' {
+  interface NuxtHooks {
+    'nuxt-security:prerenderedHeaders': (prerenderedHeaders: Record<string, Record<string, string>>) => HookResult
   }
 }
 
@@ -200,9 +210,10 @@ export default defineNuxtModule<ModuleOptions>({
     // Calculates SRI hashes at build time
     nuxt.hook('nitro:build:before', hashBundledAssets)
 
-    // When the prerendering is done, we need to add the prerendered headers to the server assets
+    // Register init hook to add pre-rendered headers to responses
     nuxt.hook('nitro:init', nitro => {  
       nitro.hooks.hook('prerender:done', async() => {
+        // Add the prenredered headers to the Nitro server assets
         nitro.options.serverAssets.push({ 
           baseName: 'nuxt-security', 
           dir: createResolver(nuxt.options.buildDir).resolve('./nuxt-security') 
@@ -210,12 +221,16 @@ export default defineNuxtModule<ModuleOptions>({
 
         // In some Nitro presets (e.g. Vercel), the header rules are generated for the static server
         // By default we update the nitro headers route rules with their calculated value to support this possibility
-        const prerenderedHeaders = await nitro.storage.getItem<any>('build:nuxt-security:headers.json')
+        const prerenderedHeaders = await nitro.storage.getItem<Record<string, Record<string, string>>>('build:nuxt-security:headers.json') || {}
+        const prerenderedHeadersRouteRules = Object.fromEntries(Object.entries(prerenderedHeaders).map(([route, headers]) => [route, { headers }]))
         const n = useNitro()
         n.options.routeRules = defuReplaceArray(
-          prerenderedHeaders,
+          prerenderedHeadersRouteRules,
           n.options.routeRules
         )
+
+        // Call the nuxt hook to allow user access to the prerendered headers
+        nuxt.hooks.callHook('nuxt-security:prerenderedHeaders', prerenderedHeaders)
       })
     })
   }
