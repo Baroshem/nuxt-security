@@ -1,8 +1,7 @@
 import { defineNitroPlugin, useRuntimeConfig } from "#imports"
-import { defuReplaceArray } from "../utils"
-import { OptionKey, SecurityHeaders } from "../../../types/headers"
-import { getKeyFromName, headerObjectFromString } from "../../utils/headers"
 import { getAppSecurityOptions } from '../context'
+import { defuReplaceArray } from '../../../utils/merge'
+import { standardToSecurity, backwardsCompatibleSecurity } from '../../../utils/headers'
 
 /**
  * This plugin merges all security options into the global security context
@@ -10,6 +9,7 @@ import { getAppSecurityOptions } from '../context'
 export default defineNitroPlugin(async(nitroApp) => {
   const appSecurityOptions = getAppSecurityOptions()
   const runtimeConfig = useRuntimeConfig()
+
   // First insert standard route rules headers
   for (const route in runtimeConfig.nitro.routeRules) {
     const rule = runtimeConfig.nitro.routeRules[route]
@@ -57,64 +57,3 @@ export default defineNitroPlugin(async(nitroApp) => {
 
   await nitroApp.hooks.callHook('nuxt-security:ready')
 })
-
-/**
- * Convert standard headers string format to security headers object format, returning undefined if no valid security header is found
- */
-function standardToSecurity(standardHeaders?: Record<string, any>) {
-  if (!standardHeaders) {
-    return undefined
-  }
-
-  const standardHeadersAsObject: SecurityHeaders = {}
-
-  Object.entries(standardHeaders).forEach(([headerName, headerValue])  => {
-    const optionKey = getKeyFromName(headerName)
-    if (optionKey) {
-      if (typeof headerValue === 'string') {
-        // Normally, standard radix headers should be supplied as string
-        const objectValue: any = headerObjectFromString(optionKey, headerValue)
-        standardHeadersAsObject[optionKey] = objectValue
-      } else {
-        // Here we ensure backwards compatibility
-        // Because in the pre-rc1 syntax, standard headers could also be supplied in object format
-        standardHeadersAsObject[optionKey] = headerValue
-        //standardHeaders[headerName] = headerStringFromObject(optionKey, headerValue)
-      }
-    }
-  })
-
-  if (Object.keys(standardHeadersAsObject).length === 0) {
-    return undefined
-  }
-
-  return standardHeadersAsObject
-}
-
-/**
- *
- * Ensure backwards compatibility with pre-rc1 syntax, returning undefined if no securityHeaders is passed
- */
-function backwardsCompatibleSecurity(securityHeaders?: SecurityHeaders | false) {
-
-  if (!securityHeaders) {
-    return undefined
-  }
-
-  const securityHeadersAsObject: SecurityHeaders = {}
-
-  Object.entries(securityHeaders).forEach(([key, value]) => {
-    const optionKey = key as OptionKey
-    if ((optionKey === 'contentSecurityPolicy' || optionKey === 'permissionsPolicy' || optionKey === 'strictTransportSecurity') && (typeof value === 'string')) {
-      // Altough this does not make sense in post-rc1 typescript definitions
-      // It was possible before rc1 though, so let's ensure backwards compatibility here
-      const objectValue: any = headerObjectFromString(optionKey, value)
-      securityHeadersAsObject[optionKey] = objectValue
-    } else if (value === '') {
-      securityHeadersAsObject[optionKey] = false
-    } else {
-      securityHeadersAsObject[optionKey] = value
-    }
-  })
-  return securityHeadersAsObject
-}

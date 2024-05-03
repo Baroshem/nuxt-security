@@ -1,8 +1,7 @@
-import type { H3Event } from 'h3'
 import { defineEventHandler, createError, setResponseHeader, useStorage, getRequestIP } from '#imports'
-import type { RateLimiter } from '~/src/module'
+import type { H3Event } from 'h3'
 import { resolveSecurityRoute, resolveSecurityRules } from '../../nitro/context'
-
+import type { RateLimiter } from '../../../types/middlewares'
 
 type StorageItem = {
   value: number,

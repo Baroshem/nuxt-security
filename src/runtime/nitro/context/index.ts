@@ -1,7 +1,7 @@
-import type { NuxtSecurityRouteRules } from "~/src/types"
+import type { NuxtSecurityRouteRules } from "~/src/types/module"
 import { createRouter, toRouteMatcher } from "radix3"
 import type { H3Event } from "h3"
-import { defuReplaceArray } from "../utils"
+import { defuReplaceArray } from '../../../utils/merge'
 
 // This is the global singleton that holds all of the application security rules
 const nitroAppSecurityOptions: Record<string, NuxtSecurityRouteRules> = {}

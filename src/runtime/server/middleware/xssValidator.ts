@@ -1,13 +1,7 @@
-import { FilterXSS, IFilterXSSOptions } from 'xss'
-import {
-  defineEventHandler,
-  createError,
-  getQuery,
-  readBody,
-  readMultipartFormData,
-} from '#imports'
-import { HTTPMethod } from '~/src/module'
+import { defineEventHandler, createError, getQuery, readBody, readMultipartFormData } from '#imports'
+import { FilterXSS, type IFilterXSSOptions } from 'xss'
 import { resolveSecurityRules } from '../../nitro/context'
+import type { HTTPMethod } from '../../../types/middlewares'
 
 export default defineEventHandler(async(event) => {
   const rules = resolveSecurityRules(event)

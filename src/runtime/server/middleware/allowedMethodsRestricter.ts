@@ -1,6 +1,6 @@
 import { defineEventHandler, createError } from '#imports'
-import { HTTPMethod } from '~/src/module'
 import { resolveSecurityRules } from '../../nitro/context'
+import type { HTTPMethod } from '../../../types/middlewares'
 
 export default defineEventHandler((event) => {
   const rules = resolveSecurityRules(event)

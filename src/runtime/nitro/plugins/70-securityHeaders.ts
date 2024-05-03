@@ -1,7 +1,7 @@
 import { defineNitroPlugin, setResponseHeader, removeResponseHeader, getRouteRules, getResponseHeader } from '#imports'
-import { type OptionKey } from '../../../types/headers'
-import { getNameFromKey, headerStringFromObject } from '../../utils/headers'
 import { resolveSecurityRules } from '../context'
+import { getNameFromKey, headerStringFromObject } from '../../../utils/headers'
+import type { OptionKey } from '../../../types/headers'
 
 /**
  * This plugin sets the security headers for the response.

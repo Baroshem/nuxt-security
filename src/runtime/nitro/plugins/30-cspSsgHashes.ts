@@ -1,6 +1,6 @@
 import { defineNitroPlugin } from '#imports'
-import { generateHash } from '../utils'
 import { resolveSecurityRules } from '../context'
+import { generateHash } from '../../../utils/hash'
 
 /**
  * This plugin adds security hashes to the event context for later use in the CSP header.

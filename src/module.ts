@@ -1,80 +1,18 @@
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, addServerImportsDir, useNitro } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro } from '@nuxt/kit'
+import { existsSync } from 'node:fs'
+import { readFile, readdir } from 'node:fs/promises'
+import { join } from 'pathe'
 import { defu } from 'defu'
-import type { Nuxt, HookResult } from '@nuxt/schema'
 import viteRemove from 'unplugin-remove/vite'
-import { defuReplaceArray } from './utils'
-import type { ModuleOptions, NuxtSecurityRouteRules } from './types/index'
-import type { BasicAuth } from './types/middlewares'
+import { getAllResourceHeaders } from './utils/headers'
+import { generateHash } from './utils/hash'
+import { defuReplaceArray } from './utils/merge'
 import { defaultSecurityConfig } from './defaultConfig'
-import type { CheerioAPI } from 'cheerio'
-import { hashBundledAssets } from './utils'
+import type { Nuxt } from '@nuxt/schema'
+import type { Nitro } from 'nitropack'
+import type { ModuleOptions } from './types/module'
 
-
-declare module 'nuxt/schema' {
-  interface NuxtOptions {
-    security: ModuleOptions
-  }
-  interface RuntimeConfig {
-    security: ModuleOptions,
-    private: { basicAuth: BasicAuth | false, [key: string]: any }
-  }
-  interface NuxtHooks {
-    'nuxt-security:prerenderedHeaders': (prerenderedHeaders: Record<string, Record<string, string>>) => HookResult
-  }
-}
-
-declare module '@nuxt/schema' {
-  interface NuxtHooks {
-    'nuxt-security:prerenderedHeaders': (prerenderedHeaders: Record<string, Record<string, string>>) => HookResult
-  }
-}
-
-declare module 'nitropack' {
-  interface NitroRouteConfig {
-    security?: NuxtSecurityRouteRules;
-  }
-  interface NitroRuntimeHooks {
-    /**
-     * @deprecated
-     */
-    'nuxt-security:headers': (config: {
-      /**
-       * The route for which the headers are being configured
-       */
-      route: string,
-      /**
-       * The headers configuration for the route
-       */
-      headers: NuxtSecurityRouteRules['headers']
-    }) => void
-    /**
-     * @deprecated
-     */
-    'nuxt-security:ready': () => void
-    /**
-     * Runtime hook to configure security rules for each route 
-     */
-    'nuxt-security:routeRules': (routeRules: Record<string, NuxtSecurityRouteRules>) => void
-  }
-}
-
-type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
-declare module 'h3' {
-  interface H3EventContext {
-    security?: {
-      route?: string;
-      rules?: NuxtSecurityRouteRules;
-      nonce?: string;
-      hashes?: {
-        script: Set<string>;
-        style: Set<string>;
-      };
-      cheerios?: Record<Section, CheerioAPI[]>;
-    }
-  }
-}
-
-export * from './types/index'
+export * from './types/module'
 export * from './types/headers'
 export * from './types/middlewares'
 
@@ -122,6 +60,28 @@ export default defineNuxtModule<ModuleOptions>({
     // Register Vite transform plugin to remove loggers
     if (securityOptions.removeLoggers) {
       addVitePlugin(viteRemove(securityOptions.removeLoggers))
+    }
+
+    // Copy security headers that apply to all resources into standard route rules
+    if (securityOptions.headers) {
+      // First insert global security config
+      const globalSecurityHeaders = getAllResourceHeaders(securityOptions.headers)
+      nuxt.options.nitro.routeRules = defuReplaceArray(
+        { '/**': { headers: globalSecurityHeaders } },
+        nuxt.options.nitro.routeRules
+      )
+    }
+    for (const route in nuxt.options.nitro.routeRules) {
+      // Then insert route specific security headers
+      const rule = nuxt.options.nitro.routeRules[route]
+      if (rule.security && rule.security.headers) {
+        const { security : { headers } } = rule
+        const routeSecurityHeaders = getAllResourceHeaders(headers)
+        nuxt.options.nitro.routeRules[route] = defuReplaceArray(
+          { headers: routeSecurityHeaders },
+          rule
+        )
+      }
     }
     
     // Register nitro plugin to manage security rules at the level of each route
@@ -201,9 +161,6 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
-    // Import server utils
-    addServerImportsDir(resolver.resolve('./runtime/server/utils'))
-
     // Import composables
     addImportsDir(resolver.resolve('./runtime/composables'))
 
@@ -229,12 +186,15 @@ export default defineNuxtModule<ModuleOptions>({
         // In some Nitro presets (e.g. Vercel), the header rules are generated for the static server
         // By default we update the nitro headers route rules with their calculated value to support this possibility
         const prerenderedHeaders = await nitro.storage.getItem<Record<string, Record<string, string>>>('build:nuxt-security:headers.json') || {}
-        const prerenderedHeadersRouteRules = Object.fromEntries(Object.entries(prerenderedHeaders).map(([route, headers]) => [route, { headers }]))
-        const n = useNitro()
-        n.options.routeRules = defuReplaceArray(
-          prerenderedHeadersRouteRules,
-          n.options.routeRules
-        )
+
+        if (securityOptions.ssg && securityOptions.ssg.exportToPresets) {
+          const prerenderedHeadersRouteRules = Object.fromEntries(Object.entries(prerenderedHeaders).map(([route, headers]) => [route, { headers }]))
+          const n = useNitro()
+          n.options.routeRules = defuReplaceArray(
+            prerenderedHeadersRouteRules,
+            n.options.routeRules
+          )
+        }
 
         // Call the nuxt hook to allow user access to the prerendered headers
         nuxt.hooks.callHook('nuxt-security:prerenderedHeaders', prerenderedHeaders)
@@ -310,4 +270,51 @@ function reorderNitroPlugins(nuxt: Nuxt) {
       })
     })
   })
+}
+
+
+async function hashBundledAssets(nitro: Nitro) {
+  const hashAlgorithm = 'sha384'
+  const sriHashes: Record<string, string> = {}
+
+  // Will be later necessary to construct url
+  const { cdnURL: appCdnUrl = '', baseURL: appBaseUrl } = nitro.options.runtimeConfig.app
+
+
+  // Go through all public assets folder by folder
+  const publicAssets = nitro.options.publicAssets
+  for (const publicAsset of publicAssets) {
+    const { dir, baseURL = '' } = publicAsset
+
+    if (existsSync(dir)) {
+      // Node 16 compatibility maintained
+      // Node 18.17+ supports recursive option on readdir
+      // const entries = await readdir(dir, { withFileTypes: true, recursive: true })
+      const entries = await readdir(dir, { withFileTypes: true })
+      for (const entry of entries) {
+        if (entry.isFile()) {
+
+          // Node 16 compatibility maintained
+          // Node 18.17+ supports entry.path on DirEnt
+          // const fullPath = join(entry.path, entry.name)
+          const fullPath = join(dir, entry.name)
+          const fileContent = await readFile(fullPath)
+          const hash = generateHash(fileContent, hashAlgorithm)
+          // construct the url as it will appear in the head template
+          const relativeUrl = join(baseURL, entry.name)
+          let url: string
+          if (appCdnUrl) {
+            // If the cdnURL option was set, the url will be in the form https://...
+            url = new URL(relativeUrl, appCdnUrl).href
+          } else {
+            // If not, the url will be in a relative form: /_nuxt/...
+            url = join('/', appBaseUrl, relativeUrl)
+          }
+          sriHashes[url] = hash
+        }
+      }
+    }
+  }
+
+  return sriHashes
 }

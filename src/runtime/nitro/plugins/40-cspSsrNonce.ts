@@ -1,6 +1,6 @@
 import { defineNitroPlugin } from '#imports'
-import { resolveSecurityRules } from '../context'
 import crypto from 'node:crypto'
+import { resolveSecurityRules } from '../context'
 
 /**
  * This plugin generates a nonce for the current request and adds it to the HTML.

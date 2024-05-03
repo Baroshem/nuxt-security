@@ -1,6 +1,6 @@
 import { defineNitroPlugin } from '#imports'
-import { headerStringFromObject } from '../../utils/headers'
 import { resolveSecurityRules } from '../context'
+import { headerStringFromObject } from '../../../utils/headers'
 
 /**
  * This plugin recombines the HTML sections from the Cheerio instances in the event context.

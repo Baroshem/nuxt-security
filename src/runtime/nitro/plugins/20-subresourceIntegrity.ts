@@ -1,7 +1,7 @@
 import { defineNitroPlugin } from '#imports'
-import { resolveSecurityRules } from '../context'
 //@ts-expect-error : we are importing from the virtual file system
 import sriHashes from '#sri-hashes'
+import { resolveSecurityRules } from '../context'
 
 /**
  * This plugin adds Subresource Integrity (SRI) hashes to script and link tags in the HTML.
