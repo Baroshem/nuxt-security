@@ -154,8 +154,9 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
 /**
  * Determines if a given option key applies to all resources
  */
-function appliesToAllResources(optionKey: OptionKey) {
+export function appliesToAllResources(optionKey: OptionKey) {
   switch (optionKey) {
+    case 'referrerPolicy':
     case 'strictTransportSecurity':
     case 'xContentTypeOptions':
     case 'xDownloadOptions':
@@ -170,15 +171,16 @@ function appliesToAllResources(optionKey: OptionKey) {
 }
 
 /**
- * Extract the security headers that apply to all resources
+ * Extract the subset of security headers that apply to all resources
  */
-export function getAllResourceHeaders(headers: SecurityHeaders) {
+export function getHeadersApplicableToAllResources(headers: SecurityHeaders) {
   return <Record<HeaderName, string>>Object.fromEntries(
     Object.entries(headers)
     .filter(([key]) => appliesToAllResources(key as OptionKey))
     .map(([key, value]) => ([getNameFromKey(key as OptionKey), headerStringFromObject(key as OptionKey, value)]))
   )
 }
+
 
 /**
  * Convert standard headers string format to security headers object format, returning undefined if no valid security header is found

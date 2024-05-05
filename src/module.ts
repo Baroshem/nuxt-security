@@ -4,7 +4,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'pathe'
 import { defu } from 'defu'
 import viteRemove from 'unplugin-remove/vite'
-import { getAllResourceHeaders } from './utils/headers'
+import { getHeadersApplicableToAllResources } from './utils/headers'
 import { generateHash } from './utils/hash'
 import { defuReplaceArray } from './utils/merge'
 import { defaultSecurityConfig } from './defaultConfig'
@@ -63,24 +63,26 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Copy security headers that apply to all resources into standard route rules
-    if (securityOptions.headers) {
+    if (securityOptions.headersMode === 'allResources') {
       // First insert global security config
-      const globalSecurityHeaders = getAllResourceHeaders(securityOptions.headers)
-      nuxt.options.nitro.routeRules = defuReplaceArray(
-        { '/**': { headers: globalSecurityHeaders } },
-        nuxt.options.nitro.routeRules
-      )
-    }
-    for (const route in nuxt.options.nitro.routeRules) {
-      // Then insert route specific security headers
-      const rule = nuxt.options.nitro.routeRules[route]
-      if (rule.security && rule.security.headers) {
-        const { security : { headers } } = rule
-        const routeSecurityHeaders = getAllResourceHeaders(headers)
-        nuxt.options.nitro.routeRules[route] = defuReplaceArray(
-          { headers: routeSecurityHeaders },
-          rule
+      if (securityOptions.headers) {
+        const globalSecurityHeaders = getHeadersApplicableToAllResources(securityOptions.headers)
+        nuxt.options.nitro.routeRules = defuReplaceArray(
+          { '/**': { headers: globalSecurityHeaders } },
+          nuxt.options.nitro.routeRules
         )
+      }
+      // Then insert route specific security headers
+      for (const route in nuxt.options.nitro.routeRules) {
+        const rule = nuxt.options.nitro.routeRules[route]
+        if (rule.security && rule.security.headers) {
+          const { security : { headers } } = rule
+          const routeSecurityHeaders = getHeadersApplicableToAllResources(headers)
+          nuxt.options.nitro.routeRules[route] = defuReplaceArray(
+            { headers: routeSecurityHeaders },
+            rule
+          )
+        }
       }
     }
     
