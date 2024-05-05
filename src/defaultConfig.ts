@@ -40,7 +40,6 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
       microphone: []
     }
   },
-  headersMode: 'htmlOnly',
   requestSizeLimiter: {
     maxRequestSizeInBytes: 2000000,
     maxUploadFileRequestInBytes: 8000000,
