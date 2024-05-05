@@ -15,7 +15,6 @@ export type Ssg = {
 
 export interface ModuleOptions {
   headers: SecurityHeaders | false;
-  headersMode: 'htmlOnly' | 'allResources';
   requestSizeLimiter: RequestSizeLimiter | false;
   rateLimiter: RateLimiter | false;
   xssValidator: XssValidator | false;
@@ -33,7 +32,7 @@ export interface ModuleOptions {
 }
 
 export type NuxtSecurityRouteRules = Partial<
-  Omit<ModuleOptions, 'headersMode' | 'csrf' | 'basicAuth' | 'rateLimiter' | 'ssg' > 
+  Omit<ModuleOptions, 'csrf' | 'basicAuth' | 'rateLimiter' | 'ssg' > 
   & { rateLimiter: Omit<RateLimiter, 'driver'> | false }
   & { ssg: Omit<Ssg, 'exportToPresets'> | false }
 >

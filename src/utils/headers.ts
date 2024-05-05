@@ -154,7 +154,7 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
 /**
  * Determines if a given option key applies to all resources
  */
-export function appliesToAllResources(optionKey: OptionKey) {
+function appliesToAllResources(optionKey: OptionKey) {
   switch (optionKey) {
     case 'referrerPolicy':
     case 'strictTransportSecurity':

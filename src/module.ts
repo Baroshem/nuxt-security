@@ -63,26 +63,24 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Copy security headers that apply to all resources into standard route rules
-    if (securityOptions.headersMode === 'allResources') {
-      // First insert global security config
-      if (securityOptions.headers) {
-        const globalSecurityHeaders = getHeadersApplicableToAllResources(securityOptions.headers)
-        nuxt.options.nitro.routeRules = defuReplaceArray(
-          { '/**': { headers: globalSecurityHeaders } },
-          nuxt.options.nitro.routeRules
+    // First insert global security config
+    if (securityOptions.headers) {
+      const globalSecurityHeaders = getHeadersApplicableToAllResources(securityOptions.headers)
+      nuxt.options.nitro.routeRules = defuReplaceArray(
+        { '/**': { headers: globalSecurityHeaders } },
+        nuxt.options.nitro.routeRules
+      )
+    }
+    // Then insert route specific security headers
+    for (const route in nuxt.options.nitro.routeRules) {
+      const rule = nuxt.options.nitro.routeRules[route]
+      if (rule.security && rule.security.headers) {
+        const { security : { headers } } = rule
+        const routeSecurityHeaders = getHeadersApplicableToAllResources(headers)
+        nuxt.options.nitro.routeRules[route] = defuReplaceArray(
+          { headers: routeSecurityHeaders },
+          rule
         )
-      }
-      // Then insert route specific security headers
-      for (const route in nuxt.options.nitro.routeRules) {
-        const rule = nuxt.options.nitro.routeRules[route]
-        if (rule.security && rule.security.headers) {
-          const { security : { headers } } = rule
-          const routeSecurityHeaders = getHeadersApplicableToAllResources(headers)
-          nuxt.options.nitro.routeRules[route] = defuReplaceArray(
-            { headers: routeSecurityHeaders },
-            rule
-          )
-        }
       }
     }
     
