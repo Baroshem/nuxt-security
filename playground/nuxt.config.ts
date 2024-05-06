@@ -61,8 +61,7 @@ export default defineNuxtConfig({
 
   hooks: {
     'nuxt-security:prerenderedHeaders': async(prerenderedHeaders) => {
-      console.log('in prerenderedHeaders hook', prerenderedHeaders)
-      // Don't take this snippet for granted, this is just provided as a dummy example
+      // Don't take this snippet for granted, this is just provided as a simplified example
       let nginxText = ''
       for (const path in prerenderedHeaders) {
         nginxText += 'location ' + path + ' {\n'
