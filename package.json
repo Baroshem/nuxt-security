@@ -74,5 +74,12 @@
   "stackblitz": {
     "installDependencies": false,
     "startCommand": "yarn stackblitz"
+  },
+  "unbuild": {
+    "entries": [
+      "src/utils/hash.ts",
+      "src/utils/headers.ts",
+      "src/utils/merge.ts"
+    ]
   }
 }
