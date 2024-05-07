@@ -105,7 +105,15 @@ export default defineNitroPlugin((nitroApp) => {
     // Insert CSP in the http meta tag if meta is true
 
     if (rules.ssg && rules.ssg.meta) {
-      cheerios.head.unshift(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`, null, false))
+      // Insert the CSP meta tag in the head
+      const firstHeadNode = cheerios.head[0]('*').get(0)
+      // Let's insert the CSP meta tag just after the first tag which should be the charset meta
+      if (firstHeadNode && firstHeadNode.type === 'tag' && firstHeadNode.tagName === 'meta' && firstHeadNode.attribs['charset']) {
+        cheerios.head[0]('meta').first().after(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`)
+      } else {
+        // If the charset meta tag is not first, insert the CSP meta tag at the beginning of the head
+        cheerios.head.unshift(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`, null, false))
+      }
     }
     // Update rules in HTTP header
     setResponseHeader(event, 'Content-Security-Policy', headerValue)
