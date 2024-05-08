@@ -1,4 +1,4 @@
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'pathe'
@@ -67,7 +67,7 @@ export default defineNuxtModule<ModuleOptions>({
     if (securityOptions.headers) {
       const globalSecurityHeaders = getHeadersApplicableToAllResources(securityOptions.headers)
       nuxt.options.nitro.routeRules = defuReplaceArray(
-        { '/**': { headers: globalSecurityHeaders } },
+        { '/**' : { headers: globalSecurityHeaders } },
         nuxt.options.nitro.routeRules
       )
     }
@@ -163,6 +163,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Import composables
     addImportsDir(resolver.resolve('./runtime/composables'))
+    addServerImports([{ name: 'defuReplaceArray', from: resolver.resolve('./utils/merge')}])
 
     // Record SRI Hashes in the Virtual File System at build time
     let sriHashes: Record<string, string> = {}
