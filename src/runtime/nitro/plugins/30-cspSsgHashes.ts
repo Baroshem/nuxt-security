@@ -52,18 +52,18 @@ export default defineNitroPlugin((nitroApp) => {
         html[section] = html[section].map(element => {
           if (hashScripts) {
             // Parse all script tags
-             element = element.replace(INLINE_SCRIPT_RE,(match, scriptText)=>{
+             element = element.replace(INLINE_SCRIPT_RE, (match, scriptText) => {
                scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
                return match
              })
-             element = element.replace(SCRIPT_RE, (match, integrity)=>{
+             element = element.replace(SCRIPT_RE, (match, integrity) => {
                scriptHashes.add(`'${integrity}'`)
                return match
              })
           }
           // Parse all style tags
           if (hashStyles) {
-            element = element.replace(STYLE_RE, (match, styleText)=>{
+            element = element.replace(STYLE_RE, (match, styleText) => {
               if (styleText) {
                 // Hash inline styles with content
                 styleHashes.add(`'${generateHash(styleText, hashAlgorithm)}'`)

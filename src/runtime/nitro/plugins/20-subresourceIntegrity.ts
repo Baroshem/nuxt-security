@@ -24,23 +24,23 @@ export default defineNitroPlugin((nitroApp) => {
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
     for (const section of sections) {
       html[section] = html[section].map(element => {
-        element = element.replace(SCRIPT_RE,(match, rest, src)=>{
+        element = element.replace(SCRIPT_RE, (match, rest, src) => {
           const hash = sriHashes[src]
           if (hash) {
             const integrityScript = `<script integrity="${hash}"${rest}></script>`
-            event.context.security!.cache!.scripts.set(src, hash)
             return integrityScript
+          } else {
+            return match
           }
-          return match
         })
-        element = element.replace(LINK_RE,(match, rest, href)=>{
+        element = element.replace(LINK_RE, (match, rest, href) => {
           const hash = sriHashes[href]
           if (hash) {
             const integrityLink = `<link integrity="${hash}"${rest}>`
-            event.context.security!.cache!.links.set(href, hash)
             return integrityLink
+          } else {
+            return match
           }
-          return match
         })
         return element
       })

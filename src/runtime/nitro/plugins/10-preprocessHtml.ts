@@ -12,10 +12,5 @@ export default defineNitroPlugin((nitroApp) => {
     if (!rules.enabled || (!rules.sri && (!rules.headers || !rules.headers.contentSecurityPolicy))) {
       return
     }
-
-    event.context.security!.cache = { 
-      scripts: new Map(),
-      links: new Map(),
-    }
   })
 })
