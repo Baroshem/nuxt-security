@@ -87,9 +87,6 @@ export default defineNuxtModule<ModuleOptions>({
     // Register nitro plugin to manage security rules at the level of each route
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-routeRules'))
 
-    // Pre-process HTML into DOM tree
-    addServerPlugin(resolver.resolve('./runtime/nitro/plugins/10-preprocessHtml'))
-
     // Register nitro plugin to enable Subresource Integrity
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/20-subresourceIntegrity'))
 

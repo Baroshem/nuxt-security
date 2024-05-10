@@ -12,7 +12,7 @@ Allows to obtain integrity from both scripts with integrity and those without (u
 const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc="[\w:.\-\\/]+")[^>]*>(.*?)<\/script>/g
 const STYLE_RE = /<style[^>]*>(.*?)<\/style>/g
 const SCRIPT_RE = /<script(?=[^>]+\bsrc="[^"]+")(?=[^>]+\bintegrity="([\w\-+/=]+)")[^>]+(?:\/>|><\/script>)/g
-const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]+\bintegrity="([\w\-+/=]+)")(?=[^>]+\bas="(\w+)")[^>]+>/g
+const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]+\bintegrity="([\w\-+/=]+)")(?=(?:[^>]+\bas="(\w+)")?)[^>]+>/g
 
 
 
@@ -73,7 +73,7 @@ export default defineNitroPlugin((nitroApp) => {
           }
 
           // Parse all link tags
-          element = element.replace(LINK_RE, (match, rel, integrity, as)=>{
+          element = element.replace(LINK_RE, (match, rel, integrity, as) => {
             // Whitelist links to external resources with integrity
             if (integrity) {
               // HTML standard defines only 3 rel values for valid integrity attributes on links : stylesheet, preload and modulepreload
@@ -102,6 +102,7 @@ export default defineNitroPlugin((nitroApp) => {
             }
             return match
           })
+
           return element
         })
       }
