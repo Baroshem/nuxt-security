@@ -95,7 +95,10 @@ declare module 'h3' {
         script: Set<string>;
         style: Set<string>;
       };
-      cheerios?: Record<Section, CheerioAPI[]>;
+      cache?: {
+        scripts: Map<string, string>
+        links: Map<string, string>
+      }
     }
   }
 }

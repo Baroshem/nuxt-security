@@ -3,8 +3,7 @@ import { resolveSecurityRules } from '../context'
 import { headerStringFromObject } from '../../../utils/headers'
 
 /**
- * This plugin recombines the HTML sections from the Cheerio instances in the event context.
- * It also adds the Content-Security-Policy header to the HTML meta tag in SSG mode.
+ * This plugin adds the Content-Security-Policy header to the HTML meta tag in SSG mode.
  */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
@@ -12,17 +11,6 @@ export default defineNitroPlugin((nitroApp) => {
     const rules = resolveSecurityRules(event)
     if (!rules.enabled) {
       return
-    }
-
-    if (rules.sri || (rules.headers && rules.headers.contentSecurityPolicy)) {
-      // Scan all relevant sections of the NuxtRenderHtmlContext
-      type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
-      const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
-      const cheerios = event.context.security!.cheerios!
-
-      for (const section of sections) {
-        html[section] = cheerios[section]
-      }
     }
 
     if (rules.ssg && rules.ssg.meta && rules.headers && rules.headers.contentSecurityPolicy && import.meta.prerender) {

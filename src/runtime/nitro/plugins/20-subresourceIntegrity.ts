@@ -22,28 +22,27 @@ export default defineNitroPlugin((nitroApp) => {
     // However the SRI standard provides that other elements may be added to that list in the future
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
-    const cheerios = event.context.security!.cheerios!
     for (const section of sections) {
-      cheerios[section]=cheerios[section].map($=>{
-        $ = $.replace(SCRIPT_RE,(match, rest, src)=>{
+      html[section] = html[section].map(element => {
+        element = element.replace(SCRIPT_RE,(match, rest, src)=>{
           const hash = sriHashes[src]
           if (hash) {
             const integrityScript = `<script integrity="${hash}"${rest}></script>`
-            event.context.cache.scripts.set(src, hash)
+            event.context.security!.cache!.scripts.set(src, hash)
             return integrityScript
           }
           return match
         })
-        $ = $.replace(LINK_RE,(match, rest, href)=>{
+        element = element.replace(LINK_RE,(match, rest, href)=>{
           const hash = sriHashes[href]
           if (hash) {
             const integrityLink = `<link integrity="${hash}"${rest}>`
-            event.context.cache.links.set(href, hash)
+            event.context.security!.cache!.links.set(href, hash)
             return integrityLink
           }
           return match
         })
-        return $
+        return element
       })
     }
   })

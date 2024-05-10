@@ -36,22 +36,21 @@ export default defineNitroPlugin((nitroApp) => {
     // Scan all relevant sections of the NuxtRenderHtmlContext
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
-    const cheerios = event.context.security!.cheerios!
     for (const section of sections) {
-      cheerios[section] = cheerios[section].map($ => {
+      html[section] = html[section].map(element => {
         // Add nonce to all link tags
-        $ = $.replace(LINK_RE, (match, rest)=>{
+        element = element.replace(LINK_RE, (match, rest)=>{
           return `<link nonce="${nonce}"` + rest
         })
         // Add nonce to all script tags
-        $ = $.replace(SCRIPT_RE, (match, rest)=>{
+        element = element.replace(SCRIPT_RE, (match, rest)=>{
           return `<script nonce="${nonce}"` + rest
         })
         // Add nonce to all style tags
-        $ = $.replace(STYLE_RE, (match, rest)=>{
+        element = element.replace(STYLE_RE, (match, rest)=>{
           return `<style nonce="${nonce}"` + rest
         })
-        return $
+        return element
       })
     }
   })
