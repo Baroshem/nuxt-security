@@ -21,10 +21,7 @@ export default defineNitroPlugin((nitroApp) => {
       const cheerios = event.context.security!.cheerios!
 
       for (const section of sections) {
-        html[section] = cheerios[section].map($ => {
-          const html = $.html()
-          return html
-        })
+        html[section] = cheerios[section]
       }
     }
 
