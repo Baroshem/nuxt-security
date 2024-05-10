@@ -33,8 +33,8 @@ export default defineNitroPlugin((nitroApp) => {
             return match
           }
         })
-        
-        element = element.replace(LINK_RE, (match, rest, href) => {
+
+        element = element.replace(LINK_RE, (match, rest: string, href: string) => {
           const hash = sriHashes[href]
           if (hash) {
             const integrityLink = `<link integrity="${hash}"${rest}>`

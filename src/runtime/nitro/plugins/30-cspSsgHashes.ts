@@ -49,31 +49,30 @@ export default defineNitroPlugin((nitroApp) => {
       // Scan all relevant sections of the NuxtRenderHtmlContext
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
       for (const section of sections) {
-        html[section] = html[section].map(element => {
+        html[section].forEach(element => {
           if (hashScripts) {
             // Parse all script tags
-             element = element.replace(INLINE_SCRIPT_RE, (match, scriptText) => {
-               scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
-               return match
-             })
-             element = element.replace(SCRIPT_RE, (match, integrity) => {
-               scriptHashes.add(`'${integrity}'`)
-               return match
-             })
+            const inlineScriptMatches = element.matchAll(INLINE_SCRIPT_RE)
+            for (const [, scriptText] of inlineScriptMatches) {
+              scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
+            }
+            const externalScriptMatches = element.matchAll(SCRIPT_RE)
+            for (const [, integrity] of externalScriptMatches) {
+              scriptHashes.add(`'${integrity}'`)
+            }
           }
+
           // Parse all style tags
           if (hashStyles) {
-            element = element.replace(STYLE_RE, (match, styleText) => {
-              if (styleText) {
-                // Hash inline styles with content
-                styleHashes.add(`'${generateHash(styleText, hashAlgorithm)}'`)
-              }
-              return match
-            })
+            const styleMatches = element.matchAll(STYLE_RE)
+            for (const [, styleText] of styleMatches) {
+              styleHashes.add(`'${generateHash(styleText, hashAlgorithm)}'`)
+            }
           }
 
           // Parse all link tags
-          element = element.replace(LINK_RE, (match, rel, integrity, as) => {
+          const linkMatches = element.matchAll(LINK_RE)
+          for (const [, rel, integrity, as] of linkMatches) {
             // Whitelist links to external resources with integrity
             if (integrity) {
               // HTML standard defines only 3 rel values for valid integrity attributes on links : stylesheet, preload and modulepreload
@@ -100,10 +99,7 @@ export default defineNitroPlugin((nitroApp) => {
                 scriptHashes.add(`'${integrity}'`)
               }
             }
-            return match
-          })
-
-          return element
+          }
         })
       }
     }
