@@ -1,6 +1,9 @@
 import { defineNitroPlugin, removeResponseHeader } from '#imports'
-import { resolveSecurityRules } from '../utils'
+import { resolveSecurityRules } from '../context'
 
+/**
+ * This plugin hides the X-Powered-By header from the response.
+ */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('beforeResponse', (event) => {
     const rules = resolveSecurityRules(event)

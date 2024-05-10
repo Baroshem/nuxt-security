@@ -11,7 +11,6 @@ export default defineNuxtConfig({
   },
   security: {
     nonce: false,
-    runtimeHooks: true,
     headers: {
       crossOriginResourcePolicy: 'cross-origin',
       contentSecurityPolicy: {

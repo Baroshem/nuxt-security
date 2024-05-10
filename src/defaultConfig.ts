@@ -1,4 +1,4 @@
-import type { ModuleOptions } from './types'
+import type { ModuleOptions } from './types/module'
 
 const defaultThrowErrorValue = { throwError: true }
 
@@ -86,7 +86,9 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
   ssg: {
     meta: true,
     hashScripts: true,
-    hashStyles: false
+    hashStyles: false,
+    nitroHeaders: true,
+    exportToPresets: true,
   },
   sri: true
 })

@@ -1,11 +1,14 @@
 import { defineNitroPlugin } from '#imports'
-import { resolveSecurityRules } from '../utils'
 //@ts-expect-error : we are importing from the virtual file system
 import sriHashes from '#sri-hashes'
+import { resolveSecurityRules } from '../context'
 
 const SCRIPT_RE = /<script((?=[^>]+\bsrc="([^"]+)")(?![^>]+\bintegrity="[^"]+")[^>]+)(?:\/>|><\/script>)/g
 const LINK_RE = /<link((?=[^>]+\brel="(?:stylesheet|preload|modulepreload)")(?=[^>]+\bhref="([^"]+)")(?![^>]+\bintegrity="[\w\-+/=]+")[^>]+)>/g
 
+/**
+ * This plugin adds Subresource Integrity (SRI) hashes to script and link tags in the HTML.
+ */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Exit if SRI not enabled for this route
@@ -19,7 +22,7 @@ export default defineNitroPlugin((nitroApp) => {
     // However the SRI standard provides that other elements may be added to that list in the future
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
-    const cheerios = event.context.security.cheerios!
+    const cheerios = event.context.security!.cheerios!
     for (const section of sections) {
       cheerios[section]=cheerios[section].map($=>{
         $ = $.replace(SCRIPT_RE,(match, rest, src)=>{
