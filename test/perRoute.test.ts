@@ -125,19 +125,13 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     const { headers } = await fetch('/ignore-all')
     expect(headers).toBeDefined()
 
+    // Security headers that should not be set
     const corp = headers.get('cross-origin-resource-policy')
     const coop = headers.get('cross-origin-opener-policy')
     const coep = headers.get('cross-origin-embedder-policy')
     const csp = headers.get('content-security-policy')
     const oac = headers.get('origin-agent-cluster')
-    const rp = headers.get('referrer-policy')
-    const sts = headers.get('strict-transport-security')
-    const xcto = headers.get('x-content-type-options')
     const xdpc = headers.get('x-dns-prefetch-control')
-    const xdo = headers.get('x-download-options')
-    const xfo = headers.get('x-frame-options')
-    const xpcdp = headers.get('x-permitted-cross-domain-policies')
-    const xxp = headers.get('x-xss-protection')
     const pp = headers.get('permissions-policy')
 
     expect(corp).toBeNull()
@@ -145,15 +139,25 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBe('no-referrer-when-downgrade')
-    expect(sts).toBeNull()
-    expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
-    expect(xdo).toBeNull()
-    expect(xfo).toBeNull()
-    expect(xpcdp).toBeNull()
-    expect(xxp).toBeNull()
     expect(pp).toBeNull()
+
+    // Security headers that should not be overwritten
+    const rp = headers.get('referrer-policy')
+    const sts = headers.get('strict-transport-security')
+    const xcto = headers.get('x-content-type-options')
+    const xdo = headers.get('x-download-options')
+    const xfo = headers.get('x-frame-options')
+    const xpcdp = headers.get('x-permitted-cross-domain-policies')
+    const xxp = headers.get('x-xss-protection')
+
+    expect(rp).toBe('no-referrer')
+    expect(sts).toBe('max-age=15552000; includeSubDomains;')
+    expect(xcto).toBe('nosniff')
+    expect(xdo).toBe('noopen')
+    expect(xfo).toBe('SAMEORIGIN')
+    expect(xpcdp).toBe('none')
+    expect(xxp).toBe('0')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -163,19 +167,13 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     const { headers } = await fetch('/ignore-all/deep/page')
     expect(headers).toBeDefined()
 
+    // Security headers that should not be set
     const corp = headers.get('cross-origin-resource-policy')
     const coop = headers.get('cross-origin-opener-policy')
     const coep = headers.get('cross-origin-embedder-policy')
     const csp = headers.get('content-security-policy')
     const oac = headers.get('origin-agent-cluster')
-    const rp = headers.get('referrer-policy')
-    const sts = headers.get('strict-transport-security')
-    const xcto = headers.get('x-content-type-options')
     const xdpc = headers.get('x-dns-prefetch-control')
-    const xdo = headers.get('x-download-options')
-    const xfo = headers.get('x-frame-options')
-    const xpcdp = headers.get('x-permitted-cross-domain-policies')
-    const xxp = headers.get('x-xss-protection')
     const pp = headers.get('permissions-policy')
 
     expect(corp).toBeNull()
@@ -183,15 +181,25 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBe('no-referrer-when-downgrade')
-    expect(sts).toBeNull()
-    expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
-    expect(xdo).toBeNull()
-    expect(xfo).toBeNull()
-    expect(xpcdp).toBeNull()
-    expect(xxp).toBeNull()
     expect(pp).toBeNull()
+
+    // Security headers that should not be overwritten
+    const rp = headers.get('referrer-policy')
+    const sts = headers.get('strict-transport-security')
+    const xcto = headers.get('x-content-type-options')
+    const xdo = headers.get('x-download-options')
+    const xfo = headers.get('x-frame-options')
+    const xpcdp = headers.get('x-permitted-cross-domain-policies')
+    const xxp = headers.get('x-xss-protection')
+
+    expect(rp).toBe('no-referrer')
+    expect(sts).toBe('max-age=15552000; includeSubDomains;')
+    expect(xcto).toBe('nosniff')
+    expect(xdo).toBe('noopen')
+    expect(xfo).toBe('SAMEORIGIN')
+    expect(xpcdp).toBe('none')
+    expect(xxp).toBe('0')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -658,23 +666,17 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(pp).toBe('camera=(), display-capture=self, fullscreen=(), geolocation=(), microphone=()')
   })
 
-  it('does not set security headers for an API route', async () => {
+  it('sets all-resources security headers for an API route', async () => {
     const { headers } = await fetch('/api/test')
     expect(headers).toBeDefined()
 
+    // Security headers that should not be set
     const corp = headers.get('cross-origin-resource-policy')
     const coop = headers.get('cross-origin-opener-policy')
     const coep = headers.get('cross-origin-embedder-policy')
     const csp = headers.get('content-security-policy')
     const oac = headers.get('origin-agent-cluster')
-    const rp = headers.get('referrer-policy')
-    const sts = headers.get('strict-transport-security')
-    const xcto = headers.get('x-content-type-options')
     const xdpc = headers.get('x-dns-prefetch-control')
-    const xdo = headers.get('x-download-options')
-    const xfo = headers.get('x-frame-options')
-    const xpcdp = headers.get('x-permitted-cross-domain-policies')
-    const xxp = headers.get('x-xss-protection')
     const pp = headers.get('permissions-policy')
 
     expect(corp).toBeNull()
@@ -682,18 +684,29 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBe('no-referrer-when-downgrade')
-    expect(sts).toBeNull()
-    expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
-    expect(xdo).toBeNull()
-    expect(xfo).toBeNull()
-    expect(xpcdp).toBeNull()
-    expect(xxp).toBeNull()
     expect(pp).toBeNull()
+
+    // Security headers that are always set on all resources
+    const rp = headers.get('referrer-policy')
+    const sts = headers.get('strict-transport-security')
+    const xcto = headers.get('x-content-type-options')
+    const xdo = headers.get('x-download-options')
+    const xfo = headers.get('x-frame-options')
+    const xpcdp = headers.get('x-permitted-cross-domain-policies')
+    const xxp = headers.get('x-xss-protection')
+
+    expect(rp).toBe('no-referrer')
+    expect(sts).toBe('max-age=15552000; includeSubDomains;')
+    expect(xcto).toBe('nosniff')
+    expect(xdo).toBe('noopen')
+    expect(xfo).toBe('SAMEORIGIN')
+    expect(xpcdp).toBe('none')
+    expect(xxp).toBe('0')
+    
   })
 
-  it('does not set security headers for bundled assets', async () => {
+  it('sets all-resources security headers for bundled assets', async () => {
     const res = await fetch('/')
     const text = await res.text()
 
@@ -706,19 +719,13 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     const { headers } = await fetch(script!)
     expect(headers).toBeDefined()
 
+    // Security headers that should not be set
     const corp = headers.get('cross-origin-resource-policy')
     const coop = headers.get('cross-origin-opener-policy')
     const coep = headers.get('cross-origin-embedder-policy')
     const csp = headers.get('content-security-policy')
     const oac = headers.get('origin-agent-cluster')
-    const rp = headers.get('referrer-policy')
-    const sts = headers.get('strict-transport-security')
-    const xcto = headers.get('x-content-type-options')
     const xdpc = headers.get('x-dns-prefetch-control')
-    const xdo = headers.get('x-download-options')
-    const xfo = headers.get('x-frame-options')
-    const xpcdp = headers.get('x-permitted-cross-domain-policies')
-    const xxp = headers.get('x-xss-protection')
     const pp = headers.get('permissions-policy')
 
     expect(corp).toBeNull()
@@ -726,34 +733,38 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBe('no-referrer-when-downgrade')
-    expect(sts).toBeNull()
-    expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
-    expect(xdo).toBeNull()
-    expect(xfo).toBeNull()
-    expect(xpcdp).toBeNull()
-    expect(xxp).toBeNull()
     expect(pp).toBeNull()
+
+    // Security headers that are always set on all resources
+    const rp = headers.get('referrer-policy')
+    const sts = headers.get('strict-transport-security')
+    const xcto = headers.get('x-content-type-options')
+    const xdo = headers.get('x-download-options')
+    const xfo = headers.get('x-frame-options')
+    const xpcdp = headers.get('x-permitted-cross-domain-policies')
+    const xxp = headers.get('x-xss-protection')
+
+    expect(rp).toBe('no-referrer')
+    expect(sts).toBe('max-age=15552000; includeSubDomains;')
+    expect(xcto).toBe('nosniff')
+    expect(xdo).toBe('noopen')
+    expect(xfo).toBe('SAMEORIGIN')
+    expect(xpcdp).toBe('none')
+    expect(xxp).toBe('0')
   })
 
-  it('does not set security headers for public assets', async () => {
+  it('sets all-resources security headers for public assets', async () => {
     const { headers } = await fetch('/icon.png')
     expect(headers).toBeDefined()
 
+    // Security headers that should not be set
     const corp = headers.get('cross-origin-resource-policy')
     const coop = headers.get('cross-origin-opener-policy')
     const coep = headers.get('cross-origin-embedder-policy')
     const csp = headers.get('content-security-policy')
     const oac = headers.get('origin-agent-cluster')
-    const rp = headers.get('referrer-policy')
-    const sts = headers.get('strict-transport-security')
-    const xcto = headers.get('x-content-type-options')
     const xdpc = headers.get('x-dns-prefetch-control')
-    const xdo = headers.get('x-download-options')
-    const xfo = headers.get('x-frame-options')
-    const xpcdp = headers.get('x-permitted-cross-domain-policies')
-    const xxp = headers.get('x-xss-protection')
     const pp = headers.get('permissions-policy')
 
     expect(corp).toBeNull()
@@ -761,15 +772,25 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(coep).toBeNull()
     expect(csp).toBeNull()
     expect(oac).toBeNull()
-    expect(rp).toBe('no-referrer-when-downgrade')
-    expect(sts).toBeNull()
-    expect(xcto).toBeNull()
     expect(xdpc).toBeNull()
-    expect(xdo).toBeNull()
-    expect(xfo).toBeNull()
-    expect(xpcdp).toBeNull()
-    expect(xxp).toBeNull()
     expect(pp).toBeNull()
+
+    // Security headers that are always set on all resources
+    const rp = headers.get('referrer-policy')
+    const sts = headers.get('strict-transport-security')
+    const xcto = headers.get('x-content-type-options')
+    const xdo = headers.get('x-download-options')
+    const xfo = headers.get('x-frame-options')
+    const xpcdp = headers.get('x-permitted-cross-domain-policies')
+    const xxp = headers.get('x-xss-protection')
+
+    expect(rp).toBe('no-referrer')
+    expect(sts).toBe('max-age=15552000; includeSubDomains;')
+    expect(xcto).toBe('nosniff')
+    expect(xdo).toBe('noopen')
+    expect(xfo).toBe('SAMEORIGIN')
+    expect(xpcdp).toBe('none')
+    expect(xxp).toBe('0')
   })
 
   it('preserves standard headers for an API route', async () => {
@@ -835,13 +856,11 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
   it('does not inject CSP hashes on a deeply-disabled route', async () => {
     const res = await fetch('/csp-hash/deep/disabled')
-    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
-    /*
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
     const headerHashes = cspHeaderValue!.match(/'sha256-(.*?)'/)
     expect(headerHashes).toBeNull()
-    */
+
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
@@ -855,13 +874,10 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
   it('injects CSP hashes on a deeply-enabled route', async () => {
     const res = await fetch('/csp-hash/deep/enabled')
-    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
-    /*
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
     const headerHashes = cspHeaderValue!.match(/'sha256-(.*?)'/)
     expect(headerHashes).toHaveLength(2)
-    */
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
@@ -876,11 +892,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
   it('does not inject CSP meta on a deeply-disabled route', async () => {
     const res = await fetch('/csp-meta/deep/disabled')
-    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
-    /*
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
-    */
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
@@ -894,11 +907,8 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
   it('injects CSP meta on a deeply-enabled route', async () => {
     const res = await fetch('/csp-meta/deep/enabled')
-    // DISABLING THIS PART OF THE TEST AFTER PATCH #348 THAT REMOVES CSP SSG PRESETS
-    /*
     const cspHeaderValue = res.headers.get('content-security-policy')
     expect(cspHeaderValue).toBeDefined()
-    */
 
     const text = await res.text()
     const head = text.match(/<head>(.*?)<\/head>/s)?.[1]
@@ -966,7 +976,6 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(rp).toBeDefined()
     expect(rp).toBeNull()
   })
-
 })
 
 

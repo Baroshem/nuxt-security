@@ -1,30 +1,33 @@
-import { defineNitroPlugin, setResponseHeader } from '#imports'
-import * as cheerio from 'cheerio'
-import type { ContentSecurityPolicyValue } from '~/src/module'
-import { headerStringFromObject } from '../../utils/headers'
-import { generateHash } from '../../utils/hashes'
-//import { isPrerendering } from '../utils'
-import { resolveSecurityRules } from '../utils'
+import { defineNitroPlugin } from '#imports'
+import { resolveSecurityRules } from '../context'
+import { generateHash } from '../../../utils/hash'
 
-
+/**
+ * This plugin adds security hashes to the event context for later use in the CSP header.
+ * It only runs in SSG mode
+ */
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', (html, { event }) => {
-    // Exit in SSR mode
-    if (!import.meta.prerender) {
-      return
-    }
+  // Exit in SSR mode
+  if (!import.meta.prerender) {
+    return
+  }
 
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
     // Exit if no CSP defined
     const rules = resolveSecurityRules(event)
     if (!rules.enabled || !rules.headers || !rules.headers.contentSecurityPolicy) {
       return
     }
 
-    const scriptHashes: Set<string> = new Set()
-    const styleHashes: Set<string> = new Set()
+    event.context.security!.hashes = {
+      script: new Set(),
+      style: new Set()
+    }
+    const scriptHashes = event.context.security!.hashes.script
+    const styleHashes = event.context.security!.hashes.style
     const hashAlgorithm = 'sha256'
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
-    const cheerios = event.context.security.cheerios!
+    const cheerios = event.context.security!.cheerios!
 
     // Parse HTML if SSG is enabled for this route
     if (rules.ssg) {
@@ -98,48 +101,5 @@ export default defineNitroPlugin((nitroApp) => {
         })
       }
     }
-
-    // Generate CSP rules
-    const csp = rules.headers.contentSecurityPolicy
-    const headerValue = generateCspRules(csp, scriptHashes, styleHashes)
-    // Insert CSP in the http meta tag if meta is true
-
-    if (rules.ssg && rules.ssg.meta) {
-      cheerios.head.unshift(cheerio.load(`<meta http-equiv="Content-Security-Policy" content="${headerValue}">`, null, false))
-    }
-    // Update rules in HTTP header
-    setResponseHeader(event, 'Content-Security-Policy', headerValue)
   })
-
-  // Insert hashes in the CSP meta tag for both the script-src and the style-src policies
-  function generateCspRules(csp: ContentSecurityPolicyValue, scriptHashes: Set<string>, styleHashes: Set<string>) {
-    const generatedCsp = <ContentSecurityPolicyValue>Object.fromEntries(
-      Object.entries(csp)
-      .map(([key, value]) => {
-        // Return boolean values unchanged
-        if (typeof value === 'boolean') {
-          return [key, value]
-        }
-
-        // Make sure nonce placeholders are eliminated
-        const sources = (typeof value === 'string') ? value.split(' ').map(token => token.trim()).filter(token => token) : value
-        const modifiedSources = sources.filter(source => !source.startsWith("'nonce-"))
-
-        const directive = <keyof ContentSecurityPolicyValue>key
-        // Add hashes to script and style
-        if (directive === 'script-src') {
-          modifiedSources.push(...scriptHashes)
-          return [directive, modifiedSources]
-        } else if (directive === 'style-src') {
-          modifiedSources.push(...styleHashes)
-          return [directive, modifiedSources]
-        } else {
-          return [directive, modifiedSources]
-        }
-      })
-      // Remove frame-ancestors from the CSP when delivered in the meta tag
-      .filter(([key]) => <keyof ContentSecurityPolicyValue>key !== 'frame-ancestors')
-    )
-    return headerStringFromObject('contentSecurityPolicy', generatedCsp)
-  }
 })

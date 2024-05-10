@@ -1,8 +1,10 @@
 import { defineNitroPlugin } from '#imports'
 import * as cheerio from 'cheerio/lib/slim'
-import { resolveSecurityRules } from '../utils'
+import { resolveSecurityRules } from '../context'
 
-
+/**
+ * This plugin parses the HTML of the NuxtRenderHtmlContext and stores the Cheerio instances in the event context.
+ */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
 
@@ -25,6 +27,6 @@ export default defineNitroPlugin((nitroApp) => {
         }, false)
       })
     }
-    event.context.security.cheerios = cheerios
+    event.context.security!.cheerios = cheerios
   })
 })
