@@ -2,6 +2,7 @@ import { defineNitroPlugin } from '#imports'
 //@ts-expect-error : we are importing from the virtual file system
 import sriHashes from '#sri-hashes'
 import { resolveSecurityRules } from '../context'
+import type { Section } from '../../../types/module'
 
 const SCRIPT_RE = /<script((?=[^>]+\bsrc="([^"]+)")(?![^>]+\bintegrity="[^"]+")[^>]+)(?:\/>|><\/script>)/g
 const LINK_RE = /<link((?=[^>]+\brel="(?:stylesheet|preload|modulepreload)")(?=[^>]+\bhref="([^"]+)")(?![^>]+\bintegrity="[\w\-+/=]+")[^>]+)>/g
@@ -20,7 +21,6 @@ export default defineNitroPlugin((nitroApp) => {
     // Scan all relevant sections of the NuxtRenderHtmlContext
     // Note: integrity can only be set on scripts and on links with rel preload, modulepreload and stylesheet
     // However the SRI standard provides that other elements may be added to that list in the future
-    type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
     for (const section of sections) {
       html[section] = html[section].map(element => {

@@ -1,6 +1,7 @@
 import { defineNitroPlugin } from '#imports'
 import { resolveSecurityRules } from '../context'
 import { generateHash } from '../../../utils/hash'
+import type { Section } from '../../../types/module'
 
 /*
 FOLLOWING PATTERN NOT IN USE:
@@ -40,7 +41,6 @@ export default defineNitroPlugin((nitroApp) => {
     const scriptHashes = event.context.security!.hashes.script
     const styleHashes = event.context.security!.hashes.style
     const hashAlgorithm = 'sha256'
-    type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
 
     // Parse HTML if SSG is enabled for this route
     if (rules.ssg) {
