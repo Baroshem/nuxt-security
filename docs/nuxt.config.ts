@@ -17,7 +17,7 @@ export default defineNuxtConfig({
       contentSecurityPolicy: {
         'img-src': ["'self'", "data:", 'https:'] // Allow https: external images
       },
-      crossOriginEmbedderPolicy: 'credentialess' // Allow youtube and stackblitz iframes
+      crossOriginEmbedderPolicy: 'credentialless' // Allow youtube and stackblitz iframes
     }
   }
 })
