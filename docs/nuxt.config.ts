@@ -18,9 +18,6 @@ export default defineNuxtConfig({
         'img-src': ["'self'", "data:", 'https:'] // Allow https: external images
       },
       crossOriginEmbedderPolicy: 'credentialless' // Allow youtube and stackblitz iframes
-    },
-    ssg: {
-      exportToPresets: false
     }
   }
 })

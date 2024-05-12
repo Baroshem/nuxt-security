@@ -12,7 +12,8 @@ export default defineNitroPlugin(async(nitroApp) => {
       const rules = resolveSecurityRules(event)
       if (rules.enabled && rules.ssg && rules.ssg.nitroHeaders) {
         // We save the headers for the current path
-        const headers = getResponseHeaders(event) as Record<string, string>
+        const headers = structuredClone(getResponseHeaders(event) as Record<string, string>)
+        delete headers['x-nitro-prerender']
         const path = event.path.split('?')[0]
         prerenderedHeaders[path] =  headers
       }
