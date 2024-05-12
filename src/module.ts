@@ -189,6 +189,7 @@ export default defineNuxtModule<ModuleOptions>({
         const prerenderedHeaders = await nitro.storage.getItem<Record<string, Record<string, string>>>('build:nuxt-security:headers.json') || {}
 
         if (securityOptions.ssg && securityOptions.ssg.exportToPresets) {
+          console.log('Updating Nitro route rules with prerendered headers', prerenderedHeaders)
           const prerenderedHeadersRouteRules = Object.fromEntries(Object.entries(prerenderedHeaders).map(([route, headers]) => [route, { headers }]))
           const n = useNitro()
           n.options.routeRules = defuReplaceArray(
