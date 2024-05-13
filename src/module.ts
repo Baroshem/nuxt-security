@@ -211,12 +211,12 @@ function registerRateLimiterStorage(nuxt: Nuxt, securityOptions: ModuleOptions) 
       securityOptions.rateLimiter ? securityOptions.rateLimiter.driver : undefined,
       { name: 'lruCache' }
     )
-    const { name, options } = driver
+    const { name, options = {} } = driver
     config.storage = defu(
       {
         '#rate-limiter-storage': {
           driver: name,
-          options
+          ...options
         }
       },
       config.storage
