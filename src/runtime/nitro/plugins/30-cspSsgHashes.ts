@@ -1,6 +1,21 @@
 import { defineNitroPlugin } from '#imports'
 import { resolveSecurityRules } from '../context'
 import { generateHash } from '../../../utils/hash'
+import type { Section } from '../../../types/module'
+
+/*
+FOLLOWING PATTERN NOT IN USE:
+Placeholder until a proper caching strategy is though of:
+/<script((?=[^>]+src="([\w:.-\/]+)")(?:(?![^>]+integrity="[\w-]+")|(?=[^>]+integrity="([\w-])"))[^>]+)(?:\/>|><\/script>)/g
+Allows to obtain integrity from both scripts with integrity and those without (useful for 03)
+*/
+
+const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc="[\w:.\-\\/]+")[^>]*>(.*?)<\/script>/g
+const STYLE_RE = /<style[^>]*>(.*?)<\/style>/g
+const SCRIPT_RE = /<script(?=[^>]+\bsrc="[^"]+")(?=[^>]+\bintegrity="([\w\-+/=]+)")[^>]+(?:\/>|><\/script>)/g
+const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]+\bintegrity="([\w\-+/=]+)")(?=(?:[^>]+\bas="(\w+)")?)[^>]+>/g
+
+
 
 /**
  * This plugin adds security hashes to the event context for later use in the CSP header.
@@ -26,8 +41,6 @@ export default defineNitroPlugin((nitroApp) => {
     const scriptHashes = event.context.security!.hashes.script
     const styleHashes = event.context.security!.hashes.style
     const hashAlgorithm = 'sha256'
-    type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
-    const cheerios = event.context.security!.cheerios!
 
     // Parse HTML if SSG is enabled for this route
     if (rules.ssg) {
@@ -36,42 +49,32 @@ export default defineNitroPlugin((nitroApp) => {
       // Scan all relevant sections of the NuxtRenderHtmlContext
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
       for (const section of sections) {
-        cheerios[section].forEach($ => {
-          // Parse all script tags
+        html[section].forEach(element => {
           if (hashScripts) {
-            $('script').each((i, script) => {
-              const scriptText = $(script).text()
-              const scriptAttrs = $(script).attr()
-              const src = scriptAttrs?.src
-              const integrity = scriptAttrs?.integrity
-              if (!src && scriptText) {
-                // Hash inline scripts with content
-                scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
-              } else if (src && integrity) {
-                // Whitelist external scripts with integrity
-                scriptHashes.add(`'${integrity}'`)
-              }
-            })
+            // Parse all script tags
+            const inlineScriptMatches = element.matchAll(INLINE_SCRIPT_RE)
+            for (const [, scriptText] of inlineScriptMatches) {
+              scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
+            }
+            const externalScriptMatches = element.matchAll(SCRIPT_RE)
+            for (const [, integrity] of externalScriptMatches) {
+              scriptHashes.add(`'${integrity}'`)
+            }
           }
 
           // Parse all style tags
           if (hashStyles) {
-            $('style').each((i, style) => {
-              const styleText = $(style).text()
-              if (styleText) {
-                // Hash inline styles with content
-                styleHashes.add(`'${generateHash(styleText, hashAlgorithm)}'`)
-              }
-            })
+            const styleMatches = element.matchAll(STYLE_RE)
+            for (const [, styleText] of styleMatches) {
+              styleHashes.add(`'${generateHash(styleText, hashAlgorithm)}'`)
+            }
           }
 
           // Parse all link tags
-          $('link').each((i, link) => {
-            const linkAttrs = $(link).attr()
-            const integrity = linkAttrs?.integrity
+          const linkMatches = element.matchAll(LINK_RE)
+          for (const [, rel, integrity, as] of linkMatches) {
             // Whitelist links to external resources with integrity
             if (integrity) {
-              const rel = linkAttrs?.rel
               // HTML standard defines only 3 rel values for valid integrity attributes on links : stylesheet, preload and modulepreload
               // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-integrity
               if (rel === 'stylesheet' && hashStyles) {
@@ -81,7 +84,6 @@ export default defineNitroPlugin((nitroApp) => {
                 // Fetch standard defines the destination (https://fetch.spec.whatwg.org/#destination-table)
                 // This table is the official mapping between HTML and CSP
                 // We only support script-src for now, but we could populate other policies in the future
-                const as = linkAttrs.as
                 switch (as) {
                   case 'script':
                   case 'audioworklet':
@@ -97,7 +99,7 @@ export default defineNitroPlugin((nitroApp) => {
                 scriptHashes.add(`'${integrity}'`)
               }
             }
-          })
+          }
         })
       }
     }

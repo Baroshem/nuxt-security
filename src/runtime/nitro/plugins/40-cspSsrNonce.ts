@@ -2,6 +2,11 @@ import { defineNitroPlugin } from '#imports'
 import crypto from 'node:crypto'
 import { resolveSecurityRules } from '../context'
 
+const LINK_RE = /<link([^>]*?>)/g
+const SCRIPT_RE = /<script([^>]*?>)/g
+const STYLE_RE = /<style([^>]*?>)/g
+
+
 /**
  * This plugin generates a nonce for the current request and adds it to the HTML.
  * It only runs in SSR mode.
@@ -31,15 +36,21 @@ export default defineNitroPlugin((nitroApp) => {
     // Scan all relevant sections of the NuxtRenderHtmlContext
     type Section = 'body' | 'bodyAppend' | 'bodyPrepend' | 'head'
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
-    const cheerios = event.context.security!.cheerios!
     for (const section of sections) {
-      cheerios[section].forEach($ => {
+      html[section] = html[section].map(element => {
         // Add nonce to all link tags
-        $('link').attr('nonce', nonce)
+        element = element.replace(LINK_RE, (match, rest)=>{
+          return `<link nonce="${nonce}"` + rest
+        })
         // Add nonce to all script tags
-        $('script').attr('nonce', nonce)
+        element = element.replace(SCRIPT_RE, (match, rest)=>{
+          return `<script nonce="${nonce}"` + rest
+        })
         // Add nonce to all style tags
-        $('style').attr('nonce', nonce)
+        element = element.replace(STYLE_RE, (match, rest)=>{
+          return `<style nonce="${nonce}"` + rest
+        })
+        return element
       })
     }
   })
