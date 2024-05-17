@@ -217,4 +217,15 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const metaFrameAncestors = metaCsp!.split(';').find(policy => policy.trim().startsWith('frame-ancestors'))
     expect(metaFrameAncestors).toBeUndefined()
   })
+
+  it('sets CSP meta at top of head after charset meta', async () => {
+    const res = await fetch('/')
+
+    const body = await res.text()
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(body).toBeDefined()
+    expect(body).toMatch(/^<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy"/)
+  })
 })
