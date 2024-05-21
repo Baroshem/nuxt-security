@@ -3,17 +3,11 @@ import { resolveSecurityRules } from '../context'
 import { generateHash } from '../../../utils/hash'
 import type { Section } from '../../../types/module'
 
-/*
-FOLLOWING PATTERN NOT IN USE:
-Placeholder until a proper caching strategy is though of:
-/<script((?=[^>]+src="([\w:.-\/]+)")(?:(?![^>]+integrity="[\w-]+")|(?=[^>]+integrity="([\w-])"))[^>]+)(?:\/>|><\/script>)/g
-Allows to obtain integrity from both scripts with integrity and those without (useful for 03)
-*/
 
-const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc="[\w:.\-\\/]+")[^>]*>(.*?)<\/script>/g
-const STYLE_RE = /<style[^>]*>(.*?)<\/style>/g
-const SCRIPT_RE = /<script(?=[^>]+\bsrc="[^"]+")(?=[^>]+\bintegrity="([\w\-+/=]+)")[^>]+(?:\/>|><\/script>)/g
-const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]+\bintegrity="([\w\-+/=]+)")(?=(?:[^>]+\bas="(\w+)")?)[^>]+>/g
+const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc="[\w:.\-\\/]+")[^>]*>(.*?)<\/script>/gi
+const STYLE_RE = /<style[^>]*>(.*?)<\/style>/gi
+const SCRIPT_RE = /<script(?=[^>]+\bsrc="[^"]+")(?=[^>]+\bintegrity="([\w\-+/=]+)")[^>]+(?:\/>|><\/script[^>]*?>)/gi
+const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]+\bintegrity="([\w\-+/=]+)")(?=(?:[^>]+\bas="(\w+)")?)[^>]+>/gi
 
 
 

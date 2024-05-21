@@ -2,9 +2,9 @@ import { defineNitroPlugin } from '#imports'
 import crypto from 'node:crypto'
 import { resolveSecurityRules } from '../context'
 
-const LINK_RE = /<link([^>]*?>)/g
-const SCRIPT_RE = /<script([^>]*?>)/g
-const STYLE_RE = /<style([^>]*?>)/g
+const LINK_RE = /<link([^>]*?>)/gi
+const SCRIPT_RE = /<script([^>]*?>)/gi
+const STYLE_RE = /<style([^>]*?>)/gi
 
 
 /**
