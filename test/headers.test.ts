@@ -37,7 +37,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(cspHeaderValue).toBeTruthy()
     expect(nonceValue).toBeDefined()
     expect(nonceValue).toHaveLength(24)
-    expect(cspHeaderValue).toBe(`base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests;`)
+    expect(cspHeaderValue).toBe(`base-uri 'none'; default-src 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests;`)
   })
 
   it('has `cross-origin-embedder-policy` header set with correct default value', async () => {
@@ -92,7 +92,7 @@ describe('[nuxt-security] Headers', async () => {
     const ppHeaderValue = headers.get('permissions-policy')
 
     expect(ppHeaderValue).toBeTruthy()
-    expect(ppHeaderValue).toBe('camera=(), display-capture=(), fullscreen=(), geolocation=(), microphone=()')
+    expect(ppHeaderValue).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
   })
 
   it('has `referrer-policy` header set with correct default value', async () => {
@@ -114,7 +114,7 @@ describe('[nuxt-security] Headers', async () => {
     const stsHeaderValue = headers.get('strict-transport-security')
 
     expect(stsHeaderValue).toBeTruthy()
-    expect(stsHeaderValue).toBe('max-age=15552000; includeSubDomains;')
+    expect(stsHeaderValue).toBe('max-age=31536000; includeSubDomains;')
   })
 
   it('has `x-content-type-options` header set with correct default value', async () => {
@@ -158,7 +158,7 @@ describe('[nuxt-security] Headers', async () => {
     const xfoHeaderValue = headers.get('x-frame-options')
 
     expect(xfoHeaderValue).toBeTruthy()
-    expect(xfoHeaderValue).toBe('SAMEORIGIN')
+    expect(xfoHeaderValue).toBe('DENY')
   })
 
   it('has `x-permitted-cross-domain-policies` header set with correct default value', async () => {
