@@ -5,8 +5,8 @@ export type RequestSizeLimiter = {
 };
 
 export type RateLimiter = {
-  tokensPerInterval: number;
-  interval: string | number;
+  tokensPerInterval?: number;
+  interval?: string | number;
   driver?: {
     name: string,
     options?: Record<string, any>
