@@ -1,6 +1,6 @@
 export type RequestSizeLimiter = {
-  maxRequestSizeInBytes: number;
-  maxUploadFileRequestInBytes: number;
+  maxRequestSizeInBytes?: number;
+  maxUploadFileRequestInBytes?: number;
   throwError?: boolean;
 };
 
