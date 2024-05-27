@@ -32,6 +32,6 @@ export interface ModuleOptions {
 
 export type NuxtSecurityRouteRules = Partial<
   Omit<ModuleOptions, 'csrf' | 'basicAuth' | 'rateLimiter' | 'requestSizeLimiter'> 
-  & { rateLimiter: RequiredOptional<Omit<RateLimiter, 'driver'> | false }
+  & { rateLimiter: RequiredOptional<Omit<RateLimiter, 'driver'>> | false }
   & { requestSizeLimiter: RequiredOptional<RequestSizeLimiter> | false }
 >
