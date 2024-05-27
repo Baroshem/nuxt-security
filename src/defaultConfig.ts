@@ -1,4 +1,4 @@
-import type { ModuleOptions } from './types'
+import type { ModuleOptions } from './types/module'
 
 const defaultThrowErrorValue = { throwError: true }
 
@@ -8,8 +8,8 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
     crossOriginOpenerPolicy: 'same-origin',
     crossOriginEmbedderPolicy: 'require-corp',
     contentSecurityPolicy: {
-      //'default-src' : ["'none'"],
       'base-uri': ["'none'"],
+      'default-src' : ["'none'"],
       'font-src': ["'self'", 'https:', 'data:'],
       'form-action': ["'self'"],
       'frame-ancestors': ["'self'"],
@@ -23,21 +23,45 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
     originAgentCluster: '?1',
     referrerPolicy: 'no-referrer',
     strictTransportSecurity: {
-      maxAge: 15552000,
+      maxAge: 31536000,
       includeSubdomains: true
     },
     xContentTypeOptions: 'nosniff',
     xDNSPrefetchControl: 'off',
     xDownloadOptions: 'noopen',
-    xFrameOptions: 'SAMEORIGIN',
+    xFrameOptions: 'DENY',
     xPermittedCrossDomainPolicies: 'none',
     xXSSProtection: '0',
     permissionsPolicy: {
-      camera: [],
-      'display-capture': [],
-      fullscreen: [],
-      geolocation: [],
-      microphone: []
+      accelerometer: [],
+      'ambient-light-sensor':[],
+      autoplay:[],
+      battery:[],
+      camera:[],
+      'display-capture':[],
+      'document-domain':[],
+      'encrypted-media':[],
+      fullscreen:[],
+      gamepad:[],
+      geolocation:[],
+      gyroscope:[],
+      'layout-animations':['self'],
+      'legacy-image-formats':['self'],
+      magnetometer:[],
+      microphone:[],
+      midi:[],
+      'oversized-images':['self'],
+      payment:[],
+      'picture-in-picture':[],
+      'publickey-credentials-get':[],
+      'speaker-selection':[],
+      'sync-xhr':['self'],
+      'unoptimized-images':['self'],
+      'unsized-media':['self'],
+      usb:[],
+      'screen-wake-lock':[],
+      'web-share':[],
+      'xr-spatial-tracking':[]
     }
   },
   requestSizeLimiter: {
@@ -86,7 +110,9 @@ export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions
   ssg: {
     meta: true,
     hashScripts: true,
-    hashStyles: false
+    hashStyles: false,
+    nitroHeaders: true,
+    exportToPresets: true,
   },
   sri: true
 })

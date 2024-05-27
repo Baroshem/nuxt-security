@@ -5,9 +5,9 @@ import type {
   OptionKey,
   HeaderName,
   SecurityHeaders
-} from '../../types/headers'
+} from '../types/headers'
 
-export const KEYS_TO_NAMES: Record<OptionKey, HeaderName> = {
+const KEYS_TO_NAMES: Record<OptionKey, HeaderName> = {
   contentSecurityPolicy: 'Content-Security-Policy',
   crossOriginEmbedderPolicy: 'Cross-Origin-Embedder-Policy',
   crossOriginOpenerPolicy: 'Cross-Origin-Opener-Policy',
@@ -148,4 +148,96 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     // Fallback: all other fields have string format
     return headerValue
   }
+}
+
+/**
+ * Determines if a given option key applies to all resources
+ */
+function appliesToAllResources(optionKey: OptionKey) {
+  switch (optionKey) {
+    case 'referrerPolicy':
+    case 'strictTransportSecurity':
+    case 'xContentTypeOptions':
+    case 'xDownloadOptions':
+    case 'xFrameOptions':
+    case 'xPermittedCrossDomainPolicies':
+    case 'xXSSProtection':
+      return true
+      break
+    default:
+      return false
+  }
+}
+
+/**
+ * Extract the subset of security headers that apply to all resources
+ */
+export function getHeadersApplicableToAllResources(headers: SecurityHeaders) {
+  return <Record<HeaderName, string>>Object.fromEntries(
+    Object.entries(headers)
+    .filter(([key]) => appliesToAllResources(key as OptionKey))
+    .map(([key, value]) => ([getNameFromKey(key as OptionKey), headerStringFromObject(key as OptionKey, value)]))
+  )
+}
+
+
+/**
+ * Convert standard headers string format to security headers object format, returning undefined if no valid security header is found
+ */
+export function standardToSecurity(standardHeaders?: Record<string, any>) {
+  if (!standardHeaders) {
+    return undefined
+  }
+
+  const standardHeadersAsObject: SecurityHeaders = {}
+
+  Object.entries(standardHeaders).forEach(([headerName, headerValue])  => {
+    const optionKey = getKeyFromName(headerName)
+    if (optionKey) {
+      if (typeof headerValue === 'string') {
+        // Normally, standard radix headers should be supplied as string
+        const objectValue: any = headerObjectFromString(optionKey, headerValue)
+        standardHeadersAsObject[optionKey] = objectValue
+      } else {
+        // Here we ensure backwards compatibility
+        // Because in the pre-rc1 syntax, standard headers could also be supplied in object format
+        standardHeadersAsObject[optionKey] = headerValue
+        //standardHeaders[headerName] = headerStringFromObject(optionKey, headerValue)
+      }
+    }
+  })
+
+  if (Object.keys(standardHeadersAsObject).length === 0) {
+    return undefined
+  }
+
+  return standardHeadersAsObject
+}
+
+/**
+ *
+ * Ensure backwards compatibility with pre-rc1 syntax, returning undefined if no securityHeaders is passed
+ */
+export function backwardsCompatibleSecurity(securityHeaders?: SecurityHeaders | false) {
+
+  if (!securityHeaders) {
+    return undefined
+  }
+
+  const securityHeadersAsObject: SecurityHeaders = {}
+
+  Object.entries(securityHeaders).forEach(([key, value]) => {
+    const optionKey = key as OptionKey
+    if ((optionKey === 'contentSecurityPolicy' || optionKey === 'permissionsPolicy' || optionKey === 'strictTransportSecurity') && (typeof value === 'string')) {
+      // Altough this does not make sense in post-rc1 typescript definitions
+      // It was possible before rc1 though, so let's ensure backwards compatibility here
+      const objectValue: any = headerObjectFromString(optionKey, value)
+      securityHeadersAsObject[optionKey] = objectValue
+    } else if (value === '') {
+      securityHeadersAsObject[optionKey] = false
+    } else {
+      securityHeadersAsObject[optionKey] = value
+    }
+  })
+  return securityHeadersAsObject
 }
