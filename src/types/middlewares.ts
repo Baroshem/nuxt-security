@@ -1,16 +1,18 @@
+import type { BuiltinDriverName, BuiltinDriverOptions } from 'unstorage'
 export type RequestSizeLimiter = {
   maxRequestSizeInBytes?: number;
   maxUploadFileRequestInBytes?: number;
   throwError?: boolean;
 };
 
-export type RateLimiter = {
+export type RateLimiter<T extends BuiltinDriverName = BuiltinDriverName> = {
   tokensPerInterval?: number;
   interval?: string | number;
   driver?: {
-    name: string,
-    options?: Record<string, any>
-  }
+    [K in T]: { 
+      name: K; 
+      options?:  BuiltinDriverOptions[K] }
+  }[T];
   headers?: boolean;
   throwError?: boolean;
 };
