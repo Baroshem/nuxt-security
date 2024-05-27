@@ -3,6 +3,10 @@ import type { Options as RemoveOptions } from 'unplugin-remove/types'
 import type { SecurityHeaders } from './headers'
 import type { AllowedHTTPMethods, BasicAuth, RateLimiter, RequestSizeLimiter, XssValidator, CorsOptions } from './middlewares'
 
+type RequiredOptional<T> = {
+  [K in keyof T]-?: [T[K]]
+}
+
 export type Ssg = {
   meta?: boolean;
   hashScripts?: boolean;
@@ -27,6 +31,7 @@ export interface ModuleOptions {
 }
 
 export type NuxtSecurityRouteRules = Partial<
-  Omit<ModuleOptions, 'csrf' | 'basicAuth' | 'rateLimiter'> 
-  & { rateLimiter: Omit<RateLimiter, 'driver'> | false }
+  Omit<ModuleOptions, 'csrf' | 'basicAuth' | 'rateLimiter', 'requestSizeLimiter'> 
+  & { rateLimiter: RequiredOptional<Omit<RateLimiter, 'driver'> | false }
+  & { requestSizeLimiter: RequiredOptional<RequestSizeLimiter> | false }
 >
