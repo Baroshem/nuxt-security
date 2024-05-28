@@ -82,7 +82,8 @@ export type ContentSecurityPolicyValue = {
   'sandbox'?: CSPSandboxValue[] | string | false;
   'form-action'?: CSPSourceValue[] | string | false;
   'frame-ancestors'?: ("'self'" | "'none'" | string)[] | string | false;
-  'navigate-to'?: ("'self'" | "'none'" | "'unsafe-allow-redirects'" | string)[] | string | false;
+  // See https://github.com/w3c/webappsec-csp/pull/564
+  //'navigate-to'?: ("'self'" | "'none'" | "'unsafe-allow-redirects'" | string)[] | string | false;
   'report-uri'?: string[] | string | false;
   'report-to'?: string | false;
   'upgrade-insecure-requests'?: boolean;
