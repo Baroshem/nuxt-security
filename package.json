@@ -1,6 +1,6 @@
 {
   "name": "nuxt-security",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0-rc.2",
   "license": "MIT",
   "type": "module",
   "homepage": "https://nuxt-security.vercel.app",
@@ -78,7 +78,8 @@
     "entries": [
       "src/utils/hash.ts",
       "src/utils/headers.ts",
-      "src/utils/merge.ts"
+      "src/utils/merge.ts",
+      "src/defaultConfig.ts"
     ],
     "externals": [
       "unstorage"
