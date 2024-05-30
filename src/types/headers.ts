@@ -82,7 +82,8 @@ export type ContentSecurityPolicyValue = {
   'sandbox'?: CSPSandboxValue[] | string | false;
   'form-action'?: CSPSourceValue[] | string | false;
   'frame-ancestors'?: ("'self'" | "'none'" | string)[] | string | false;
-  'navigate-to'?: ("'self'" | "'none'" | "'unsafe-allow-redirects'" | string)[] | string | false;
+  // See https://github.com/w3c/webappsec-csp/pull/564
+  //'navigate-to'?: ("'self'" | "'none'" | "'unsafe-allow-redirects'" | string)[] | string | false;
   'report-uri'?: string[] | string | false;
   'report-to'?: string | false;
   'upgrade-insecure-requests'?: boolean;
@@ -100,6 +101,9 @@ export type PermissionsPolicyValue = {
   'fullscreen'?: string[] | string | false;
   'geolocation'?: string[] | string | false;
   'microphone'?: string[] | string | false;
+  'publickey-credentials-get'?: string[] | string | false;
+  'screen-wake-lock'?: string[] | string | false;
+  'web-share'?: string[] | string | false;
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
@@ -116,6 +120,14 @@ export type PermissionsPolicyValue = {
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
   'battery'?: string[] | string | false;
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'bluetooth'?: string[] | string | false;
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  'browsing-topics'?: string[] | string | false;
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
@@ -147,7 +159,20 @@ export type PermissionsPolicyValue = {
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
+  'identity-credentials-get'?: string[] | string | false;
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  
   'idle-detection'?: string[] | string | false;
+  /**
+   * 🧪 Mozilla-undocumented. Expect browser behavior to change in the future.
+   */
+  'layout-animations'?: string[] | string | false;
+  /**
+   * 🧪 Mozilla-undocumented. Expect browser behavior to change in the future.
+   */
+  'legacy-image-formats'?: string[] | string | false;
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
@@ -163,6 +188,14 @@ export type PermissionsPolicyValue = {
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
+  'otp-credentials'?: string[] | string | false;
+  /**
+   * 🧪 Mozilla-undocumented. Expect browser behavior to change in the future.
+   */
+  'oversized-images'?: string[] | string | false;
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
   'payment'?: string[] | string | false;
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
@@ -171,11 +204,7 @@ export type PermissionsPolicyValue = {
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
-  'publickey-credentials-get'?: string[] | string | false;
-  /**
-   * 🧪 Experimental. Expect browser behavior to change in the future.
-   */
-  'screen-wake-lock'?: string[] | string | false;
+  'publickey-credentials-create'?: string[] | string | false;
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
@@ -187,8 +216,28 @@ export type PermissionsPolicyValue = {
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
+  'storage-access'?: string[] | string | false;
+  /**
+   * 🧪 Experimental. Expect browser behavior to change in the future.
+   */
+  
   'usb'?: string[] | string | false;
-  'web-share'?: string[] | string | false;
+  /**
+   * 🧪 Mozilla-undocumented. Expect browser behavior to change in the future.
+   */
+  'sync-xhr'?: string[] | string | false;
+  /**
+   * 🧪 Mozilla-undocumented. Expect browser behavior to change in the future.
+   */
+  'unoptimized-images'?: string[] | string | false;
+  /**
+   * 🧪 Mozilla-undocumented. Expect browser behavior to change in the future.
+   */
+  'unsized-media'?: string[] | string | false;
+  /**
+     * 🧪 Experimental. Expect browser behavior to change in the future.
+     */
+  'window-management'?: string[] | string | false;
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
