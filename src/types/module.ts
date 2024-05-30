@@ -5,10 +5,6 @@ import type { AllowedHTTPMethods, BasicAuth, RateLimiter, RequestSizeLimiter, Xs
 import type { HookResult } from '@nuxt/schema'
 
 
-type RequiredWithoutThrowError<T> = Omit<T, 'throwError'>;
-type OptionalThrowError<T> = Pick<T, 'throwError'>;
-type QualifiedConfig<T> =  Required<RequiredWithoutThrowError<T>> & Partial<OptionalThrowError<T>>;
-
 export type Ssg = {
   meta?: boolean;
   hashScripts?: boolean;
@@ -36,9 +32,9 @@ export interface ModuleOptions {
 
 export type NuxtSecurityRouteRules = Partial<
   Omit<ModuleOptions, 'csrf' | 'basicAuth' | 'rateLimiter' | 'ssg' | 'requestSizeLimiter' > 
-  & { rateLimiter: QualifiedConfig<Omit<RateLimiter, 'driver'>> | false }
+  & { rateLimiter: Omit<RateLimiter, 'driver'> | false }
   & { ssg: Omit<Ssg, 'exportToPresets'> | false }
-  & { requestSizeLimiter: QualifiedConfig<RequestSizeLimiter> | false }
+  & { requestSizeLimiter: RequestSizeLimiter | false }
 >
 
 declare module 'nuxt/schema' {

@@ -2,7 +2,7 @@ import type { ModuleOptions } from './types/module'
 
 const defaultThrowErrorValue = { throwError: true }
 
-export const defaultSecurityConfig = (serverlUrl: string): Partial<ModuleOptions> => ({
+export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
   headers: {
     crossOriginResourcePolicy: 'same-origin',
     crossOriginOpenerPolicy: 'same-origin',

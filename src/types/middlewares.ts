@@ -1,18 +1,23 @@
 import type { BuiltinDriverName, BuiltinDriverOptions } from 'unstorage'
+// NOTE : unstorage is not an explicit dependency in package.json
+// This causes @nuxt/module-builder to fail when preparing the module for publishing
+// The solution is to add unstorage as an external dependency of unbuild
+// This is done in the unbuild entry of package.json
+
 export type RequestSizeLimiter = {
   maxRequestSizeInBytes?: number;
   maxUploadFileRequestInBytes?: number;
   throwError?: boolean;
 };
 
-export type RateLimiter<T extends BuiltinDriverName = BuiltinDriverName> = {
+export type RateLimiter = {
   tokensPerInterval?: number;
   interval?: string | number;
   driver?: {
-    [K in T]: { 
-      name: K; 
-      options?:  BuiltinDriverOptions[K] }
-  }[T];
+    [driverName in BuiltinDriverName]: { 
+      name: driverName; 
+      options?:  BuiltinDriverOptions[driverName] }
+  }[BuiltinDriverName];
   headers?: boolean;
   throwError?: boolean;
 };
