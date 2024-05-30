@@ -13,7 +13,7 @@
     "@nuxtjs/plausible": "^1.0.0",
     "@nuxtlabs/github-module": "^1.6.3",
     "nuxt": "^3.11.2",
-    "nuxt-security": "^2.0.0-rc.1"
+    "nuxt-security": "^2.0.0-rc.2"
   },
   "resolutions": {
     "string-width": "4.2.3",
