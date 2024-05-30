@@ -9,7 +9,7 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     crossOriginEmbedderPolicy: 'require-corp',
     contentSecurityPolicy: {
       'base-uri': ["'none'"],
-      'default-src' : ["'none'"],
+      'default-src' : ["'self'"],
       'font-src': ["'self'", 'https:', 'data:'],
       'form-action': ["'self'"],
       'frame-ancestors': ["'self'"],
