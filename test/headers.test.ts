@@ -37,7 +37,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(cspHeaderValue).toBeTruthy()
     expect(nonceValue).toBeDefined()
     expect(nonceValue).toHaveLength(24)
-    expect(cspHeaderValue).toBe(`base-uri 'none'; default-src 'self'; connect-src 'self' https:; font-src 'self' https: data:; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests;`)
+    expect(cspHeaderValue).toBe(`base-uri 'none'; default-src 'none'; connect-src 'self' https:; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; img-src 'self' data:; manifest-src 'self'; media-src 'self'; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests; worker-src 'self';`)
   })
 
   it('has `cross-origin-embedder-policy` header set with correct default value', async () => {
