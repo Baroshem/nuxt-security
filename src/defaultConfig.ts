@@ -10,9 +10,8 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     contentSecurityPolicy: {
       'base-uri': ["'none'"],
       'default-src' : ["'self'"],
+      'connect-src': ["'self'", 'https:'],
       'font-src': ["'self'", 'https:', 'data:'],
-      'form-action': ["'self'"],
-      'frame-ancestors': ["'self'"],
       'img-src': ["'self'", 'data:'],
       'object-src': ["'none'"],
       'script-src-attr': ["'none'"],

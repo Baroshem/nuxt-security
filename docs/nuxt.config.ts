@@ -15,9 +15,11 @@ export default defineNuxtConfig({
   security: {
     headers: {
       contentSecurityPolicy: {
-        'img-src': ["'self'", "data:", 'https:'] // Allow https: external images
+        'img-src': ["'self'", "data:", 'https:'], // Allow https: external images
+        'connect-src': process.env.NODE_ENV === 'development' ? ["'self'", 'https:', 'ws:'] : ["'self'", 'https:'], // Allow self and image api
+        'frame-src': ['https://www.youtube-nocookie.com', 'https://stackblitz.com'], // Allow self and youtube and stackblitz iframes
       },
-      crossOriginEmbedderPolicy: 'credentialless' // Allow youtube and stackblitz iframes
+      crossOriginEmbedderPolicy: 'unsafe-none', // Allow youtube and stackblitz iframes
     }
   }
 })

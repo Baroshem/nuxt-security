@@ -62,7 +62,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(metaCsp).toBeDefined()
     expect(headerCsp).toBeDefined()
     // Frame ancestors are not injected in meta tag
-    const strippedHeaderCsp = headerCsp!.replace("frame-ancestors 'self'; ", '')
+    const strippedHeaderCsp = headerCsp!.replace(" frame-ancestors 'self';", '')
     expect(strippedHeaderCsp).toBe(metaCsp)
   })
 
