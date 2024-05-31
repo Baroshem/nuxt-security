@@ -39,32 +39,52 @@ export const defaultSecurityConfig = (serverlUrl: string): ModuleOptions => ({
     xXSSProtection: '0',
     permissionsPolicy: {
       accelerometer: [],
+      /* Disable OWASP Experimental values
       'ambient-light-sensor':[],
+      */
       autoplay:[],
+      /* Disable OWASP Experimental values
       battery:[],
+      */
       camera:[],
       'display-capture':[],
+      /* Disable OWASP Experimental values
       'document-domain':[],
+      */
       'encrypted-media':[],
       fullscreen:[],
+      /* Disable OWASP Experimental values
       gamepad:[],
+      */
       geolocation:[],
       gyroscope:[],
+      /* Disable OWASP Experimental values
       'layout-animations':['self'],
+      */
+      /* Disable OWASP Experimental values
       'legacy-image-formats':['self'],
+      */
       magnetometer:[],
       microphone:[],
       midi:[],
+      /* Disable OWASP Experimental values
       'oversized-images':['self'],
+      */
       payment:[],
       'picture-in-picture':[],
       'publickey-credentials-get':[],
-      'speaker-selection':[],
-      'sync-xhr':['self'],
-      'unoptimized-images':['self'],
-      'unsized-media':['self'],
-      usb:[],
       'screen-wake-lock':[],
+      /* Disable OWASP Experimental values
+      'speaker-selection':[],
+      */
+      'sync-xhr':['self'],
+      /* Disable OWASP Experimental values
+      'unoptimized-images':['self'],
+      */
+      /* Disable OWASP Experimental values
+      'unsized-media':['self'],
+      */
+      usb:[],
       'web-share':[],
       'xr-spatial-tracking':[]
     }

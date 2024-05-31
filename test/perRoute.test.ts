@@ -39,7 +39,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -77,7 +77,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -115,7 +115,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -237,7 +237,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -275,7 +275,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -313,7 +313,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -351,7 +351,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -389,7 +389,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -427,7 +427,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -465,7 +465,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(self), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=*, gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(self), display-capture=(), encrypted-media=(), fullscreen=*, geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     const foo2 = headers.get('foo2')
@@ -505,7 +505,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(self), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(self), gamepad=(), geolocation=(*), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(self), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(*), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     const foo2 = headers.get('foo2')
@@ -545,7 +545,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(self), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(self), gamepad=(), geolocation=(*), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(self), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(*), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     const foo2 = headers.get('foo2')
@@ -586,7 +586,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -624,7 +624,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(xfo).toBe('DENY')
     expect(xpcdp).toBe('none')
     expect(xxp).toBe('0')
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
 
     const foo = headers.get('foo')
     expect(foo).toBe('bar')
@@ -663,7 +663,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     const pp = headers.get('permissions-policy')
 
     expect(csp).toBe("base-uri 'none'; default-src 'none'; connect-src 'self' https:; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; img-src blob:; manifest-src 'self'; media-src 'self'; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic'; upgrade-insecure-requests; worker-src 'self';")
-    expect(pp).toBe('accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=self, document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), layout-animations=(self), legacy-image-formats=(self), magnetometer=(), microphone=(), midi=(), oversized-images=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(self), unoptimized-images=(self), unsized-media=(self), usb=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()')
+    expect(pp).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=self, encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
   })
 
   it('sets all-resources security headers for an API route', async () => {
