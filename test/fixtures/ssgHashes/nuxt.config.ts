@@ -42,6 +42,11 @@ export default defineNuxtConfig({
       meta: true,
       hashScripts: true,
       hashStyles: true
+    },
+    headers: {
+      contentSecurityPolicy: {
+        'frame-ancestors': ["'self'"]
+      }
     }
   }
 })

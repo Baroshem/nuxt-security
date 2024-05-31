@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/renew': {
       security: {
+        //@ts-expect-error Purposedly deprecated configuration
         nonce: { mode: 'check' }
       }
     },
