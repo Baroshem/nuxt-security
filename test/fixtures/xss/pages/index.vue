@@ -1,9 +1,11 @@
 <template>
-  <div>basic</div>
   <div>
-    <button @click="onClick">
-      Click to emit event
-    </button>
+    basic
+    <div>
+      <button @click="onClick">
+        Click to emit event
+      </button>
+    </div>
   </div>
 </template>
 
