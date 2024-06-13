@@ -1,5 +1,11 @@
 {
   "private": true,
   "name": "basic",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "eiows": "^7.0.3",
+    "engine.io": "^6.5.4",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+  },
 }
