@@ -27,14 +27,17 @@ export default defineEventHandler(async(event) => {
         const valueToFilter =
           event.node.req.method === 'GET'
             ? getQuery(event)
+            : event.node.req.headers['upgrade'] === "websocket"
+            ? event.node.req.socket.read().toString('utf8')
             : event.node.req.headers['content-type']?.includes(
                 'multipart/form-data'
               )
             ? await readMultipartFormData(event)
             : await readBody(event)
         // Fix for problems when one middleware is returning an error and it is catched in the next
-        if (valueToFilter && Object.keys(valueToFilter).length) {
+        if (valueToFilter && (typeof valueToFilter === "object" && Object.keys(valueToFilter).length || valueToFilter.length) {
           if (
+            typeof valueToFilter === "object"
             valueToFilter.statusMessage &&
             valueToFilter.statusMessage !== 'Bad Request'
           ) {
