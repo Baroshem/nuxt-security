@@ -37,7 +37,7 @@ export default defineEventHandler(async(event) => {
         // Fix for problems when one middleware is returning an error and it is catched in the next
         if (valueToFilter && (typeof valueToFilter === "object" && Object.keys(valueToFilter).length || valueToFilter.length)) {
           if (
-            typeof valueToFilter === "object"
+            typeof valueToFilter === "object" &&
             valueToFilter.statusMessage &&
             valueToFilter.statusMessage !== 'Bad Request'
           ) {
