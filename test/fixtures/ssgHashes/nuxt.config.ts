@@ -9,7 +9,13 @@ export default defineNuxtConfig({
     '/inline-script': {
       prerender: true
     },
+    '/inline-script-with-linebreak': {
+      prerender: true
+    },
     '/inline-style': {
+      prerender: true
+    },
+    '/inline-style-with-linebreak': {
       prerender: true
     },
     '/external-script': {
