@@ -84,8 +84,43 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
   })
 
+  it('sets script-src for inline scripts with line break', async () => {
+    const res = await fetch('/inline-script-with-linebreak')
+    const body = await res.text()
+    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(body).toBeDefined()
+    expect(metaTag).toBeDefined()
+    expect(csp).toBeDefined()
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
+    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes + 1) // Inlined script in head
+    expect(externalScriptHashes).toBe(expectedExternalScriptHashes + 1) // + 1 vue modulepreload
+    expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
+    expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
+  })
+
   it('sets style-src for inline styles', async () => {
     const res = await fetch('/inline-style')
+
+    const body = await res.text()
+    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(body).toBeDefined()
+    expect(metaTag).toBeDefined()
+    expect(csp).toBeDefined()
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
+    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
+    expect(externalScriptHashes).toBe(expectedExternalScriptHashes + 1) // + 1 vue modulepreload
+    expect(inlineStyleHashes).toBe(expectedInlineStyleHashes + 1) // Inlined style
+    expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
+  })
+
+  it('sets style-src for inline styles with line break', async () => {
+    const res = await fetch('/inline-style-with-linebreak')
 
     const body = await res.text()
     const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
