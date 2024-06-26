@@ -63,7 +63,7 @@ describe('[nuxt-security] Nonce', async () => {
     const noncesInCsp = cspHeaderValue?.match(/'nonce-(.*?)'/)?.length ?? 0
 
     expect(noncesInCsp).toBe(0)
-    expect(cspHeaderValue).toBe("base-uri 'none'; default-src 'none'; connect-src 'self' https:; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; img-src 'self' data:; manifest-src 'self'; media-src 'self'; object-src 'none'; script-src-attr 'none'; style-src 'self'; script-src 'self' 'strict-dynamic'; upgrade-insecure-requests; worker-src 'self';")
+    expect(cspHeaderValue).toBe("base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self'; script-src 'self' 'strict-dynamic'; upgrade-insecure-requests;")
   })
 
   it('injects `nonce` attribute in style tags', async () => {

@@ -32,7 +32,7 @@ export default defineNuxtConfig({
         headers: {
           crossOriginResourcePolicy: false,
           crossOriginOpenerPolicy: undefined,
-          crossOriginEmbedderPolicy: 'credentialless'
+          crossOriginEmbedderPolicy: 'unsafe-none'
         }
       }
     },
@@ -68,7 +68,7 @@ export default defineNuxtConfig({
       security: {
         headers: {
           crossOriginOpenerPolicy: false,
-          crossOriginEmbedderPolicy: 'credentialless',
+          crossOriginEmbedderPolicy: 'unsafe-none',
           strictTransportSecurity: {
             maxAge: 2,
             preload: false,
