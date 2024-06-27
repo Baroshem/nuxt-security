@@ -13,6 +13,7 @@ export default defineNuxtConfig({
   },
 
   security: {
+    owaspDefaults: 'security',
     headers: {
       contentSecurityPolicy: {
         'img-src': ["'self'", "data:", 'https:'], // Allow https: external images

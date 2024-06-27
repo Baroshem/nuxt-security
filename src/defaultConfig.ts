@@ -4,7 +4,7 @@ const defaultThrowErrorValue = { throwError: true }
 
 
 export const defaultSecurityConfig = (serverlUrl: string, owaspDefaults: ModuleOptions['owaspDefaults']) => {
-  const defaults: any = {
+  const defaultConfig: any = {
     owaspDefaults,
     headers: {
       crossOriginResourcePolicy: 'same-origin',
@@ -96,33 +96,33 @@ export const defaultSecurityConfig = (serverlUrl: string, owaspDefaults: ModuleO
   }
 
   if (owaspDefaults === 'security') {
-    defaults.headers.crossOriginEmbedderPolicy = 'require-corp'
-    defaults.headers.contentSecurityPolicy = {
+    defaultConfig.headers.crossOriginEmbedderPolicy = 'require-corp'
+    defaultConfig.headers.contentSecurityPolicy = {
       'base-uri': ["'none'"],
       'default-src' : ["'none'"],
-      'connect-src': ["'self'", 'https:'],
-      'font-src': ["'self'", 'https:', 'data:'],
+      'connect-src': ["'self'"],
+      'font-src': ["'self'"],
       'form-action': ["'self'"],
       'frame-ancestors': ["'self'"],
       'frame-src': ["'self'"],
-      'img-src': ["'self'", 'data:'],
+      'img-src': ["'self'"],
       'manifest-src': ["'self'"],
       'media-src': ["'self'"],
       'object-src': ["'none'"],
       'script-src-attr': ["'none'"],
-      'style-src': ["'self'", 'https:', "'nonce-{{nonce}}'"],
-      'script-src': ["'self'", 'https:', "'strict-dynamic'", "'nonce-{{nonce}}'"],
+      'style-src': ["'self'", "'nonce-{{nonce}}'"],
+      'script-src': ["'self'", "'strict-dynamic'", "'nonce-{{nonce}}'"],
       'upgrade-insecure-requests': true,
       'worker-src': ["'self'"],
     }
-    defaults.ssg.hashStyles = true
-    defaults.headers.strictTransportSecurity = {
+    defaultConfig.ssg.hashStyles = true
+    defaultConfig.headers.strictTransportSecurity = {
       maxAge: 31536000,
       includeSubdomains: true,
       preload: true
     },
-    defaults.headers.xFrameOptions = 'DENY'
-    defaults.headers.permissionsPolicy = {
+    defaultConfig.headers.xFrameOptions = 'DENY'
+    defaultConfig.headers.permissionsPolicy = {
       accelerometer: [],
       /* Disable OWASP Experimental values
       'ambient-light-sensor':[],
@@ -174,7 +174,7 @@ export const defaultSecurityConfig = (serverlUrl: string, owaspDefaults: ModuleO
       'xr-spatial-tracking':[]
     }
   }
-  return defaults as ModuleOptions
+  return defaultConfig as ModuleOptions
 }
 
 

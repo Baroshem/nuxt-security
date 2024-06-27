@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { fileURLToPath } from 'node:url'
 import { setup, fetch } from '@nuxt/test-utils'
 
-describe('[nuxt-security] Headers', async () => {
+describe('[nuxt-security] Compatibility-level OWASP Headers', async () => {
   await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/settingsMode', import.meta.url)),
+    rootDir: fileURLToPath(new URL('./fixtures/owaspCompatibility', import.meta.url)),
   })
   let res: Response 
 
@@ -15,7 +15,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(res).toBeTruthy()
   })
 
-  it('has `x-xss-protection` header set with correct default value for certain route', async () => {
+  it('has `x-xss-protection` header set with compatibility-level default value for certain route', async () => {
     const { headers } = await fetch('/test')
 
     expect(headers.has('x-xss-protection')).toBeTruthy()
@@ -26,7 +26,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(xxpHeaderValue).toBe('1')
   })
 
-  it('has `content-security-policy` header set with correct default value', async () => {
+  it('has `content-security-policy` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('content-security-policy')).toBeTruthy()
@@ -37,10 +37,10 @@ describe('[nuxt-security] Headers', async () => {
     expect(cspHeaderValue).toBeTruthy()
     expect(nonceValue).toBeDefined()
     expect(nonceValue).toHaveLength(24)
-    expect(cspHeaderValue).toBe(`base-uri 'none'; default-src 'none'; connect-src 'self' https:; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; img-src 'self' data:; manifest-src 'self'; media-src 'self'; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'nonce-${nonceValue}'; script-src 'self' https: 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests; worker-src 'self';`)
+    expect(cspHeaderValue).toBe(`base-uri 'none'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data:; object-src 'none'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests;`)
   })
 
-  it('has `cross-origin-embedder-policy` header set with correct default value', async () => {
+  it('has `cross-origin-embedder-policy` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('cross-origin-embedder-policy')).toBeTruthy()
@@ -48,10 +48,10 @@ describe('[nuxt-security] Headers', async () => {
     const coepHeaderValue = headers.get('cross-origin-embedder-policy')
 
     expect(coepHeaderValue).toBeTruthy()
-    expect(coepHeaderValue).toBe('require-corp')
+    expect(coepHeaderValue).toBe('credentialless')
   })
 
-  it('has `cross-origin-opener-policy` header set with correct default value', async () => {
+  it('has `cross-origin-opener-policy` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('cross-origin-opener-policy')).toBeTruthy()
@@ -62,7 +62,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(coopHeaderValue).toBe('same-origin')
   })
 
-  it('has `cross-origin-resource-policy` header set with correct default value', async () => {
+  it('has `cross-origin-resource-policy` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('cross-origin-resource-policy')).toBeTruthy()
@@ -73,7 +73,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(corpHeaderValue).toBe('same-origin')
   })
 
-  it('has `origin-agent-cluster` header set with correct default value', async () => {
+  it('has `origin-agent-cluster` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('origin-agent-cluster')).toBeTruthy()
@@ -84,7 +84,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(oacHeaderValue).toBe('?1')
   })
 
-  it('has `permissions-policy` header set with correct default value', async () => {
+  it('has `permissions-policy` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('permissions-policy')).toBeTruthy()
@@ -92,7 +92,7 @@ describe('[nuxt-security] Headers', async () => {
     const ppHeaderValue = headers.get('permissions-policy')
 
     expect(ppHeaderValue).toBeTruthy()
-    expect(ppHeaderValue).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
+    expect(ppHeaderValue).toBe('camera=(), display-capture=(), fullscreen=(), geolocation=(), microphone=()')
   })
 
   it('has `referrer-policy` header set with correct default value', async () => {
@@ -106,7 +106,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(rpHeaderValue).toBe('no-referrer')
   })
 
-  it('has `strict-transport-security` header set with correct default value', async () => {
+  it('has `strict-transport-security` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('strict-transport-security')).toBeTruthy()
@@ -114,10 +114,10 @@ describe('[nuxt-security] Headers', async () => {
     const stsHeaderValue = headers.get('strict-transport-security')
 
     expect(stsHeaderValue).toBeTruthy()
-    expect(stsHeaderValue).toBe('max-age=31536000; includeSubDomains; preload;')
+    expect(stsHeaderValue).toBe('max-age=15552000; includeSubDomains;')
   })
 
-  it('has `x-content-type-options` header set with correct default value', async () => {
+  it('has `x-content-type-options` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('x-content-type-options')).toBeTruthy()
@@ -128,7 +128,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(xctpHeaderValue).toBe('nosniff')
   })
 
-  it('has `x-dns-prefetch-control` header set with correct default value', async () => {
+  it('has `x-dns-prefetch-control` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('x-dns-prefetch-control')).toBeTruthy()
@@ -139,7 +139,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(xdpcHeaderValue).toBe('off')
   })
 
-  it('has `x-download-options` header set with correct default value', async () => {
+  it('has `x-download-options` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('x-download-options')).toBeTruthy()
@@ -150,7 +150,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(xdoHeaderValue).toBe('noopen')
   })
 
-  it('has `x-frame-options` header set with correct default value', async () => {
+  it('has `x-frame-options` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('x-frame-options')).toBeTruthy()
@@ -158,10 +158,10 @@ describe('[nuxt-security] Headers', async () => {
     const xfoHeaderValue = headers.get('x-frame-options')
 
     expect(xfoHeaderValue).toBeTruthy()
-    expect(xfoHeaderValue).toBe('DENY')
+    expect(xfoHeaderValue).toBe('SAMEORIGIN')
   })
 
-  it('has `x-permitted-cross-domain-policies` header set with correct default value', async () => {
+  it('has `x-permitted-cross-domain-policies` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('x-permitted-cross-domain-policies')).toBeTruthy()
@@ -172,7 +172,7 @@ describe('[nuxt-security] Headers', async () => {
     expect(xpcdpHeaderValue).toBe('none')
   })
 
-  it('has `x-xss-protection` header set with correct default value', async () => {
+  it('has `x-xss-protection` header set with compatibility-level default value', async () => {
     const { headers } = res
 
     expect(headers.has('x-xss-protection')).toBeTruthy()
