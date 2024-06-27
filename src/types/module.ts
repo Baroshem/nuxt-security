@@ -14,7 +14,7 @@ export type Ssg = {
 };
 
 export interface ModuleOptions {
-  owaspDefaults: 'compatibility' | 'security';
+  strict: boolean;
   headers: SecurityHeaders | false;
   requestSizeLimiter: RequestSizeLimiter | false;
   rateLimiter: RateLimiter | false;
@@ -32,7 +32,7 @@ export interface ModuleOptions {
 }
 
 export type NuxtSecurityRouteRules = Partial<
-  Omit<ModuleOptions, 'defaultLevel' | 'csrf' | 'basicAuth' | 'rateLimiter' | 'ssg' | 'requestSizeLimiter' > 
+  Omit<ModuleOptions, 'strict' | 'csrf' | 'basicAuth' | 'rateLimiter' | 'ssg' | 'requestSizeLimiter' > 
   & { rateLimiter: Omit<RateLimiter, 'driver'> | false }
   & { ssg: Omit<Ssg, 'exportToPresets'> | false }
   & { requestSizeLimiter: RequestSizeLimiter | false }

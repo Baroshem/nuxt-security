@@ -3,9 +3,9 @@ import type { ModuleOptions } from './types/module'
 const defaultThrowErrorValue = { throwError: true }
 
 
-export const defaultSecurityConfig = (serverlUrl: string, owaspDefaults: ModuleOptions['owaspDefaults']) => {
+export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
   const defaultConfig: any = {
-    owaspDefaults,
+    strict,
     headers: {
       crossOriginResourcePolicy: 'same-origin',
       crossOriginOpenerPolicy: 'same-origin',
@@ -95,7 +95,7 @@ export const defaultSecurityConfig = (serverlUrl: string, owaspDefaults: ModuleO
     sri: true
   }
 
-  if (owaspDefaults === 'security') {
+  if (strict) {
     defaultConfig.headers.crossOriginEmbedderPolicy = 'require-corp'
     defaultConfig.headers.contentSecurityPolicy = {
       'base-uri': ["'none'"],

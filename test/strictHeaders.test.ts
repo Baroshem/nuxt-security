@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { fileURLToPath } from 'node:url'
 import { setup, fetch } from '@nuxt/test-utils'
 
-describe('[nuxt-security] Security-level OWASP defaults', async () => {
+describe('[nuxt-security] Strict Headers', async () => {
   await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/owaspSecurity', import.meta.url)),
+    rootDir: fileURLToPath(new URL('./fixtures/strictHeaders', import.meta.url)),
   })
   let res: Response 
 
@@ -15,7 +15,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(res).toBeTruthy()
   })
 
-  it('has `x-xss-protection` header set with security-level default value for certain route', async () => {
+  it('has `x-xss-protection` header set with strict value for certain route', async () => {
     const { headers } = await fetch('/test')
 
     expect(headers.has('x-xss-protection')).toBeTruthy()
@@ -26,7 +26,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(xxpHeaderValue).toBe('1')
   })
 
-  it('has `content-security-policy` header set with security-level default value', async () => {
+  it('has `content-security-policy` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('content-security-policy')).toBeTruthy()
@@ -40,7 +40,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(cspHeaderValue).toBe(`base-uri 'none'; default-src 'none'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; img-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; script-src-attr 'none'; style-src 'self' 'nonce-${nonceValue}'; script-src 'self' 'strict-dynamic' 'nonce-${nonceValue}'; upgrade-insecure-requests; worker-src 'self';`)
   })
 
-  it('has `cross-origin-embedder-policy` header set with security-level default value', async () => {
+  it('has `cross-origin-embedder-policy` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('cross-origin-embedder-policy')).toBeTruthy()
@@ -51,7 +51,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(coepHeaderValue).toBe('require-corp')
   })
 
-  it('has `cross-origin-opener-policy` header set with security-level default value', async () => {
+  it('has `cross-origin-opener-policy` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('cross-origin-opener-policy')).toBeTruthy()
@@ -62,7 +62,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(coopHeaderValue).toBe('same-origin')
   })
 
-  it('has `cross-origin-resource-policy` header set with security-level default value', async () => {
+  it('has `cross-origin-resource-policy` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('cross-origin-resource-policy')).toBeTruthy()
@@ -73,7 +73,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(corpHeaderValue).toBe('same-origin')
   })
 
-  it('has `origin-agent-cluster` header set with security-level default value', async () => {
+  it('has `origin-agent-cluster` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('origin-agent-cluster')).toBeTruthy()
@@ -84,7 +84,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(oacHeaderValue).toBe('?1')
   })
 
-  it('has `permissions-policy` header set with security-level default value', async () => {
+  it('has `permissions-policy` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('permissions-policy')).toBeTruthy()
@@ -95,7 +95,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(ppHeaderValue).toBe('accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=()')
   })
 
-  it('has `referrer-policy` header set with security-level default value', async () => {
+  it('has `referrer-policy` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('referrer-policy')).toBeTruthy()
@@ -106,7 +106,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(rpHeaderValue).toBe('no-referrer')
   })
 
-  it('has `strict-transport-security` header set with security-level default value', async () => {
+  it('has `strict-transport-security` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('strict-transport-security')).toBeTruthy()
@@ -117,7 +117,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(stsHeaderValue).toBe('max-age=31536000; includeSubDomains; preload;')
   })
 
-  it('has `x-content-type-options` header set with security-level default value', async () => {
+  it('has `x-content-type-options` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('x-content-type-options')).toBeTruthy()
@@ -128,7 +128,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(xctpHeaderValue).toBe('nosniff')
   })
 
-  it('has `x-dns-prefetch-control` header set with security-level default value', async () => {
+  it('has `x-dns-prefetch-control` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('x-dns-prefetch-control')).toBeTruthy()
@@ -139,7 +139,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(xdpcHeaderValue).toBe('off')
   })
 
-  it('has `x-download-options` header set with security-level default value', async () => {
+  it('has `x-download-options` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('x-download-options')).toBeTruthy()
@@ -150,7 +150,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(xdoHeaderValue).toBe('noopen')
   })
 
-  it('has `x-frame-options` header set with security-level default value', async () => {
+  it('has `x-frame-options` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('x-frame-options')).toBeTruthy()
@@ -161,7 +161,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(xfoHeaderValue).toBe('DENY')
   })
 
-  it('has `x-permitted-cross-domain-policies` header set with security-level default value', async () => {
+  it('has `x-permitted-cross-domain-policies` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('x-permitted-cross-domain-policies')).toBeTruthy()
@@ -172,7 +172,7 @@ describe('[nuxt-security] Security-level OWASP defaults', async () => {
     expect(xpcdpHeaderValue).toBe('none')
   })
 
-  it('has `x-xss-protection` header set with security-level default value', async () => {
+  it('has `x-xss-protection` header set with strict value', async () => {
     const { headers } = res
 
     expect(headers.has('x-xss-protection')).toBeTruthy()

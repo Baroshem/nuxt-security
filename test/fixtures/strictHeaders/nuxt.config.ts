@@ -10,6 +10,6 @@ export default defineNuxtConfig({
     }
   },
   security: {
-    owaspDefaults: 'security',
+    strict: true,
   }
 })
