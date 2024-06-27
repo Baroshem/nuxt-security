@@ -115,6 +115,7 @@ export const defaultSecurityConfig = (serverlUrl: string, owaspDefaults: ModuleO
       'upgrade-insecure-requests': true,
       'worker-src': ["'self'"],
     }
+    defaults.ssg.hashStyles = true
     defaults.headers.strictTransportSecurity = {
       maxAge: 31536000,
       includeSubdomains: true,

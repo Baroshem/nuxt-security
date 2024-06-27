@@ -27,11 +27,11 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
 
     // First merge module options with default options
-    const defaultLevel = options.owaspDefaults || nuxt.options.security?.owaspDefaults || 'normal'
+    const owaspDefaults = options.owaspDefaults || nuxt.options.security?.owaspDefaults || 'compatibility'
     nuxt.options.security = defuReplaceArray(
       { ...options, ...nuxt.options.security },
       {
-        ...defaultSecurityConfig(nuxt.options.devServer.url, defaultLevel)
+        ...defaultSecurityConfig(nuxt.options.devServer.url, owaspDefaults)
       }
     )
 
