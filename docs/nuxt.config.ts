@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     strict: true,
     headers: {
       contentSecurityPolicy: {
+        'style-src': ["'self'", "'unsafe-inline'"],
         'img-src': ["'self'", "data:", 'https:'], // Allow https: external images
         'connect-src': process.env.NODE_ENV === 'development' ? ["'self'", 'https:', 'ws:'] : ["'self'", 'https:'], // Allow websocket in dev mode
         'frame-src': ['https://www.youtube-nocookie.com', 'https://stackblitz.com'], // Allow youtube and stackblitz iframes
@@ -25,6 +26,9 @@ export default defineNuxtConfig({
         "fullscreen": ['self', '"https://www.youtube-nocookie.com"'], // Allow fullscreen for youtube
       },
       crossOriginEmbedderPolicy: 'unsafe-none', // Allow youtube and stackblitz iframes
+    },
+    ssg: {
+      hashStyles: false
     }
   }
 })
