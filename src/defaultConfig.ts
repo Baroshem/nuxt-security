@@ -9,7 +9,7 @@ export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
     headers: {
       crossOriginResourcePolicy: 'same-origin',
       crossOriginOpenerPolicy: 'same-origin',
-      crossOriginEmbedderPolicy: 'credentialless',
+      crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'credentialless',
       contentSecurityPolicy: {
         'base-uri': ["'none'"],
         'font-src': ["'self'", 'https:', 'data:'],
