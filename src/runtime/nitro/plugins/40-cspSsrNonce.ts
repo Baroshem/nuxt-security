@@ -53,5 +53,12 @@ export default defineNitroPlugin((nitroApp) => {
         return element
       })
     }
+
+    // Add meta header for Vite in development
+    if (import.meta.dev) {
+      html.head.push(
+        `<meta property="csp-nonce" nonce="${nonce}">`,
+      )
+    }
   })
 })
