@@ -2,6 +2,7 @@ import { defineNitroPlugin, useRuntimeConfig } from "#imports"
 import { getAppSecurityOptions } from '../context'
 import { defuReplaceArray } from '../../../utils/merge'
 import { standardToSecurity, backwardsCompatibleSecurity } from '../../../utils/headers'
+import { getRegExpOriginRestoredCorsHandler } from '../../../utils/originRegExpSerde';
 
 /**
  * This plugin merges all security options into the global security context
@@ -24,9 +25,15 @@ export default defineNitroPlugin(async(nitroApp) => {
   const securityOptions = runtimeConfig.security
   const { headers } = securityOptions
 
+  // Restore origin regexp
+  const corsHandlerOption = getRegExpOriginRestoredCorsHandler(securityOptions.corsHandler)
+
   const securityHeaders = backwardsCompatibleSecurity(headers)
   appSecurityOptions['/**'] = defuReplaceArray(
-    { headers: securityHeaders },
+    {
+      headers: securityHeaders,
+      corsHandler: corsHandlerOption,
+    },
     securityOptions,
     appSecurityOptions['/**']
   )
@@ -40,8 +47,12 @@ export default defineNitroPlugin(async(nitroApp) => {
     if (security) {
       const { headers } = security
       const securityHeaders = backwardsCompatibleSecurity(headers)
+      const corsHandlerOption = getRegExpOriginRestoredCorsHandler(security.corsHandler)
       appSecurityOptions[route] = defuReplaceArray(
-        { headers: securityHeaders },
+        {
+          headers: securityHeaders,
+          corsHandler: corsHandlerOption
+        },
         security,
         appSecurityOptions[route],
       )
@@ -63,4 +74,3 @@ export default defineNitroPlugin(async(nitroApp) => {
 
   await nitroApp.hooks.callHook('nuxt-security:ready')
 })
-
