@@ -24,11 +24,13 @@ export default defineNitroPlugin((nitroApp) => {
 
       // Let's insert the CSP meta tag just after the first tag which should be the charset meta
       let insertIndex = 0
-      const metaCharsetMatch = html.head[0].match(/^<meta charset="(.*?)">/mdi)
-      if (metaCharsetMatch && metaCharsetMatch.indices) {
-        insertIndex = metaCharsetMatch.indices[0][1]
+      if (html.head.length > 0) {
+        const metaCharsetMatch = html.head[0].match(/^<meta charset="(.*?)">/mdi)
+        if (metaCharsetMatch && metaCharsetMatch.indices) {
+          insertIndex = metaCharsetMatch.indices[0][1]
+        }
+        html.head[0] = html.head[0].slice(0, insertIndex) + `<meta http-equiv="Content-Security-Policy" content="${headerValue}">` + html.head[0].slice(insertIndex) 
       }
-      html.head[0] = html.head[0].slice(0, insertIndex) + `<meta http-equiv="Content-Security-Policy" content="${headerValue}">` + html.head[0].slice(insertIndex) 
     }
   })
 })

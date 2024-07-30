@@ -7,16 +7,18 @@ import type { ContentSecurityPolicyValue } from '../../../types/headers'
  */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (response, { event }) => {
-    const rules = resolveSecurityRules(event)
-    if (rules.enabled && rules.headers) {
-      const headers = rules.headers
-      
-      if (headers.contentSecurityPolicy) {
-        const csp = headers.contentSecurityPolicy
-        const nonce = event.context.security?.nonce
-        const scriptHashes = event.context.security?.hashes?.script
-        const styleHashes = event.context.security?.hashes?.style
-        headers.contentSecurityPolicy = updateCspVariables(csp, nonce, scriptHashes, styleHashes)
+    if (!response.island) {
+      const rules = resolveSecurityRules(event)
+      if (rules.enabled && rules.headers) {
+        const headers = rules.headers
+        
+        if (headers.contentSecurityPolicy) {
+          const csp = headers.contentSecurityPolicy
+          const nonce = event.context.security?.nonce
+          const scriptHashes = event.context.security?.hashes?.script
+          const styleHashes = event.context.security?.hashes?.style
+          headers.contentSecurityPolicy = updateCspVariables(csp, nonce, scriptHashes, styleHashes)
+        }
       }
     }
   })
