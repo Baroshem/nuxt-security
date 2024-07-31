@@ -8,6 +8,12 @@ import { useLogger } from '@nuxt/kit'
  */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (response, { event }) => {
+    if (response.island) {
+      // When rendering server-only (NuxtIsland) components, do not update CSP headers.
+      // The CSP headers from the page that the island components are mounted into are used.
+      return
+    }
+
     const rules = resolveSecurityRules(event)
     if (rules.enabled && rules.headers) {
       const headers = rules.headers
