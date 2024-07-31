@@ -1,7 +1,7 @@
 import { defineNitroPlugin } from '#imports'
 import { randomBytes } from 'node:crypto'
 import { resolveSecurityRules } from '../context'
-import { isIslandRequst } from '../../../utils/island'
+import { isIslandRequest } from '../../../utils/island'
 
 const LINK_RE = /<link([^>]*?>)/gi
 const SCRIPT_RE = /<script([^>]*?>)/gi
@@ -20,7 +20,7 @@ export default defineNitroPlugin((nitroApp) => {
 
   // Genearate a 16-byte random nonce for each request.
   nitroApp.hooks.hook('request', (event) => {
-    if (isIslandRequst(event)) {
+    if (isIslandRequest(event)) {
       // When rendering server-only (NuxtIsland) components, each component will trigger a request event.
       // The request context is shared between the event that renders the actual page and the island request events.
       // We only generate the nonce once for the page event.
