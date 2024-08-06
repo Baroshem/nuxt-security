@@ -13,7 +13,7 @@ describe('[nuxt-security] Nonce', async () => {
     const res = await fetch('/')
 
     const cspHeaderValue = res.headers.get('content-security-policy')
-    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)![1]
+    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)?.[1]
 
     const text = await res.text()
     const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -44,7 +44,7 @@ describe('[nuxt-security] Nonce', async () => {
     const res = await fetch('/use-head')
 
     const cspHeaderValue = res.headers.get('content-security-policy')
-    const nonce = cspHeaderValue!.match(/'nonce-(.*?)'/)![1]
+    const nonce = cspHeaderValue!.match(/'nonce-(.*?)'/)?.[1]
 
     const text = await res.text()
     const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -70,7 +70,7 @@ describe('[nuxt-security] Nonce', async () => {
     const res = await fetch('/with-styling')
 
     const cspHeaderValue = res.headers.get('content-security-policy')
-    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)![1]
+    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)?.[1]
 
     const text = await res.text()
     const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -96,5 +96,19 @@ describe('[nuxt-security] Nonce', async () => {
     expect(content).toBeDefined()
     expect(injectedNonces).toBe(null)
     expect(cspNonces).toBe(null)
+  })
+
+  it('works with server-only components', async () => {
+    const res = await fetch('/server-component')
+
+    const cspHeaderValue = res.headers.get('content-security-policy')
+    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)?.[1]
+
+    const text = await res.text()
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(nonce).toBeDefined()
+    expect(text).toMatch(`<span id="server-nonce">${nonce}</span>`)
   })
 })
