@@ -57,6 +57,11 @@ describe('[nuxt-security] CORS', async () => {
     expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull()
   })
 
+  it('should match origins with regular expressions in a case-insensitive way', async () => {
+    const res = await fetch('/regexp-single', { headers: { origin: 'https://A.EXAMPLE.COM' } })
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://A.EXAMPLE.COM')
+  })
+
   it('should support multiple regular expressions', async () => {
     let res = await fetch('/regexp-multi', { headers: { origin: 'https://a.example.com' } })
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://a.example.com')

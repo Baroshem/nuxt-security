@@ -16,7 +16,7 @@ export default defineEventHandler((event) => {
     }
 
     if (origin && origin !== '*' && corsHandler.useRegExp) {
-      origin = origin.map((o) => new RegExp(o))
+      origin = origin.map((o) => new RegExp(o, 'i'))
     }
 
     handleCors(event, {
