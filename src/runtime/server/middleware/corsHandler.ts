@@ -9,13 +9,13 @@ export default defineEventHandler((event) => {
     const { corsHandler } = rules
 
     let origin: H3CorsOptions['origin']
-    if (typeof corsHandler.origin === 'string') {
+    if (typeof corsHandler.origin === 'string' && corsHandler.origin !== '*') {
       origin = [corsHandler.origin]
     } else {
       origin = corsHandler.origin
     }
 
-    if (origin && corsHandler.useRegExp) {
+    if (origin && origin !== '*' && corsHandler.useRegExp) {
       origin = origin.map((o) => new RegExp(o))
     }
 
