@@ -11,7 +11,6 @@ import { defaultSecurityConfig } from './defaultConfig'
 import type { Nuxt } from '@nuxt/schema'
 import type { Nitro } from 'nitropack'
 import type { ModuleOptions } from './types/module'
-import { modifyCorsHandlerOriginRegExpToJSON } from './utils/originRegExpSerde'
 
 export * from './types/module'
 export * from './types/headers'
@@ -24,7 +23,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup (options, nuxt) {
     const resolver = createResolver(import.meta.url)
-
+    
     nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
 
     // First merge module options with default options
@@ -56,9 +55,6 @@ export default defineNuxtModule<ModuleOptions>({
     // At this point we have all security options merged into runtimeConfig
     const securityOptions = nuxt.options.runtimeConfig.security
 
-    // Avoid JSON.stringify regexp to '{}'
-    modifyCorsHandlerOriginRegExpToJSON(securityOptions.corsHandler)
-
     // Disable module when `enabled` is set to `false`
     if (!securityOptions.enabled) { return }
 
@@ -79,9 +75,6 @@ export default defineNuxtModule<ModuleOptions>({
     // Then insert route specific security headers
     for (const route in nuxt.options.nitro.routeRules) {
       const rule = nuxt.options.nitro.routeRules[route]
-      if (rule.security && rule.security.corsHandler) {
-        modifyCorsHandlerOriginRegExpToJSON(rule.security.corsHandler)
-      }
       if (rule.security && rule.security.headers) {
         const { security : { headers } } = rule
         const routeSecurityHeaders = getHeadersApplicableToAllResources(headers)
@@ -91,7 +84,7 @@ export default defineNuxtModule<ModuleOptions>({
         )
       }
     }
-
+    
     // Register nitro plugin to manage security rules at the level of each route
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-routeRules'))
 
@@ -142,12 +135,12 @@ export default defineNuxtModule<ModuleOptions>({
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/rateLimiter')
     })
-
+    
     // Register XSS validator middleware
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/xssValidator')
     })
-
+    
     // Register basicAuth middleware that is disabled by default
     const basicAuthConfig = nuxt.options.runtimeConfig.private.basicAuth
     if (basicAuthConfig && (basicAuthConfig.enabled || (basicAuthConfig as any)?.value?.enabled)) {
@@ -181,12 +174,12 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Register init hook to add pre-rendered headers to responses
-    nuxt.hook('nitro:init', nitro => {
+    nuxt.hook('nitro:init', nitro => {  
       nitro.hooks.hook('prerender:done', async() => {
         // Add the prenredered headers to the Nitro server assets
-        nitro.options.serverAssets.push({
-          baseName: 'nuxt-security',
-          dir: createResolver(nuxt.options.buildDir).resolve('./nuxt-security')
+        nitro.options.serverAssets.push({ 
+          baseName: 'nuxt-security', 
+          dir: createResolver(nuxt.options.buildDir).resolve('./nuxt-security') 
         })
 
         // In some Nitro presets (e.g. Vercel), the header rules are generated for the static server
@@ -210,7 +203,7 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 /**
- *
+ * 
  * Register storage driver for the rate limiter
  */
 function registerRateLimiterStorage(nuxt: Nuxt, securityOptions: ModuleOptions) {
@@ -236,8 +229,8 @@ function registerRateLimiterStorage(nuxt: Nuxt, securityOptions: ModuleOptions) 
  * Make sure our nitro plugins will be applied last,
  * After all other third-party modules that might have loaded their own nitro plugins
  */
-function reorderNitroPlugins(nuxt: Nuxt) {
-  nuxt.hook('nitro:init', nitro => {
+function reorderNitroPlugins(nuxt: Nuxt) {  
+  nuxt.hook('nitro:init', nitro => {    
     const resolver = createResolver(import.meta.url)
     const securityPluginsPrefix = resolver.resolve('./runtime/nitro/plugins')
 
