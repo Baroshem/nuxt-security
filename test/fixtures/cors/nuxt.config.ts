@@ -36,6 +36,7 @@ export default defineNuxtConfig({
     '/regexp-single': {
       security: {
         corsHandler: {
+          // eslint-disable-next-line no-useless-escape -- This is parsed as a regular expression, so the escape is required.
           origin: '(a|b)\\.example\\.com',
           useRegExp: true
         }
@@ -44,6 +45,7 @@ export default defineNuxtConfig({
     '/regexp-multi': {
       security: {
         corsHandler: {
+          // eslint-disable-next-line no-useless-escape -- This is parsed as a regular expression, so the escape is required.
           origin: ['(a|b)\.example\.com', '(.*)\\.foo.example\\.com'],
           useRegExp: true
         }

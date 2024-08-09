@@ -1,4 +1,3 @@
 <template>
-    <div>star</div>
-  </template>
-  
+  <div>star</div>
+</template>
