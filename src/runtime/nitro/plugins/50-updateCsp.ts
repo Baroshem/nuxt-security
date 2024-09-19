@@ -7,6 +7,12 @@ import type { ContentSecurityPolicyValue } from '../../../types/headers'
  */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (response, { event }) => {
+    if (response.island) {
+      // When rendering server-only (NuxtIsland) components, do not update CSP headers.
+      // The CSP headers from the page that the island components are mounted into are used.
+      return
+    }
+
     const rules = resolveSecurityRules(event)
     if (rules.enabled && rules.headers) {
       const headers = rules.headers
@@ -31,7 +37,13 @@ function updateCspVariables(csp: ContentSecurityPolicyValue, nonce?: string, scr
     // Make sure nonce placeholders are eliminated
     const sources = (typeof value === 'string') ? value.split(' ').map(token => token.trim()).filter(token => token) : value
     const modifiedSources = sources
-      .filter(source => !source.startsWith("'nonce-") || source === "'nonce-{{nonce}}'")
+      .filter(source => {
+        if (source.startsWith("'nonce-") && source !== "'nonce-{{nonce}}'") {
+          console.warn('[nuxt-security] removing static nonce from CSP header')
+          return false
+        }
+        return true
+      })
       .map(source => {
         if (source === "'nonce-{{nonce}}'") {
           return nonce ? `'nonce-${nonce}'` : ''
