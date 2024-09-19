@@ -46,9 +46,10 @@ export type BasicAuth = {
 
 export type HTTPMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'PUT' | 'TRACE' | 'OPTIONS' | 'CONNECT' | 'HEAD';
 
-// Cannot use the H3CorsOptions from `h3` as it breaks the build process for some reason :(
+// Cannot use the H3CorsOptions, because it allows unserializable types, such as functions or RegExp.
 export type CorsOptions = {
-  origin?: '*' | 'null' | string | (string | RegExp)[] | ((origin: string) => boolean);
+  origin?: '*' | string | string[];
+  useRegExp?: boolean;
   methods?: '*' | HTTPMethod[];
   allowHeaders?: '*' | string[];
   exposeHeaders?: '*' | string[];

@@ -7,7 +7,27 @@ export default defineEventHandler((event) => {
 
   if (rules.enabled && rules.corsHandler) {
     const { corsHandler } = rules
-    handleCors(event, corsHandler as H3CorsOptions)
+
+    let origin: H3CorsOptions['origin']
+    if (typeof corsHandler.origin === 'string' && corsHandler.origin !== '*') {
+      origin = [corsHandler.origin]
+    } else {
+      origin = corsHandler.origin
+    }
+
+    if (origin && origin !== '*' && corsHandler.useRegExp) {
+      origin = origin.map((o) => new RegExp(o, 'i'))
+    }
+
+    handleCors(event, {
+      origin,
+      methods: corsHandler.methods,
+      allowHeaders: corsHandler.allowHeaders,
+      exposeHeaders: corsHandler.exposeHeaders,
+      credentials: corsHandler.credentials,
+      maxAge: corsHandler.maxAge,
+      preflight: corsHandler.preflight
+    })
   }
 
 })
