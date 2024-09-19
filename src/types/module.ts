@@ -38,7 +38,7 @@ export type NuxtSecurityRouteRules = Partial<
   & { requestSizeLimiter: RequestSizeLimiter | false }
 >
 
-declare module 'nuxt/schema' {
+declare module '@nuxt/schema' {
   interface NuxtOptions {
     security: ModuleOptions
   }
@@ -46,12 +46,6 @@ declare module 'nuxt/schema' {
     security: ModuleOptions,
     private: { basicAuth: BasicAuth | false, [key: string]: any }
   }
-  interface NuxtHooks {
-    'nuxt-security:prerenderedHeaders': (prerenderedHeaders: Record<string, Record<string, string>>) => HookResult
-  }
-}
-
-declare module '@nuxt/schema' {
   interface NuxtHooks {
     'nuxt-security:prerenderedHeaders': (prerenderedHeaders: Record<string, Record<string, string>>) => HookResult
   }
