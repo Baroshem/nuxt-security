@@ -112,7 +112,7 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     const directives = headerValue.split(';').map(directive => directive.trim()).filter(directive => directive)
     const objectForm = {} as ContentSecurityPolicyValue
     for (const directive of directives) {
-      const [type, ...sources] = directive.split(' ').map(token => token.trim()) as [keyof ContentSecurityPolicyValue, ...any]          
+      const [type, ...sources] = directive.split(' ').map(token => token.trim()) as [keyof ContentSecurityPolicyValue, ...string[]]          
       if (type === 'upgrade-insecure-requests') {
         objectForm[type] = true
       } else {
