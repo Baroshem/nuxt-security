@@ -96,7 +96,7 @@ export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
   }
 
   if (strict) {
-    defaultConfig.headers.crossOriginEmbedderPolicy = 'require-corp'
+    defaultConfig.headers.crossOriginEmbedderPolicy = process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp'
     defaultConfig.headers.contentSecurityPolicy = {
       'base-uri': ["'none'"],
       'default-src' : ["'none'"],
