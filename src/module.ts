@@ -58,9 +58,38 @@ export default defineNuxtModule<ModuleOptions>({
     // Disable module when `enabled` is set to `false`
     if (!securityOptions.enabled) { return }
 
-    // Register Vite transform plugin to remove loggers
+    // Register transform plugin to remove loggers
     if (securityOptions.removeLoggers) {
-      addVitePlugin(viteRemove(securityOptions.removeLoggers))
+      if (securityOptions.removeLoggers !== true) {
+        // Uses the legacy unplugin-remove plugin method
+        // This method is deprecated and will be removed in the future
+        addVitePlugin(viteRemove(securityOptions.removeLoggers))
+
+      } else {
+        // Uses the native method by Vite
+        // Vite can use either esbuild or terser
+        if (nuxt.options.vite.build?.minify === 'terser') {
+          // In case of terser, set the drop_console and drop_debugger options
+          nuxt.options.vite.build = defu(
+            {
+              terserOptions: { compress: { drop_console: true, drop_debugger: true } }
+            },
+            nuxt.options.vite.build
+          )
+        } else {
+          // In the default case, make sure minification by esbuild is turned on and set the drop option
+          nuxt.options.vite.build = defu(
+            { minify: true },
+            nuxt.options.vite.build
+          )
+          nuxt.options.vite.esbuild = defu(
+            { 
+              drop: ['console', 'debugger'] as ('console' | 'debugger')[],
+            },
+            nuxt.options.vite.esbuild
+          )
+        }
+      }
     }
 
     // Copy security headers that apply to all resources into standard route rules
