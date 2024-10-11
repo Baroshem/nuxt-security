@@ -78,13 +78,7 @@ export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
     enabled: true,
     csrf: false,
     nonce: true,
-    // https://github.com/Talljack/unplugin-remove/blob/main/src/types.ts
-    removeLoggers: {
-      external: [],
-      consoleType: ['log', 'debug'],
-      include: [/\.[jt]sx?$/, /\.vue\??/],
-      exclude: [/node_modules/, /\.git/]
-    },
+    removeLoggers: true,
     ssg: {
       meta: true,
       hashScripts: true,

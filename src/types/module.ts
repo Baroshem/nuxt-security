@@ -28,11 +28,11 @@ export interface ModuleOptions {
   sri: boolean
   basicAuth: BasicAuth | false;
   csrf: CsrfOptions | boolean;
-  removeLoggers: RemoveOptions | false;
+  removeLoggers: RemoveOptions | boolean;
 }
 
 export type NuxtSecurityRouteRules = Partial<
-  Omit<ModuleOptions, 'strict' | 'csrf' | 'basicAuth' | 'rateLimiter' | 'ssg' | 'requestSizeLimiter' > 
+  Omit<ModuleOptions, 'strict' | 'csrf' | 'basicAuth' | 'rateLimiter' | 'ssg' | 'requestSizeLimiter' | 'removeLoggers' > 
   & { rateLimiter: Omit<RateLimiter, 'driver'> | false }
   & { ssg: Omit<Ssg, 'exportToPresets'> | false }
   & { requestSizeLimiter: RequestSizeLimiter | false }
