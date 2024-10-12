@@ -1,7 +1,7 @@
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { readFile, readdir } from 'node:fs/promises'
-import { join } from 'pathe'
+import { join, isAbsolute } from 'pathe'
 import { defu } from 'defu'
 import viteRemove from 'unplugin-remove/vite'
 import { getHeadersApplicableToAllResources } from './utils/headers'
@@ -279,7 +279,6 @@ async function hashBundledAssets(nitro: Nitro) {
   // Will be later necessary to construct url
   const { cdnURL: appCdnUrl = '', baseURL: appBaseUrl } = nitro.options.runtimeConfig.app
 
-
   // Go through all public assets folder by folder
   const publicAssets = nitro.options.publicAssets
   for (const publicAsset of publicAssets) {
@@ -296,24 +295,27 @@ async function hashBundledAssets(nitro: Nitro) {
           // Node 16 compatibility maintained
           // Node 18.17+ supports entry.path on DirEnt
           // const fullPath = join(entry.path, entry.name)
-          const fullPath = join(dir, entry.name)
-          const fileContent = await readFile(fullPath)
-          const hash = generateHash(fileContent, hashAlgorithm)
+          const path = join(dir, entry.name)
+          const content = await readFile(path)
+          const hash = generateHash(content, hashAlgorithm)
           // construct the url as it will appear in the head template
-          const relativeUrl = join(baseURL, entry.name)
+          const fullPath = join(baseURL, entry.name)
           let url: string
           if (appCdnUrl) {
             // If the cdnURL option was set, the url will be in the form https://...
-            url = new URL(relativeUrl, appCdnUrl).href
+            const relativePath = isAbsolute(fullPath) ? fullPath.slice(1) : fullPath
+            const abdsoluteCdnUrl = appCdnUrl.endsWith('/') ? appCdnUrl : appCdnUrl + '/'
+            url = new URL(relativePath, abdsoluteCdnUrl).href
           } else {
             // If not, the url will be in a relative form: /_nuxt/...
-            url = join('/', appBaseUrl, relativeUrl)
+            url = join('/', appBaseUrl, fullPath)
           }
           sriHashes[url] = hash
         }
       }
     }
   }
+
 
   return sriHashes
 }
