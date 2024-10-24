@@ -173,11 +173,16 @@ function appliesToAllResources(optionKey: OptionKey) {
  * Extract the subset of security headers that apply to all resources
  */
 export function getHeadersApplicableToAllResources(headers: SecurityHeaders) {
-  return <Record<HeaderName, string>>Object.fromEntries(
+  const applicableHeaders = <Record<HeaderName, string>>Object.fromEntries(
     Object.entries(headers)
     .filter(([key]) => appliesToAllResources(key as OptionKey))
     .map(([key, value]) => ([getNameFromKey(key as OptionKey), headerStringFromObject(key as OptionKey, value)]))
   )
+  if (Object.keys(applicableHeaders).length === 0) {
+    return undefined
+  } else {
+    return applicableHeaders
+  }
 }
 
 
