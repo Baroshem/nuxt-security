@@ -178,11 +178,7 @@ export function getHeadersApplicableToAllResources(headers: SecurityHeaders) {
     .filter(([key]) => appliesToAllResources(key as OptionKey))
     .map(([key, value]) => ([getNameFromKey(key as OptionKey), headerStringFromObject(key as OptionKey, value)]))
   )
-  if (Object.keys(applicableHeaders).length === 0) {
-    return undefined
-  } else {
-    return applicableHeaders
-  }
+  return Object.keys(applicableHeaders).length === 0 ? undefined : applicableHeaders
 }
 
 
