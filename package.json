@@ -57,7 +57,7 @@
     "@nuxt/kit": "^3.11.2",
     "basic-auth": "^2.0.1",
     "defu": "^6.1.1",
-    "nuxt-csurf": "^1.5.1",
+    "nuxt-csurf": "^1.6.5",
     "pathe": "^1.0.0",
     "unplugin-remove": "^1.0.3",
     "xss": "^1.0.14"
