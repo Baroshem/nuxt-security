@@ -21,7 +21,7 @@ export default defineNitroPlugin((nitroApp) => {
     return
   }
 
-  nitroApp.hooks.hook('render:html', (html, { event }) => {
+  nitroApp.hooks.hook('render:html', async(html, { event }) => {
     // Exit if no CSP defined
     const rules = resolveSecurityRules(event)
     if (!rules.enabled || !rules.headers || !rules.headers.contentSecurityPolicy) {
@@ -34,7 +34,7 @@ export default defineNitroPlugin((nitroApp) => {
     }
     const scriptHashes = event.context.security!.hashes.script
     const styleHashes = event.context.security!.hashes.style
-    const hashAlgorithm = 'sha256'
+    const hashAlgorithm = 'SHA-256'
 
     // Parse HTML if SSG is enabled for this route
     if (rules.ssg) {
@@ -43,12 +43,13 @@ export default defineNitroPlugin((nitroApp) => {
       // Scan all relevant sections of the NuxtRenderHtmlContext
       const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
       for (const section of sections) {
-        html[section].forEach(element => {
+        for (const element of html[section]) {
           if (hashScripts) {
             // Parse all script tags
             const inlineScriptMatches = element.matchAll(INLINE_SCRIPT_RE)
             for (const [, scriptText] of inlineScriptMatches) {
-              scriptHashes.add(`'${generateHash(scriptText, hashAlgorithm)}'`)
+              const hash = await generateHash(scriptText, hashAlgorithm)
+              scriptHashes.add(`'${hash}'`)
             }
             const externalScriptMatches = element.matchAll(SCRIPT_RE)
             for (const [, integrity] of externalScriptMatches) {
@@ -60,7 +61,8 @@ export default defineNitroPlugin((nitroApp) => {
           if (hashStyles) {
             const styleMatches = element.matchAll(STYLE_RE)
             for (const [, styleText] of styleMatches) {
-              styleHashes.add(`'${generateHash(styleText, hashAlgorithm)}'`)
+              const hash = await generateHash(styleText, hashAlgorithm)
+              styleHashes.add(`'${hash}'`)
             }
           }
 
@@ -94,7 +96,7 @@ export default defineNitroPlugin((nitroApp) => {
               }
             }
           }
-        })
+        }
       }
     }
   })

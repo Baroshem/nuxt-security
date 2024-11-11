@@ -273,7 +273,7 @@ function reorderNitroPlugins(nuxt: Nuxt) {
 
 
 async function hashBundledAssets(nitro: Nitro) {
-  const hashAlgorithm = 'sha384'
+  const hashAlgorithm = 'SHA-384'
   const sriHashes: Record<string, string> = {}
 
   // Will be later necessary to construct url
@@ -298,7 +298,7 @@ async function hashBundledAssets(nitro: Nitro) {
           // const fullPath = join(entry.path, entry.name)
           const fullPath = join(dir, entry.name)
           const fileContent = await readFile(fullPath)
-          const hash = generateHash(fileContent, hashAlgorithm)
+          const hash = await generateHash(fileContent, hashAlgorithm)
           // construct the url as it will appear in the head template
           const relativeUrl = join(baseURL, entry.name)
           let url: string
