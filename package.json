@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "homepage": "https://nuxt-security.vercel.app",
   "description": "🛡️ Security Module for Nuxt based on HTTP Headers and Middleware",
   "repository": {
