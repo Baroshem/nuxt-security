@@ -79,7 +79,7 @@
   },
   "unbuild": {
     "entries": [
-      "./src/utils/hash.ts",
+      "./src/utils/crypto.ts",
       "./src/utils/headers.ts",
       "./src/utils/merge.ts",
       "./src/defaultConfig.ts"
