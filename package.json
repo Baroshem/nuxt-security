@@ -1,10 +1,10 @@
 {
   "name": "nuxt-security",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=18.0.0"
   },
   "homepage": "https://nuxt-security.vercel.app",
   "description": "🛡️ Security Module for Nuxt based on HTTP Headers and Middleware",
@@ -79,7 +79,7 @@
   },
   "unbuild": {
     "entries": [
-      "./src/utils/hash.ts",
+      "./src/utils/crypto.ts",
       "./src/utils/headers.ts",
       "./src/utils/merge.ts",
       "./src/defaultConfig.ts"
