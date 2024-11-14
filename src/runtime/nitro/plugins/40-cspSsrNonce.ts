@@ -1,5 +1,6 @@
 import { defineNitroPlugin } from '#imports'
 import { resolveSecurityRules } from '../context'
+import { generateRandomNonce } from '../../../utils/crypto'
 
 const LINK_RE = /<link([^>]*?>)/gi
 const SCRIPT_RE = /<script([^>]*?>)/gi
@@ -27,9 +28,7 @@ export default defineNitroPlugin((nitroApp) => {
 
     const rules = resolveSecurityRules(event)
     if (rules.enabled && rules.nonce && !import.meta.prerender) {
-      const array = new Uint8Array(18);
-      crypto.getRandomValues(array)
-      const nonce = btoa(String.fromCharCode(...array))
+      const nonce = generateRandomNonce()
       event.context.security!.nonce = nonce
     }
   })

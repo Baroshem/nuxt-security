@@ -1,6 +1,6 @@
 import { defineNitroPlugin } from '#imports'
 import { resolveSecurityRules } from '../context'
-import { generateHash } from '../../../utils/hash'
+import { generateHash } from '../../../utils/crypto'
 import type { Section } from '../../../types/module'
 
 
