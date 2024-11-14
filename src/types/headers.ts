@@ -86,6 +86,8 @@ export type ContentSecurityPolicyValue = {
   //'navigate-to'?: ("'self'" | "'none'" | "'unsafe-allow-redirects'" | string)[] | string | false;
   'report-uri'?: string[] | string | false;
   'report-to'?: string | false;
+  'require-trusted-types-for'?: string | false;
+  'trusted-types'?: string[] | string | false;
   'upgrade-insecure-requests'?: boolean;
 };
 

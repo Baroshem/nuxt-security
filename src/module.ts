@@ -1,7 +1,7 @@
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { readFile, readdir } from 'node:fs/promises'
-import { join } from 'pathe'
+import { join, isAbsolute } from 'pathe'
 import { defu } from 'defu'
 import viteRemove from 'unplugin-remove/vite'
 import { getHeadersApplicableToAllResources } from './utils/headers'
@@ -58,9 +58,38 @@ export default defineNuxtModule<ModuleOptions>({
     // Disable module when `enabled` is set to `false`
     if (!securityOptions.enabled) { return }
 
-    // Register Vite transform plugin to remove loggers
+    // Register transform plugin to remove loggers
     if (securityOptions.removeLoggers) {
-      addVitePlugin(viteRemove(securityOptions.removeLoggers))
+      if (securityOptions.removeLoggers !== true) {
+        // Uses the legacy unplugin-remove plugin method
+        // This method is deprecated and will be removed in the future
+        addVitePlugin(viteRemove(securityOptions.removeLoggers))
+
+      } else {
+        // Uses the native method by Vite
+        // Vite can use either esbuild or terser
+        if (nuxt.options.vite.build?.minify === 'terser') {
+          // In case of terser, set the drop_console and drop_debugger options
+          nuxt.options.vite.build = defu(
+            {
+              terserOptions: { compress: { drop_console: true, drop_debugger: true } }
+            },
+            nuxt.options.vite.build
+          )
+        } else {
+          // In the default case, make sure minification by esbuild is turned on and set the drop option
+          nuxt.options.vite.build = defu(
+            { minify: true },
+            nuxt.options.vite.build
+          )
+          nuxt.options.vite.esbuild = defu(
+            { 
+              drop: ['console', 'debugger'] as ('console' | 'debugger')[],
+            },
+            nuxt.options.vite.esbuild
+          )
+        }
+      }
     }
 
     // Copy security headers that apply to all resources into standard route rules
@@ -273,12 +302,11 @@ function reorderNitroPlugins(nuxt: Nuxt) {
 
 
 async function hashBundledAssets(nitro: Nitro) {
-  const hashAlgorithm = 'sha384'
+  const hashAlgorithm = 'SHA-384'
   const sriHashes: Record<string, string> = {}
 
   // Will be later necessary to construct url
   const { cdnURL: appCdnUrl = '', baseURL: appBaseUrl } = nitro.options.runtimeConfig.app
-
 
   // Go through all public assets folder by folder
   const publicAssets = nitro.options.publicAssets
@@ -296,24 +324,27 @@ async function hashBundledAssets(nitro: Nitro) {
           // Node 16 compatibility maintained
           // Node 18.17+ supports entry.path on DirEnt
           // const fullPath = join(entry.path, entry.name)
-          const fullPath = join(dir, entry.name)
-          const fileContent = await readFile(fullPath)
-          const hash = generateHash(fileContent, hashAlgorithm)
+          const path = join(dir, entry.name)
+          const content = await readFile(path)
+          const hash = await generateHash(content, hashAlgorithm)
           // construct the url as it will appear in the head template
-          const relativeUrl = join(baseURL, entry.name)
+          const fullPath = join(baseURL, entry.name)
           let url: string
           if (appCdnUrl) {
             // If the cdnURL option was set, the url will be in the form https://...
-            url = new URL(relativeUrl, appCdnUrl).href
+            const relativePath = isAbsolute(fullPath) ? fullPath.slice(1) : fullPath
+            const abdsoluteCdnUrl = appCdnUrl.endsWith('/') ? appCdnUrl : appCdnUrl + '/'
+            url = new URL(relativePath, abdsoluteCdnUrl).href
           } else {
             // If not, the url will be in a relative form: /_nuxt/...
-            url = join('/', appBaseUrl, relativeUrl)
+            url = join('/', appBaseUrl, fullPath)
           }
           sriHashes[url] = hash
         }
       }
     }
   }
+
 
   return sriHashes
 }

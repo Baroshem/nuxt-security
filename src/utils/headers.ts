@@ -112,7 +112,7 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     const directives = headerValue.split(';').map(directive => directive.trim()).filter(directive => directive)
     const objectForm = {} as ContentSecurityPolicyValue
     for (const directive of directives) {
-      const [type, ...sources] = directive.split(' ').map(token => token.trim()) as [keyof ContentSecurityPolicyValue, ...any]          
+      const [type, ...sources] = directive.split(' ').map(token => token.trim()) as [keyof ContentSecurityPolicyValue, ...string[]]          
       if (type === 'upgrade-insecure-requests') {
         objectForm[type] = true
       } else {
@@ -173,11 +173,12 @@ function appliesToAllResources(optionKey: OptionKey) {
  * Extract the subset of security headers that apply to all resources
  */
 export function getHeadersApplicableToAllResources(headers: SecurityHeaders) {
-  return <Record<HeaderName, string>>Object.fromEntries(
+  const applicableHeaders = <Record<HeaderName, string>>Object.fromEntries(
     Object.entries(headers)
     .filter(([key]) => appliesToAllResources(key as OptionKey))
     .map(([key, value]) => ([getNameFromKey(key as OptionKey), headerStringFromObject(key as OptionKey, value)]))
   )
+  return Object.keys(applicableHeaders).length === 0 ? undefined : applicableHeaders
 }
 
 
