@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <svg
     class="text-[#18181B] dark:text-white"
