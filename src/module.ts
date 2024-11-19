@@ -65,8 +65,8 @@ export default defineNuxtModule<ModuleOptions>({
         // This method is deprecated and will be removed in the future
         addVitePlugin(viteRemove(securityOptions.removeLoggers))
 
-      } else {
-        // Uses the native method by Vite
+      } else if (!nuxt.options.dev) {
+        // Uses the native method by Vite, except in dev mode
         // Vite can use either esbuild or terser
         if (nuxt.options.vite.build?.minify === 'terser') {
           // In case of terser, set the drop_console and drop_debugger options

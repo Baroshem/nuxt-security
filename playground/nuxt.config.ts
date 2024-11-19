@@ -55,7 +55,6 @@ export default defineNuxtConfig({
       interval: 30000,
       headers: true
     },
-    removeLoggers: false,
   },
 
   hooks: {
