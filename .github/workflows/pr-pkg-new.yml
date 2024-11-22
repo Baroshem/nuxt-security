@@ -1,12 +1,13 @@
 name: Publish Approved Pull Requests
 on:
+  workflow_dispatch:
   pull_request_review:
     types: [submitted]
 
 jobs:
   check:
     # First, trigger a permissions check on the user approving the pull request.
-    if: github.event.review.state == 'approved'
+    if: (github.event_name == 'workflow_dispatch' || github.event.review.state == 'approved')
     runs-on: ubuntu-latest
     outputs:
       has-permissions: ${{ steps.checkPermissions.outputs.require-result }}
