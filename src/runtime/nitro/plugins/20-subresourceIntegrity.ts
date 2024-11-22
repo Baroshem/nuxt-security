@@ -24,6 +24,11 @@ export default defineNitroPlugin((nitroApp) => {
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
     for (const section of sections) {
       html[section] = html[section].map(element => {
+        // Skip non-string elements
+        if (typeof element !== 'string') {
+          return element;
+        }
+        
         element = element.replace(SCRIPT_RE, (match, rest: string, src: string) => {
           const hash = sriHashes[src]
           if (hash) {
