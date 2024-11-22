@@ -52,6 +52,10 @@ export default defineNitroPlugin((nitroApp) => {
     const sections = ['body', 'bodyAppend', 'bodyPrepend', 'head'] as Section[]
     for (const section of sections) {
       html[section] = html[section].map((element) => {
+        // Skip non-string elements
+        if (typeof element !== 'string') {
+          return element;
+        }
         // Add nonce to all link tags
         element = element.replace(LINK_RE, (match, rest) => {
           return `<link nonce="${nonce}"` + rest
