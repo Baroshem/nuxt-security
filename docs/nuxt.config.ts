@@ -21,6 +21,10 @@ export default defineNuxtConfig({
     icons: ['heroicons', 'simple-icons', 'ph'],
   },
 
+  uiPro: {
+    license: 'oss'
+  },
+
   security: {
     strict: true,
     rateLimiter: false,
