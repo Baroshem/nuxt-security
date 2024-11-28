@@ -1,19 +1,33 @@
 export default defineNuxtConfig({
-  extends: '@nuxt-themes/docus',
-  modules: ['@nuxtjs/plausible', '@nuxtlabs/github-module', 'nuxt-security'],
+  extends: '@nuxt/ui-pro',
+
   experimental: {
     // Need this otherwise vue-server-renderer not found
     externalVue: false
   },
 
-  github: {
-    owner: 'Baroshem',
-    repo: 'nuxt-security',
-    branch: 'main'
+  modules: [
+    '@nuxt/content',
+    '@nuxt/ui',
+    'nuxt-security',
+    '@vueuse/nuxt'
+  ],
+
+  colorMode: {
+    preference: 'dark',
+  },
+
+  ui: {
+    icons: ['heroicons', 'simple-icons', 'ph'],
+  },
+
+  uiPro: {
+    license: 'oss'
   },
 
   security: {
     strict: true,
+    rateLimiter: false,
     headers: {
       contentSecurityPolicy: {
         'style-src': ["'self'", "'unsafe-inline'"],
@@ -30,5 +44,23 @@ export default defineNuxtConfig({
     ssg: {
       hashStyles: false
     }
-  }
+  },
+
+  nitro: {
+    prerender: {
+      routes: ['/api/search.json'],
+    },
+  },
+
+  hooks: {
+    // Related to https://github.com/nuxt/nuxt/pull/22558
+    // Adding all global components to the main entry
+    // To avoid lagging during page navigation on client-side
+    'components:extend': function (components) {
+      for (const comp of components) {
+        if (comp.global)
+          comp.global = 'sync'
+      }
+    },
+  },
 })

@@ -10,4 +10,3 @@ dist
 sw.*
 .env
 .output
-yarn.lock
