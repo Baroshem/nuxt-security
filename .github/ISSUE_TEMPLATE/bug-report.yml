@@ -38,8 +38,8 @@ body:
       label: Default security
       description: Tell us if the bug happens with our default `security` options in your `nuxt.config.ts`
       options:
-        - Yes: My bug happens even if the security option is not set
-        - No: My bug happens only when I set a specific option in the security object
+        - Yes, My bug happens even if the security option is not set
+        - No, My bug happens only when I set a specific option in the security object
     validations:
       required: true
   - type: textarea
