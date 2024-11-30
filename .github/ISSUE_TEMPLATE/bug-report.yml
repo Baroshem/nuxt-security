@@ -29,7 +29,7 @@ body:
     id: config
     attributes:
       label: Security options
-      description: Does the bug happen when `security` is not set in nuxt.config.ts
+      description: Does the bug happen when `security` is not set in `nuxt.config.ts`
       options:
         - My bug happens even if the `security` object is not set
         - My bug happens when I set a specific option in the `security` object
