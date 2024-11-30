@@ -47,8 +47,8 @@ body:
       label: Reproduction
       description: Please provide a reproduction link. A minimal [reproduction is required](https://antfu.me/posts/why-reproductions-are-required) unless you are absolutely sure that the issue is obvious and the provided information is enough to understand the problem. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "needs reproduction" label. If no reproduction is provided we might close it.
       placeholder: |
-      - Either a GitHub repository that can reproduce the bug
-      - Or a Stackblitz link to an actual reproduction
+        - Either a GitHub repository that can reproduce the bug
+        - Or a Stackblitz link to an actual reproduction
     validations:
       required: true
   - type: textarea
