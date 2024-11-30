@@ -56,7 +56,7 @@ body:
     attributes:
       label: Description
       description: A clear and concise description of what the bug is. If you intend to submit a PR for this issue, tell us in the description.
-      placholder: |
+      placeholder: |
         - What happens ?
         - What is expected to happen ?
     validations:
