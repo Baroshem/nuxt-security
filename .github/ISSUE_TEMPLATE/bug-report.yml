@@ -48,6 +48,10 @@ body:
     attributes:
       label: Security options
       description: If you answered `No` to the question above, please give us your `security` settings in `nuxt.config.ts`
+      placeholder: |
+        security: {
+        ...
+        }
   - type: textarea
     id: reproduction
     attributes:
@@ -74,9 +78,10 @@ body:
       label: Additional context
       description: If applicable, add any other context or screenshots here.
       placeholder: |
-        Use this space to post 
+        If relevant, use this space to post 
         - your full `nuxt.config.ts`
         - screenshots of your DevTools console
+        - any other information
   - type: textarea
     id: logs
     attributes:
