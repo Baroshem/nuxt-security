@@ -4,9 +4,10 @@ labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: |
-        ## Thank you for taking the time to fill this bug report
-        
+      value: ## Thank you for taking the time to fill this bug report
+  - type: markdown
+    attributes:
+      value: | 
         **IMPORTANT!**
         Before reporting a bug, please make sure that you have read through our documentation and you think your problem is indeed an issue related to our module.
   - type: textarea
@@ -37,18 +38,18 @@ body:
   - type: dropdown
     id: default
     attributes:
-      label: Default security
+      label: Custom setup
       description: Tell us if the bug happens with our default `security` options in your `nuxt.config.ts`
       options:
         - Yes, My bug happens even if the security option is not set
-        - No, My bug happens only when I set a specific option in the security object
+        - No, My bug happens only when I set custom values for the security option
     validations:
       required: true
   - type: textarea
     id: config
     attributes:
       label: Security options
-      description: If you answered `No` to the question above, please give us your `security` settings in `nuxt.config.ts`
+      description: If you answered **No** to the question above, please give us your `security` settings in `nuxt.config.ts`
       placeholder: |
         security: {
         ...
