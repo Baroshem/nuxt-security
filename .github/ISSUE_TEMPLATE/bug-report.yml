@@ -14,11 +14,11 @@ body:
       description: You can use `npx nuxi info` to fill this section
       placeholder: |
         - Operating System: `Darwin`
-        - Node Version:     `v18.16.0`
-        - Nuxt Version:     `3.7.3`
-        - CLI Version:      `3.8.4`
-        - Nitro Version:    `2.6.3`
-        - Package Manager:  `pnpm@8.7.4`
+        - Node Version:     `v22.11.0`
+        - Nuxt Version:     `3.14.1592`
+        - CLI Version:      `3.16.0`
+        - Nitro Version:    `2.10.4`
+        - Package Manager:  `npm@10.9.1`
         - Builder:          `-`
         - User Config:      `-`
         - Runtime Modules:  `-`
@@ -68,8 +68,8 @@ body:
       label: Additional context
       description: If applicable, add any other context or screenshots here.
       placeholder: |
-        Ideally we need
-        - your full nuxt.config.ts
+        Use this space to post 
+        - your full `nuxt.config.ts`
         - screenshots of your DevTools console
   - type: textarea
     id: logs
