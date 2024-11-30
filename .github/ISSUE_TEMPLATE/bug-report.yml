@@ -25,21 +25,21 @@ body:
         - Build Modules:    `-`
     validations:
       required: true
-  - type: dropdown
-    id: config
-    attributes:
-      label: Security options in nuxt.config.ts
-      description: Tell us if the bug happens with our default `security` options
-      options:
-        - My bug happens even if the security object is not set
-        - My bug happens only when I set a specific option in the security object
-    validations:
-      required: true
   - type: input
     id: version
     attributes:
       label: Nuxt Security Version
       placeholder: v2.1.5
+    validations:
+      required: true
+  - type: dropdown
+    id: config
+    attributes:
+      label: Security configuration
+      description: Tell us if the bug happens with our default `security` options in your `nuxt.config.ts`
+      options:
+        - My bug happens even if the security object is not set
+        - My bug happens only when I set a specific option in the security object
     validations:
       required: true
   - type: textarea
