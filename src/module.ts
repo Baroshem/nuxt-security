@@ -77,11 +77,7 @@ export default defineNuxtModule<ModuleOptions>({
             nuxt.options.vite.build
           )
         } else {
-          // In the default case, make sure minification by esbuild is turned on and set the drop option
-          nuxt.options.vite.build = defu(
-            { minify: true },
-            nuxt.options.vite.build
-          )
+          // In case of esbuild, set the drop option
           nuxt.options.vite.esbuild = defu(
             { 
               drop: ['console', 'debugger'] as ('console' | 'debugger')[],
