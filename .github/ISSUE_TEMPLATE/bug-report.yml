@@ -4,7 +4,7 @@ labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: ## Thank you for taking the time to fill this bug report
+      value: "## Thank you for taking the time to fill this bug report"
   - type: markdown
     attributes:
       value: | 
