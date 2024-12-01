@@ -38,7 +38,7 @@ body:
   - type: dropdown
     id: default
     attributes:
-      label: Custom setup
+      label: Default setup used
       description: Tell us if the bug happens with our default `security` options in your `nuxt.config.ts`
       options:
         - Yes, My bug happens even if the security option is not set
