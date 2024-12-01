@@ -1,0 +1,93 @@
+name: "🐛 Bug report"
+description: Report a bug to help us improve the module.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Thank you for taking the time to fill this bug report"
+  - type: markdown
+    attributes:
+      value: | 
+        **IMPORTANT!**
+        Before reporting a bug, please make sure that you have read through our documentation and you think your problem is indeed an issue related to our module.
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: You can use `npx nuxi info` to fill this section
+      placeholder: |
+        - Operating System: `Darwin`
+        - Node Version:     `v22.11.0`
+        - Nuxt Version:     `3.14.1592`
+        - CLI Version:      `3.16.0`
+        - Nitro Version:    `2.10.4`
+        - Package Manager:  `npm@10.9.1`
+        - Builder:          `-`
+        - User Config:      `-`
+        - Runtime Modules:  `-`
+        - Build Modules:    `-`
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Nuxt Security Version
+      placeholder: v2.1.5
+    validations:
+      required: true
+  - type: dropdown
+    id: default
+    attributes:
+      label: Default setup used
+      description: Tell us if the bug happens with our default `security` options in your `nuxt.config.ts`
+      options:
+        - Yes, the bug happens even if the security option is not customized
+        - No, the bug happens only when I set custom values for the security option
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Security options
+      description: If you answered **No** to the question above, please give us your `security` settings in `nuxt.config.ts`
+      placeholder: |
+        security: {
+        ...
+        }
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Please provide a reproduction link. A minimal [reproduction is required](https://antfu.me/posts/why-reproductions-are-required) unless you are absolutely sure that the issue is obvious and the provided information is enough to understand the problem. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "needs reproduction" label. If no reproduction is provided we might close it.
+      placeholder: |
+        - Either a GitHub repository that can reproduce the bug
+        - Or a link to a Stackblitz playground
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is. If you intend to submit a PR for this issue, tell us in the description.
+      placeholder: |
+        - What happens ?
+        - What is expected to happen ?
+    validations:
+      required: true
+  - type: textarea
+    id: additonal
+    attributes:
+      label: Additional context
+      description: If applicable, add any other context or screenshots here.
+      placeholder: |
+        If relevant, use this space to post 
+        - your full `nuxt.config.ts`
+        - screenshots of your DevTools console
+        - any other information
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Optional if provided reproduction. Please try not to insert an image but copy paste the log text.
+      render: shell-script
