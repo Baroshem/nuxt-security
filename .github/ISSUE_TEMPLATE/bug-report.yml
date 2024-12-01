@@ -41,8 +41,8 @@ body:
       label: Default setup used
       description: Tell us if the bug happens with our default `security` options in your `nuxt.config.ts`
       options:
-        - Yes, My bug happens even if the security option is not customized
-        - No, My bug happens only when I set custom values for the security option
+        - Yes, the bug happens even if the security option is not customized
+        - No, the bug happens only when I set custom values for the security option
     validations:
       required: true
   - type: textarea
