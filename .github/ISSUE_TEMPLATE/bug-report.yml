@@ -26,6 +26,7 @@ body:
         - User Config:      `-`
         - Runtime Modules:  `-`
         - Build Modules:    `-`
+      render: shell
     validations:
       required: true
   - type: input
@@ -54,6 +55,7 @@ body:
         security: {
         ...
         }
+      render: typescript
   - type: textarea
     id: reproduction
     attributes:
@@ -62,6 +64,7 @@ body:
       placeholder: |
         - Either a GitHub repository that can reproduce the bug
         - Or a link to a Stackblitz playground
+      render: text
     validations:
       required: true
   - type: textarea
@@ -90,4 +93,4 @@ body:
       label: Logs
       description: |
         Optional if provided reproduction. Please try not to insert an image but copy paste the log text.
-      render: shell-script
+      render: shell
