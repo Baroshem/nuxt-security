@@ -177,6 +177,7 @@ export function getHeadersApplicableToAllResources(headers: SecurityHeaders) {
     Object.entries(headers)
     .filter(([key]) => appliesToAllResources(key as OptionKey))
     .map(([key, value]) => ([getNameFromKey(key as OptionKey), headerStringFromObject(key as OptionKey, value)]))
+    .filter(([, value]) => Boolean(value))
   )
   return Object.keys(applicableHeaders).length === 0 ? undefined : applicableHeaders
 }
