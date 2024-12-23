@@ -56,7 +56,7 @@ For all available configuration options check out the [docs](https://nuxt-securi
 
 ## License
 
-[MIT License](./LICENSE)
+[MIT License](./LICENSE.md)
 
 <!-- Badges -->
 
