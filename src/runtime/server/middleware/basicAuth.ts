@@ -16,10 +16,9 @@ export type BasicAuth = {
   message: string;
 }
 
-const securityConfig = useRuntimeConfig().private
-
 export default defineEventHandler((event) => {
   const credentials = getCredentials(event.node.req)
+  const securityConfig = useRuntimeConfig(event).private
   const basicAuthConfig = securityConfig.basicAuth
 
   if (!basicAuthConfig) {
