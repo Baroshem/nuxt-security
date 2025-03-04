@@ -47,7 +47,7 @@ export default defineNuxtConfig({
 })
 ```
 
-For all available configuration options check out the [docs](https://nuxt-security.vercel.app).
+For all available configuration options check out the [docs](https://nuxt-security.vercel.app/getting-started/configuration).
 
 ## Development
 
