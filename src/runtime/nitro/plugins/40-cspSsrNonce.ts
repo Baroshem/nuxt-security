@@ -81,3 +81,20 @@ function addNonceToElement(element: string, tagName: string, nonce: string): str
     return `<${tagName} nonce="${nonce}"${rest}>`
   })
 }
+
+function parseHtmlRecursively(html: string, nonce: string): string {
+  const tagRegex = /<([a-zA-Z]+)([^>]*)>(.*?)<\/\1>/gs
+  return html.replace(tagRegex, (match, tagName, attributes, innerHtml) => {
+    const updatedAttributes = addNonceToAttributes(attributes, nonce)
+    const updatedInnerHtml = parseHtmlRecursively(innerHtml, nonce)
+    return `<${tagName}${updatedAttributes}>${updatedInnerHtml}</${tagName}>`
+  })
+}
+
+function addNonceToAttributes(attributes: string, nonce: string): string {
+  const nonceRegex = /nonce="[^"]+"/i
+  if (nonceRegex.test(attributes)) {
+    return attributes.replace(nonceRegex, `nonce="${nonce}"`)
+  }
+  return ` nonce="${nonce}"${attributes}`
+}
