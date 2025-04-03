@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from '#imports'
+import { defineNitroPlugin, useRuntimeConfig } from '#imports'
 //@ts-expect-error : we are importing from the virtual file system
 import sriHashes from '#sri-hashes'
 import { resolveSecurityRules } from '../context'
@@ -17,6 +17,9 @@ export default defineNitroPlugin((nitroApp) => {
     if (!rules.enabled || !rules.sri) {
       return
     }
+    const runtimeConfig = useRuntimeConfig()
+    const cdnURL = runtimeConfig.app.cdnURL
+
 
     // Scan all relevant sections of the NuxtRenderHtmlContext
     // Note: integrity can only be set on scripts and on links with rel preload, modulepreload and stylesheet
@@ -28,9 +31,9 @@ export default defineNitroPlugin((nitroApp) => {
         if (typeof element !== 'string') {
           return element;
         }
-        
+
         element = element.replace(SCRIPT_RE, (match, rest: string, src: string) => {
-          const hash = sriHashes[src]
+          const hash = sriHashes[src.replace(cdnURL, '')]
           if (hash) {
             const integrityScript = `<script integrity="${hash}"${rest}></script>`
             return integrityScript
@@ -40,7 +43,7 @@ export default defineNitroPlugin((nitroApp) => {
         })
 
         element = element.replace(LINK_RE, (match, rest: string, href: string) => {
-          const hash = sriHashes[href]
+          const hash = sriHashes[href.replace(cdnURL, '')]
           if (hash) {
             const integrityLink = `<link integrity="${hash}"${rest}>`
             return integrityLink
