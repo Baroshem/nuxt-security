@@ -18,7 +18,7 @@ export default defineNitroPlugin((nitroApp) => {
       return
     }
     const runtimeConfig = useRuntimeConfig()
-    const cdnURL = runtimeConfig.app.cdnURL
+    const cdnURL = runtimeConfig.app.cdnURL.replace(/\/$/, '') // Remove trailing slash
 
 
     // Scan all relevant sections of the NuxtRenderHtmlContext
