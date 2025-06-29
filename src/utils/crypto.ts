@@ -1,9 +1,3 @@
-// These two lines are required only to maintain compatibility with Node 18
-//  - In Node 19 and above, crypto is available in the global scope
-//  - In Workers environments, crypto is available in the global scope
-import { webcrypto } from 'node:crypto'
-globalThis.crypto ??= webcrypto as Crypto
-
 export async function generateHash(content: Buffer | string, hashAlgorithm: 'SHA-256' | 'SHA-384' | 'SHA-512') {
   let buffer: Uint8Array
   if (typeof content === 'string') {
