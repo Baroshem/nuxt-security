@@ -51,6 +51,34 @@ declare module '@nuxt/schema' {
   }
 }
 
+declare module 'nitropack/types' {
+  interface NitroRouteConfig {
+    security?: NuxtSecurityRouteRules;
+  }
+  interface NitroRuntimeHooks {
+    /**
+     * @deprecated
+     */
+    'nuxt-security:headers': (config: {
+      /**
+       * The route for which the headers are being configured
+       */
+      route: string,
+      /**
+       * The headers configuration for the route
+       */
+      headers: NuxtSecurityRouteRules['headers']
+    }) => void
+    /**
+     * @deprecated
+     */
+    'nuxt-security:ready': () => void
+    /**
+     * Runtime hook to configure security rules for each route 
+     */
+    'nuxt-security:routeRules': (routeRules: Record<string, NuxtSecurityRouteRules>) => void
+  }
+}
 declare module 'nitropack' {
   interface NitroRouteConfig {
     security?: NuxtSecurityRouteRules;

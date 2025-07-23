@@ -30,7 +30,7 @@ describe('[nuxt-security] Public Assets', async () => {
   })
   
   it('sets security headers on routes when specified in routeRules', async () => {
-    const { headers } = await fetch('/test')
+    const { headers } = await fetch('/test/icon.png')
     expect(headers).toBeDefined()
     
     // Security headers that are always set on all resources

@@ -7,7 +7,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/ssgHashes', import.meta.url))
   })
 
-  const expectedIntegrityAttributes = 4 // 3 links (entry, page, vue), 1 script (entry)
+  const expectedIntegrityAttributes = 5 // 4 links (entry, page, vue, build meta), 1 script (entry)
   const expectedInlineScriptHashes = 2 // 1 Hydration data, 1 Nuxt global
   const expectedExternalScriptHashes = 2 // 1 entry (modulepreload + script), 1 index (modulepreload)
   const expectedInlineStyleHashes = 0
