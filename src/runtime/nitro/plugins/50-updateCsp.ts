@@ -7,6 +7,7 @@ import type { ContentSecurityPolicyValue } from '../../../types/headers'
  */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (response, { event }) => {
+    // TODO: find alternative for modern Nuxt versions that don't have the island property anymore, or remove logic
     if (response.island) {
       // When rendering server-only (NuxtIsland) components, do not update CSP headers.
       // The CSP headers from the page that the island components are mounted into are used.
