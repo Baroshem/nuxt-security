@@ -851,7 +851,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
     const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const elementsWithNonce = text.match(new RegExp(nonceMatch, 'g'))
-    expect(elementsWithNonce).toHaveLength(8)
+    expect(elementsWithNonce).toHaveLength(9)
   })
 
   it('does not inject CSP hashes on a deeply-disabled route', async () => {
@@ -935,7 +935,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     const text = await res.text()
     const elementsWithIntegrity = text.match(/ integrity="sha384-/g)
 
-    expect(elementsWithIntegrity).toHaveLength(3)
+    expect(elementsWithIntegrity).toHaveLength(4)
   })
 
   it ('does not overwrite middleware headers when false', async () => {

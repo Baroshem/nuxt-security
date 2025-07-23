@@ -7,7 +7,7 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/sri', import.meta.url)),
   })
 
-  const expectedIntegrityAttributes = 3 // 2 links (entry, index), 1 script (entry)
+  const expectedIntegrityAttributes = 4 // 3 links (entry, index, build meta), 1 script (entry)
 
   it('injects `integrity` on Nuxt root scripts', async () => {
     const res = await fetch('/')
@@ -30,7 +30,7 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 image 
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 image
   })
 
 

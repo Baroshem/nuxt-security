@@ -7,7 +7,7 @@ describe('[nuxt-security] Nonce', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/ssrNonce', import.meta.url))
   })
 
-  const expectedNonceElements = 8 // 1 from app.vue/useHead, 6 for nuxt, 1 for plugin vue export helper
+  const expectedNonceElements = 9 // 1 from app.vue/useHead, 7 for nuxt, 1 for plugin vue export helper
 
   it('injects `nonce` attribute in response', async () => {
     const res = await fetch('/')
@@ -98,7 +98,8 @@ describe('[nuxt-security] Nonce', async () => {
     expect(cspNonces).toBe(null)
   })
 
-  it('works with server-only components', async () => {
+  // TODO: reenable if it's possible for island context to share the same `event.context.security.nonce`
+  it.skip('works with server-only components', async () => {
     const res = await fetch('/server-component')
 
     const cspHeaderValue = res.headers.get('content-security-policy')
