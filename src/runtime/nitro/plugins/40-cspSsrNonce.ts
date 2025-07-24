@@ -2,12 +2,6 @@ import { defineNitroPlugin } from '#imports'
 import { resolveSecurityRules } from '../context'
 import { generateRandomNonce } from '../../../utils/crypto'
 
-const LINK_RE = /<link([^>]*?>)/gi
-const NONCE_RE = /nonce="[^"]+"/i
-const SCRIPT_RE = /<script([^>]*?>)/gi
-const STYLE_RE = /<style([^>]*?>)/gi
-
-
 /**
  * This plugin generates a nonce for the current request and adds it to the HTML.
  * It only runs in SSR mode.
@@ -58,20 +52,11 @@ export default defineNitroPlugin((nitroApp) => {
           return element;
         }
         // Add nonce to all link tags
-        element = element.replace(LINK_RE, (match, rest) => {
-          if (NONCE_RE.test(rest)) {
-            return match.replace(NONCE_RE, `nonce="${nonce}"`);
-          }
-          return `<link nonce="${nonce}"` + rest
-        })
+        element = addNonceToElement(element, 'link', nonce)
         // Add nonce to all script tags
-        element = element.replace(SCRIPT_RE, (match, rest) => {
-          return `<script nonce="${nonce}"` + rest
-        })
+        element = addNonceToElement(element, 'script', nonce)
         // Add nonce to all style tags
-        element = element.replace(STYLE_RE, (match, rest) => {
-          return `<style nonce="${nonce}"` + rest
-        })
+        element = addNonceToElement(element, 'style', nonce)
         return element
       })
     }
@@ -84,3 +69,32 @@ export default defineNitroPlugin((nitroApp) => {
     }
   })
 })
+
+function addNonceToElement(element: string, tagName: string, nonce: string): string {
+  const tagRegex = new RegExp(`<${tagName}([^>]*?)>`, 'gi')
+  const nonceRegex = /nonce="[^"]+"/i
+
+  return element.replace(tagRegex, (match, rest) => {
+    if (nonceRegex.test(rest)) {
+      return match.replace(nonceRegex, `nonce="${nonce}"`)
+    }
+    return `<${tagName} nonce="${nonce}"${rest}>`
+  })
+}
+
+function parseHtmlRecursively(html: string, nonce: string): string {
+  const tagRegex = /<([a-zA-Z]+)([^>]*)>(.*?)<\/\1>/gs
+  return html.replace(tagRegex, (match, tagName, attributes, innerHtml) => {
+    const updatedAttributes = addNonceToAttributes(attributes, nonce)
+    const updatedInnerHtml = parseHtmlRecursively(innerHtml, nonce)
+    return `<${tagName}${updatedAttributes}>${updatedInnerHtml}</${tagName}>`
+  })
+}
+
+function addNonceToAttributes(attributes: string, nonce: string): string {
+  const nonceRegex = /nonce="[^"]+"/i
+  if (nonceRegex.test(attributes)) {
+    return attributes.replace(nonceRegex, `nonce="${nonce}"`)
+  }
+  return ` nonce="${nonce}"${attributes}`
+}
