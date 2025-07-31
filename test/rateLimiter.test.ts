@@ -102,4 +102,25 @@ describe('[nuxt-security] Rate Limiter', async () => {
     expect(res5.status).toBe(429)
     expect(res5.statusText).toBe('Too Many Requests')
   })
+
+  it ('should return 200 OK after multiple requests for a route with different IPs in the custom ipHeader', async () => {
+    const count = 5
+    const requests = Array(count)
+      .fill('')
+      .map((value, index) =>
+        fetch('/customIpHeader', {
+          headers: { 'X-Custom-IP': `${index}` }
+        }).then((res) => res.status)
+      )
+
+    const results = await Promise.allSettled(requests)
+
+    expect(results).toBeDefined()
+    expect(results).toBeTruthy()
+    expect(results.length).toEqual(count)
+
+    for (const result of results) {
+      expect(result).toMatchObject({ status: 'fulfilled', value: 200 })
+    }
+  })
 })

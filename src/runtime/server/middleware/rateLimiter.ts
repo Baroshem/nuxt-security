@@ -1,4 +1,4 @@
-import { defineEventHandler, createError, setResponseHeader, useStorage, getRequestIP } from '#imports'
+import { defineEventHandler, createError, setResponseHeader, useStorage, getRequestIP, getRequestHeader } from '#imports'
 import type { H3Event } from 'h3'
 import { resolveSecurityRoute, resolveSecurityRules } from '../../nitro/context'
 import type { RateLimiter } from '../../../types/middlewares'
@@ -27,7 +27,7 @@ export default defineEventHandler(async(event) => {
       rules.rateLimiter,
       defaultRateLimiter
     )
-    const ip = getIP(event)
+    const ip = getIP(event, rateLimiter.ipHeader)
     if(rateLimiter.whiteList && rateLimiter.whiteList.includes(ip)){
       return
     }
@@ -89,8 +89,8 @@ async function setStorageItem(rateLimiter: Required<RateLimiter>, url: string) {
   await storage.setItem(url, rateLimitedObject)
 }
 
-function getIP (event: H3Event) {
-  const ip = getRequestIP(event, { xForwardedFor: true }) || ''
+function getIP (event: H3Event, customIpHeader?: string) {
+  const ip = customIpHeader ? getRequestHeader(event, customIpHeader) || '' : getRequestIP(event, { xForwardedFor: true }) || ''
   return ip
 }
 
