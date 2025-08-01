@@ -56,6 +56,7 @@ export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
         name: 'lruCache'
       },
       whiteList: undefined,
+      ipHeader: undefined,
       ...defaultThrowErrorValue
     },
     xssValidator: {
