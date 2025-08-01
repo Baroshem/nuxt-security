@@ -81,7 +81,7 @@ export default defineNuxtConfig({
     '/customIpHeader': {
       security: {
         rateLimiter: {
-          tokensPerInterval: 1,
+          tokensPerInterval: 0,
           interval: 300000,
           ipHeader: 'X-Custom-IP'
         }

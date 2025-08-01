@@ -105,13 +105,11 @@ describe('[nuxt-security] Rate Limiter', async () => {
 
   it ('should return 200 OK after multiple requests for a route with different IPs in the custom ipHeader', async () => {
     const count = 5
-    const requests = Array(count)
-      .fill('')
-      .map((value, index) =>
-        fetch('/customIpHeader', {
-          headers: { 'X-Custom-IP': `${index}` }
-        }).then((res) => res.status)
-      )
+    const requests = Array.from({ length: count }, (value, index) =>
+      fetch('/customIpHeader', {
+        headers: { 'X-Custom-IP': `${index}` }
+      }).then((res) => res.status)
+    )
 
     const results = await Promise.allSettled(requests)
 
@@ -121,6 +119,33 @@ describe('[nuxt-security] Rate Limiter', async () => {
 
     for (const result of results) {
       expect(result).toMatchObject({ status: 'fulfilled', value: 200 })
+    }
+  })
+
+  it ('should return 429 after multiple requests for a route with the same IPs in the custom ipHeader', async () => {
+    const count = 5
+    const firstAttempts = Array.from({ length: count }, (value, index) =>
+      fetch('/customIpHeader', {
+        headers: { 'X-Custom-IP': `${index}` }
+      }).then((res) => res.status)
+    )
+
+    await Promise.allSettled(firstAttempts)
+
+    const retries = Array.from({ length: count }, (value, index) =>
+      fetch('/customIpHeader', {
+        headers: { 'X-Custom-IP': `${index}` }
+      }).then((res) => res.status)
+    )
+
+    const retryResults = await Promise.allSettled(retries)
+
+    expect(retryResults).toBeDefined()
+    expect(retryResults).toBeTruthy()
+    expect(retryResults.length).toEqual(count)
+
+    for (const result of retryResults) {
+      expect(result).toMatchObject({ status: 'fulfilled', value: 429 })
     }
   })
 })
