@@ -162,7 +162,6 @@ function appliesToAllResources(optionKey: OptionKey) {
     case 'xPermittedCrossDomainPolicies':
     case 'xXSSProtection':
       return true
-      break
     default:
       return false
   }
