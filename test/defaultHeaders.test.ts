@@ -6,7 +6,7 @@ describe('[nuxt-security] Default Headers', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('./fixtures/defaultHeaders', import.meta.url)),
   })
-  let res: Response 
+  let res: Response
 
   it ('fetches the homepage', async () => {
     res = await fetch('/')
@@ -114,7 +114,7 @@ describe('[nuxt-security] Default Headers', async () => {
     const stsHeaderValue = headers.get('strict-transport-security')
 
     expect(stsHeaderValue).toBeTruthy()
-    expect(stsHeaderValue).toBe('max-age=15552000; includeSubDomains;')
+    expect(stsHeaderValue).toBe('max-age=15552000; includeSubDomains')
   })
 
   it('has `x-content-type-options` header set with default value', async () => {
@@ -183,5 +183,3 @@ describe('[nuxt-security] Default Headers', async () => {
     expect(xxpHeaderValue).toBe('0')
   })
 })
-
-

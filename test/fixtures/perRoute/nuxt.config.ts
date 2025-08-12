@@ -47,7 +47,7 @@ export default defineNuxtConfig({
     '/provided-as-standard': {
       headers: {
         'Cross-Origin-Resource-Policy': 'cross-origin',
-        'Strict-Transport-Security': 'max-age=1; preload;',
+        'Strict-Transport-Security': 'max-age=1; preload',
         'Permissions-Policy': 'fullscreen=*, camera=(self)',
         'Content-Security-Policy':
           "script-src 'self' https:; media-src 'none';",
@@ -60,7 +60,7 @@ export default defineNuxtConfig({
         'Cross-Origin-Resource-Policy': 'same-site',
         'Cross-Origin-Opener-Policy': 'cross-origin',
         'Cross-Origin-Embedder-Policy': 'unsafe-none',
-        'Strict-Transport-Security': 'max-age=1; preload;',
+        'Strict-Transport-Security': 'max-age=1; preload',
         'Permissions-Policy': 'fullscreen=*',
         foo: 'baz',
         foo2: 'baz2'
@@ -95,7 +95,7 @@ export default defineNuxtConfig({
     },
     '/resolve-conflict/deep/page': {
       headers: {
-        'Strict-Transport-Security': 'max-age=1; preload;',
+        'Strict-Transport-Security': 'max-age=1; preload',
         'X-Frame-Options': 'DENY'
       },
       security: {

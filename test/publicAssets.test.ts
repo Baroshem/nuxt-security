@@ -10,7 +10,7 @@ describe('[nuxt-security] Public Assets', async () => {
   it('does not set all-resources security headers when disabled in config', async () => {
     const { headers } = await fetch('/icon.png')
     expect(headers).toBeDefined()
-    
+
     // Security headers that are always set on all resources
     const rp = headers.get('referrer-policy')
     const sts = headers.get('strict-transport-security')
@@ -28,11 +28,11 @@ describe('[nuxt-security] Public Assets', async () => {
     expect(xpcdp).toBeNull()
     expect(xxp).toBeNull()
   })
-  
+
   it('sets security headers on routes when specified in routeRules', async () => {
     const { headers } = await fetch('/test/icon.png')
     expect(headers).toBeDefined()
-    
+
     // Security headers that are always set on all resources
     const rp = headers.get('referrer-policy')
     const sts = headers.get('strict-transport-security')
@@ -43,7 +43,7 @@ describe('[nuxt-security] Public Assets', async () => {
     const xxp = headers.get('x-xss-protection')
 
     expect(rp).toBe('no-referrer')
-    expect(sts).toBe('max-age=15552000; includeSubDomains;')
+    expect(sts).toBe('max-age=15552000; includeSubDomains')
     expect(xcto).toBe('nosniff')
     expect(xdo).toBe('noopen')
     expect(xfo).toBe('SAMEORIGIN')
