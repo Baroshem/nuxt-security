@@ -6,7 +6,7 @@ describe('[nuxt-security] Strict Headers', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('./fixtures/strictHeaders', import.meta.url)),
   })
-  let res: Response 
+  let res: Response
 
   it ('fetches the homepage', async () => {
     res = await fetch('/')
@@ -114,7 +114,7 @@ describe('[nuxt-security] Strict Headers', async () => {
     const stsHeaderValue = headers.get('strict-transport-security')
 
     expect(stsHeaderValue).toBeTruthy()
-    expect(stsHeaderValue).toBe('max-age=31536000; includeSubDomains; preload;')
+    expect(stsHeaderValue).toBe('max-age=31536000; includeSubDomains; preload')
   })
 
   it('has `x-content-type-options` header set with strict value', async () => {
@@ -183,5 +183,3 @@ describe('[nuxt-security] Strict Headers', async () => {
     expect(xxpHeaderValue).toBe('0')
   })
 })
-
-

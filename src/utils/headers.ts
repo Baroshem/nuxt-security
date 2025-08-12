@@ -27,7 +27,7 @@ const KEYS_TO_NAMES: Record<OptionKey, HeaderName> = {
 const NAMES_TO_KEYS = Object.fromEntries(Object.entries(KEYS_TO_NAMES).map(([key, name]) => ([name, key]))) as Record<HeaderName, OptionKey>
 
 /**
- * 
+ *
  * Converts a valid OptionKey into its corresponding standard header name
  */
 export function getNameFromKey(key: OptionKey) {
@@ -35,8 +35,8 @@ export function getNameFromKey(key: OptionKey) {
 }
 
 /**
- * 
- * Converts a standard header name to its corresponding OptionKey name, or undefined if not found 
+ *
+ * Converts a standard header name to its corresponding OptionKey name, or undefined if not found
  */
 export function getKeyFromName(headerName: string) {
   const [, key] = Object.entries(NAMES_TO_KEYS).find(([name]) => name.toLowerCase() === headerName.toLowerCase()) || []
@@ -44,8 +44,8 @@ export function getKeyFromName(headerName: string) {
 }
 
 /**
- * 
- * Gigen a valid OptionKey, converts a header object value into its corresponding string format 
+ *
+ * Gigen a valid OptionKey, converts a header object value into its corresponding string format
  */
 export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclude<SecurityHeaders[OptionKey], undefined>) {
   // False value translates into empty header
@@ -74,11 +74,10 @@ export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclud
   } else if (optionKey === 'strictTransportSecurity') {
     const policies = optionValue as StrictTransportSecurityValue
     return [
-      `max-age=${policies.maxAge};`,
-      policies.includeSubdomains && 'includeSubDomains;',
-      policies.preload && 'preload;'
-    ].filter(Boolean).join(' ')
-  
+      `max-age=${policies.maxAge}`,
+      policies.includeSubdomains && 'includeSubDomains',
+      policies.preload && 'preload'
+    ].filter(Boolean).join('; ')
   } else if (optionKey === 'permissionsPolicy') {
     const policies = optionValue as PermissionsPolicyValue
     return Object.entries(policies)
@@ -99,7 +98,7 @@ export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclud
 }
 
 /**
- * 
+ *
  * Given a valid OptionKey, converts a header value string into its corresponding object format
  */
 export function headerObjectFromString(optionKey: OptionKey, headerValue: string) {
@@ -112,7 +111,7 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     const directives = headerValue.split(';').map(directive => directive.trim()).filter(directive => directive)
     const objectForm = {} as ContentSecurityPolicyValue
     for (const directive of directives) {
-      const [type, ...sources] = directive.split(' ').map(token => token.trim()) as [keyof ContentSecurityPolicyValue, ...string[]]          
+      const [type, ...sources] = directive.split(' ').map(token => token.trim()) as [keyof ContentSecurityPolicyValue, ...string[]]
       if (type === 'upgrade-insecure-requests') {
         objectForm[type] = true
       } else {
