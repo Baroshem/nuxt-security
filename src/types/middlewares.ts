@@ -21,6 +21,7 @@ export type RateLimiter = {
   headers?: boolean;
   whiteList?: string[];
   throwError?: boolean;
+  ipHeader?: string;
 };
 
 export type XssValidator = {
