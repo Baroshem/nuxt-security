@@ -10,7 +10,7 @@
 
 Automatically configure your app to follow OWASP security patterns and principles by using HTTP Headers and Middleware.
 
-> This module works with Nuxt 3 only
+> This module works with Nuxt 3.X and newer (4.X)
 
 - [📖 &nbsp;Read the documentation](https://nuxt-security.vercel.app)
 - [👾 &nbsp;Playground](https://nuxt-security.vercel.app/playground)
