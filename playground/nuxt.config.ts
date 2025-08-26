@@ -35,6 +35,9 @@ export default defineNuxtConfig({
         rateLimiter: false
       }
     },
+    '/api/test-no-csrf': {
+      csurf: false
+    },
     '/preserve': {
       security: {
         headers: {
@@ -64,6 +67,7 @@ export default defineNuxtConfig({
       interval: 30000,
       headers: true
     },
+    csrf: true,
   },
 
   hooks: {
