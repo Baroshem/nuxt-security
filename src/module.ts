@@ -23,7 +23,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup (options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    
+
     nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
 
     // First merge module options with default options
@@ -79,7 +79,7 @@ export default defineNuxtModule<ModuleOptions>({
         } else {
           // In case of esbuild, set the drop option
           nuxt.options.vite.esbuild = defu(
-            { 
+            {
               drop: ['console', 'debugger'] as ('console' | 'debugger')[],
             },
             nuxt.options.vite.esbuild
@@ -109,7 +109,7 @@ export default defineNuxtModule<ModuleOptions>({
         )
       }
     }
-    
+
     // Register nitro plugin to manage security rules at the level of each route
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-routeRules'))
 
@@ -160,12 +160,12 @@ export default defineNuxtModule<ModuleOptions>({
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/rateLimiter')
     })
-    
+
     // Register XSS validator middleware
     addServerHandler({
       handler: resolver.resolve('./runtime/server/middleware/xssValidator')
     })
-    
+
     // Register basicAuth middleware that is disabled by default
     const basicAuthConfig = nuxt.options.runtimeConfig.private.basicAuth
     if (basicAuthConfig && (basicAuthConfig.enabled || (basicAuthConfig as any)?.value?.enabled)) {
@@ -199,12 +199,12 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Register init hook to add pre-rendered headers to responses
-    nuxt.hook('nitro:init', nitro => {  
+    nuxt.hook('nitro:init', nitro => {
       nitro.hooks.hook('prerender:done', async() => {
         // Add the prenredered headers to the Nitro server assets
-        nitro.options.serverAssets.push({ 
-          baseName: 'nuxt-security', 
-          dir: createResolver(nuxt.options.buildDir).resolve('./nuxt-security') 
+        nitro.options.serverAssets.push({
+          baseName: 'nuxt-security',
+          dir: createResolver(nuxt.options.buildDir).resolve('./nuxt-security')
         })
 
         // In some Nitro presets (e.g. Vercel), the header rules are generated for the static server
@@ -228,7 +228,7 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 /**
- * 
+ *
  * Register storage driver for the rate limiter
  */
 function registerRateLimiterStorage(nuxt: Nuxt, securityOptions: ModuleOptions) {
@@ -254,8 +254,8 @@ function registerRateLimiterStorage(nuxt: Nuxt, securityOptions: ModuleOptions) 
  * Make sure our nitro plugins will be applied last,
  * After all other third-party modules that might have loaded their own nitro plugins
  */
-function reorderNitroPlugins(nuxt: Nuxt) {  
-  nuxt.hook('nitro:init', nitro => {    
+function reorderNitroPlugins(nuxt: Nuxt) {
+  nuxt.hook('nitro:init', nitro => {
     const resolver = createResolver(import.meta.url)
     const securityPluginsPrefix = resolver.resolve('./runtime/nitro/plugins')
 
@@ -302,7 +302,7 @@ async function hashBundledAssets(nitro: Nitro) {
   const sriHashes: Record<string, string> = {}
 
   // Will be later necessary to construct url
-  const { cdnURL: appCdnUrl = '', baseURL: appBaseUrl } = nitro.options.runtimeConfig.app
+  const { baseURL: appBaseUrl } = nitro.options.runtimeConfig.app
 
   // Go through all public assets folder by folder
   const publicAssets = nitro.options.publicAssets
@@ -325,16 +325,7 @@ async function hashBundledAssets(nitro: Nitro) {
           const hash = await generateHash(content, hashAlgorithm)
           // construct the url as it will appear in the head template
           const fullPath = join(baseURL, entry.name)
-          let url: string
-          if (appCdnUrl) {
-            // If the cdnURL option was set, the url will be in the form https://...
-            const relativePath = isAbsolute(fullPath) ? fullPath.slice(1) : fullPath
-            const abdsoluteCdnUrl = appCdnUrl.endsWith('/') ? appCdnUrl : appCdnUrl + '/'
-            url = new URL(relativePath, abdsoluteCdnUrl).href
-          } else {
-            // If not, the url will be in a relative form: /_nuxt/...
-            url = join('/', appBaseUrl, fullPath)
-          }
+          const url = join('/', appBaseUrl, fullPath)
           sriHashes[url] = hash
         }
       }
