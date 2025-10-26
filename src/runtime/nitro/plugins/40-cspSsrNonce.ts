@@ -2,10 +2,10 @@ import { defineNitroPlugin } from '#imports'
 import { resolveSecurityRules } from '../context'
 import { generateRandomNonce } from '../../../utils/crypto'
 
-const LINK_RE = /<link\b([^>]*?>[\s\S]*?<\/link>)/gi
+const LINK_RE = /<link\b([^>]*?>)/gi
 const NONCE_RE = /nonce="[^"]+"/i
-const SCRIPT_RE = /<script\b([^>]*?>[\s\S]*?<\/script>)/gi
-const STYLE_RE = /<style\b([^>]*?>[\s\S]*?<\/style>)/gi
+const SCRIPT_RE = /<script\b([^>]*?>)/gi
+const STYLE_RE = /<style\b([^>]*?>)/gi
 
 
 /**
