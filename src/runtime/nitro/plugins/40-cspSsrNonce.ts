@@ -17,7 +17,7 @@ function injectNonceToTags(element: string, nonce: string) {
   const quotes: string[] = [];
 
   // Mask attributes to avoid manipulating stringified elements
-  let maskedElement = element.replace(QUOTE_MASK_REGEX, (match) => {
+  let maskedElement = element.replace(QUOTE_MASK_RE, (match) => {
     quotes.push(match);
     return `__QUOTE_PLACEHOLDER_${quotes.length - 1}__`;
   });
