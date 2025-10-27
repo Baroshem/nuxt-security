@@ -7,7 +7,7 @@ const NONCE_RE = /nonce="[^"]+"/i
 const SCRIPT_RE = /<script\b([^>]*?>)/gi
 const STYLE_RE = /<style\b([^>]*?>)/gi
 const QUOTE_MASK_RE = /"([^"]*)"/g;
-const QUOTE_RESTOR_RE = /__QUOTE_PLACEHOLDER_(\d+)__/g
+const QUOTE_RESTORE_RE = /__QUOTE_PLACEHOLDER_(\d+)__/g
 
 function injectNonceToTags(element: string, nonce: string) {
   // Skip non-string elements
@@ -38,7 +38,7 @@ function injectNonceToTags(element: string, nonce: string) {
   })
 
   // Restore the original quoted content.
-  const restoredHtml = maskedElement.replace(/__QUOTE_PLACEHOLDER_(\d+)__/g, (match, index) => {
+  const restoredHtml = maskedElement.replace(QUOTE_RESTORE_RE, (match, index) => {
     return quotes[parseInt(index, 10)];
   });
 
