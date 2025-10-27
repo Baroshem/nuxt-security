@@ -6,7 +6,7 @@ const LINK_RE = /<link\b([^>]*?>)/gi
 const NONCE_RE = /nonce="[^"]+"/i
 const SCRIPT_RE = /<script\b([^>]*?>)/gi
 const STYLE_RE = /<style\b([^>]*?>)/gi
-const QUOTE_MASK_RE = /"([^"]*)"/g;
+const QUOTE_MASK_RE = /"([^"]*)"/g
 const QUOTE_RESTORE_RE = /__QUOTE_PLACEHOLDER_(\d+)__/g
 
 function injectNonceToTags(element: string, nonce: string) {
