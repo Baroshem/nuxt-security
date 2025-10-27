@@ -16,6 +16,7 @@ function injectNonceToTags(element: string, nonce: string) {
   }
   const quotes: string[] = [];
 
+  // Mask attributes to avoid manipulating stringifed elements
   let maskedElement = element.replace(QUOTE_MASK_REGEX, (match) => {
     quotes.push(match);
     return `__QUOTE_PLACEHOLDER_${quotes.length - 1}__`;
@@ -36,9 +37,8 @@ function injectNonceToTags(element: string, nonce: string) {
     return `<style nonce="${nonce}"` + rest
   })
 
-  // Step 3: Restore the original quoted content.
+  // Restore the original quoted content.
   const restoredHtml = maskedElement.replace(/__QUOTE_PLACEHOLDER_(\d+)__/g, (match, index) => {
-    // Retrieve the original quote string from the stored array
     return quotes[parseInt(index, 10)];
   });
 
