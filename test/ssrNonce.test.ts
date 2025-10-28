@@ -101,7 +101,7 @@ describe('[nuxt-security] Nonce', async () => {
   it('does not modify custom elements', async () => {
     const res = await fetch('/with-custom-element')
 
-    const body = (await res.text()).match(/<body>[\s\S]+<\/body>/)
+    const body = (await res.text()).match(/<body\b([^>]*?>[\s\S]+<\/body>/)
     const injectedNonces = body.match(/ nonce="(.*?)"/)
     const hasElement = body.includes('<scripter>This should remain as is</scripter>')
 
