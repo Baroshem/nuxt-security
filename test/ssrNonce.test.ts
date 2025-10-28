@@ -101,12 +101,11 @@ describe('[nuxt-security] Nonce', async () => {
   it('does not modify custom elements', async () => {
     const res = await fetch('/with-custom-element')
 
-    const body = (await res.text()).match(/<body\b[^>]*?>([\s\S]+)<\/body>/)
-    const hasElement = body[1].includes('<scripter>')
+    const body = /<scripter>/.test(await res.text())
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
-    expect(hasElement).toBe(true)
+    expect(body).toBe(true)
   })
 
   // TODO: reenable if it's possible for island context to share the same `event.context.security.nonce`
