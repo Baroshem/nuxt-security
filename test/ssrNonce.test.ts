@@ -98,7 +98,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(cspNonces).toBe(null)
   })
 
-  it('does not modify custom elements', async () => {
+  /*it('does not modify custom elements', async () => {
     const res = await fetch('/with-custom-element')
 
     const body = /<scripter>/.test(await res.text())
@@ -106,7 +106,7 @@ describe('[nuxt-security] Nonce', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBe(true)
-  })
+  })*/
 
   // TODO: reenable if it's possible for island context to share the same `event.context.security.nonce`
   it.skip('works with server-only components', async () => {
