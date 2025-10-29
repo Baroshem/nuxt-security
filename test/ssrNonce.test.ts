@@ -109,7 +109,7 @@ describe('[nuxt-security] Nonce', async () => {
   })*/
 
   it('does not modify stringified elements', async () => {
-    const res = await fetch('/string-script')
+    const res = await fetch('/string-script').then(res=>res.text())
 
     const body = res.match(/<div class="(.+)Hello/)
     const hasNonce = body[1].includes('nonce')
