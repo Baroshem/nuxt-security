@@ -108,6 +108,18 @@ describe('[nuxt-security] Nonce', async () => {
     expect(body).toBe(true)
   })*/
 
+  it('does not modify stringified elements', async () => {
+    const res = await fetch('/string-script')
+
+    const body = res.match(/<div class="(.+)Hello/)
+    const hasNonce = body[1].includes('nonce')
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(body[0]).toBeDefined()
+    expect(hasNonce).toBe(false)
+  })
+
   // TODO: reenable if it's possible for island context to share the same `event.context.security.nonce`
   it.skip('works with server-only components', async () => {
     const res = await fetch('/server-component')
