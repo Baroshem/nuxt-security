@@ -112,7 +112,7 @@ describe('[nuxt-security] Nonce', async () => {
     const res = await fetch('/string-script').then(res=>res.text())
 
     const body = res.match(/<div class="(.+)Hello/)
-    const hasNonce = body[1].includes('nonce')
+    const hasNonce = body[1].includes('nonce=')
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
