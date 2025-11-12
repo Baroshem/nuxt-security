@@ -43,7 +43,7 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 2) // + 1 image + vue head
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 image
   })
 
   it('does not modify `integrity` attributes when manually provided', async () => {
@@ -55,6 +55,6 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 3) // + 2 Bootstrap + vue head
+    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 2) // + 2 Bootstrap
   })
 })

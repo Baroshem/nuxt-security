@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from '#imports'
+import { defineNitroPlugin } from 'nitropack/runtime'
 //@ts-expect-error : we are importing from the virtual file system
 import sriHashes from '#sri-hashes'
 import { resolveSecurityRules } from '../context'
@@ -28,7 +28,7 @@ export default defineNitroPlugin((nitroApp) => {
         if (typeof element !== 'string') {
           return element;
         }
-        
+
         element = element.replace(SCRIPT_RE, (match, rest: string, src: string) => {
           const hash = sriHashes[src]
           if (hash) {

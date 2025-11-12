@@ -1,5 +1,5 @@
 export async function generateHash(content: Buffer | string, hashAlgorithm: 'SHA-256' | 'SHA-384' | 'SHA-512') {
-  let buffer: Uint8Array
+  let buffer: Uint8Array<ArrayBuffer>
   if (typeof content === 'string') {
     buffer = new TextEncoder().encode(content);
   } else {

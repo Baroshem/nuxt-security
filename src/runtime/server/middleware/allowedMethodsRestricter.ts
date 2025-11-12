@@ -1,4 +1,4 @@
-import { defineEventHandler, createError } from '#imports'
+import { defineEventHandler, createError } from 'h3'
 import { resolveSecurityRules } from '../../nitro/context'
 import type { HTTPMethod } from '../../../types/middlewares'
 

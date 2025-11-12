@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from '#imports'
+import { defineNitroPlugin } from 'nitropack/runtime'
 import { resolveSecurityRules } from '../context'
 import { generateHash } from '../../../utils/crypto'
 import type { Section } from '../../../types/module'
@@ -48,6 +48,7 @@ export default defineNitroPlugin((nitroApp) => {
             // Parse all script tags
             const inlineScriptMatches = element.matchAll(INLINE_SCRIPT_RE)
             for (const [, scriptText] of inlineScriptMatches) {
+              if (!scriptText) continue
               const hash = await generateHash(scriptText, hashAlgorithm)
               scriptHashes.add(`'${hash}'`)
             }
@@ -61,6 +62,7 @@ export default defineNitroPlugin((nitroApp) => {
           if (hashStyles) {
             const styleMatches = element.matchAll(STYLE_RE)
             for (const [, styleText] of styleMatches) {
+              if (!styleText) continue
               const hash = await generateHash(styleText, hashAlgorithm)
               styleHashes.add(`'${hash}'`)
             }
