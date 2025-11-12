@@ -1,4 +1,5 @@
-import { useRuntimeConfig, createError, defineEventHandler, sendError, setHeader } from '#imports'
+import { useRuntimeConfig } from 'nitropack/runtime'
+import { createError, defineEventHandler, sendError, setHeader } from 'h3'
 // @ts-ignore : the basic-auth module does not export types
 import getCredentials from 'basic-auth'
 

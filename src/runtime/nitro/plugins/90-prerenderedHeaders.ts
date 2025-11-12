@@ -1,5 +1,6 @@
-import { defineNitroPlugin, getResponseHeaders, setResponseHeaders, useStorage } from '#imports'
-import { OutgoingHttpHeaders } from 'http'
+import { defineNitroPlugin, useStorage } from 'nitropack/runtime'
+import { getResponseHeaders, setResponseHeaders } from 'h3'
+import type { OutgoingHttpHeaders } from 'http'
 import { resolveSecurityRules } from '../context'
 
 /**
@@ -15,6 +16,7 @@ export default defineNitroPlugin(async(nitroApp) => {
         // We save the headers for the current path
         const headers = getResponseHeaders(event)
         const path = event.path.split('?')[0]
+        if (!path) return
         // This is a hack
         // It works because headers is an object
         // 70-securityHeaders is executed after this step
@@ -53,7 +55,7 @@ export default defineNitroPlugin(async(nitroApp) => {
       if (rules.enabled && rules.ssg && rules.ssg.nitroHeaders) {
         const path = event.path.split('?')[0]
         // We retrieve the headers for the current path
-        if (prerenderedHeaders[path]) {
+        if (path && prerenderedHeaders[path]) {
           setResponseHeaders(event, prerenderedHeaders[path])
         }
       }
