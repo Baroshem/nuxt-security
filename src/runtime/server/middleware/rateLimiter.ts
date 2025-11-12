@@ -1,4 +1,5 @@
-import { defineEventHandler, createError, setResponseHeader, useStorage, getRequestIP, getRequestHeader } from '#imports'
+import { defineEventHandler, createError, setResponseHeader, getRequestIP, getRequestHeader } from 'h3'
+import { useStorage } from 'nitropack/runtime'
 import type { H3Event } from 'h3'
 import { resolveSecurityRoute, resolveSecurityRules } from '../../nitro/context'
 import type { RateLimiter } from '../../../types/middlewares'
@@ -11,12 +12,12 @@ type StorageItem = {
 }
 
 const storage = useStorage<StorageItem>('#rate-limiter-storage')
-const defaultRateLimiter = defaultSecurityConfig('').rateLimiter as Required<RateLimiter>
+const defaultRateLimiter = defaultSecurityConfig('', true).rateLimiter as Required<RateLimiter>
 
 export default defineEventHandler(async(event) => {
   // Disable rate limiter in prerender mode
-  if (import.meta.prerender) { 
-    return 
+  if (import.meta.prerender) {
+    return
   }
 
   const rules = resolveSecurityRules(event)
@@ -93,4 +94,3 @@ function getIP (event: H3Event, customIpHeader?: string) {
   const ip = customIpHeader ? getRequestHeader(event, customIpHeader) || '' : getRequestIP(event, { xForwardedFor: true }) || ''
   return ip
 }
-

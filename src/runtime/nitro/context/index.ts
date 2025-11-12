@@ -23,7 +23,8 @@ export function resolveSecurityRules(event: H3Event): NuxtSecurityRouteRules {
   if (!event.context.security.rules) {
     const router = createRouter<NuxtSecurityRouteRules>({ routes: structuredClone(nitroAppSecurityOptions) })
     const matcher = toRouteMatcher(router)
-    const matches = matcher.matchAll(event.path.split('?')[0])
+    const eventPathNoQuery = event.path.split('?')[0]
+    const matches = eventPathNoQuery ? matcher.matchAll(eventPathNoQuery) : []
     const rules: NuxtSecurityRouteRules = defuReplaceArray({}, ...matches.reverse())
     event.context.security.rules = rules
   }
@@ -31,7 +32,7 @@ export function resolveSecurityRules(event: H3Event): NuxtSecurityRouteRules {
 }
 
 /**
- * Returns the security route that was matched for a specific request 
+ * Returns the security route that was matched for a specific request
  */
 export function resolveSecurityRoute(event: H3Event) {
   if (!event.context.security) {
@@ -40,12 +41,10 @@ export function resolveSecurityRoute(event: H3Event) {
   if (!event.context.security.route) {
     const routeNames = Object.fromEntries(Object.entries(nitroAppSecurityOptions).map(([name]) => [name, { name }]))
     const router = createRouter<{ name: string }>({ routes: routeNames})
-    const match = router.lookup(event.path.split('?')[0])
+    const eventPathNoQuery = event.path.split('?')[0]
+    const match = eventPathNoQuery ? router.lookup(eventPathNoQuery) : undefined
     const route = match?.name ?? ''
     event.context.security.route = route
   }
   return event.context.security.route
 }
-
-
-

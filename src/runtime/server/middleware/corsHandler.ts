@@ -1,4 +1,4 @@
-import { defineEventHandler, handleCors } from '#imports'
+import { defineEventHandler, handleCors } from 'h3'
 import type { H3CorsOptions } from 'h3'
 import { resolveSecurityRules } from '../../nitro/context'
 
