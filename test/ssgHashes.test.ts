@@ -66,6 +66,16 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(strippedHeaderCsp).toBe(metaCsp)
   })
 
+  it('sets script- and style-src-elem for inline scripts and styles', async () => {
+    const res = await fetch('/inline-elem')
+
+    const body = await res.text()
+    const { csp } = extractDataFromBody(body)
+
+    expect(csp).toMatch(/script-src-elem[^;]+'sha256-/)
+    expect(csp).toMatch(/style-src-elem[^;]+'sha256-/)
+  })
+
   it('sets script-src for inline scripts', async () => {
     const res = await fetch('/inline-script')
 
@@ -88,7 +98,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/inline-script-with-linebreak')
     const body = await res.text()
     const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
-    
+
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
