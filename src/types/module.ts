@@ -32,7 +32,7 @@ export interface ModuleOptions {
 }
 
 export type NuxtSecurityRouteRules = Partial<
-  Omit<ModuleOptions, 'strict' | 'csrf' | 'basicAuth' | 'rateLimiter' | 'ssg' | 'requestSizeLimiter' | 'removeLoggers' > 
+  Omit<ModuleOptions, 'strict' | 'basicAuth' | 'rateLimiter' | 'ssg' | 'requestSizeLimiter' | 'removeLoggers' > 
   & { rateLimiter: Omit<RateLimiter, 'driver'> | false }
   & { ssg: Omit<Ssg, 'exportToPresets'> | false }
   & { requestSizeLimiter: RequestSizeLimiter | false }
@@ -54,6 +54,7 @@ declare module '@nuxt/schema' {
 declare module 'nitropack/types' {
   interface NitroRouteConfig {
     security?: NuxtSecurityRouteRules;
+    csurf?: CsrfOptions | boolean;
   }
   interface NitroRuntimeHooks {
     /**
@@ -82,6 +83,7 @@ declare module 'nitropack/types' {
 declare module 'nitropack' {
   interface NitroRouteConfig {
     security?: NuxtSecurityRouteRules;
+    csurf?: CsrfOptions | boolean;
   }
   interface NitroRuntimeHooks {
     /**

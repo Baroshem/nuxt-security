@@ -6,6 +6,19 @@ export default defineNuxtConfig({
     '/': {
       prerender: true
     },
+    '/inline-elem': {
+      prerender: true,
+      security: {
+        headers: {
+          contentSecurityPolicy: {
+            "script-src": false,
+            "style-src": false,
+            "script-src-elem": [],
+            "style-src-elem": []
+          }
+        }
+      }
+    },
     '/inline-script': {
       prerender: true
     },

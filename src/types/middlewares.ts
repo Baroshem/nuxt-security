@@ -1,4 +1,4 @@
-import type { BuiltinDriverName, BuiltinDriverOptions } from 'unstorage'
+import type { BuiltinDriverOptions } from 'unstorage'
 // NOTE : unstorage is not an explicit dependency in package.json
 // This causes @nuxt/module-builder to fail when preparing the module for publishing
 // The solution is to add unstorage as an external dependency of unbuild
@@ -14,10 +14,10 @@ export type RateLimiter = {
   tokensPerInterval?: number;
   interval?: string | number;
   driver?: {
-    [driverName in BuiltinDriverName]: { 
-      name: driverName; 
-      options?:  BuiltinDriverOptions[driverName] }
-  }[BuiltinDriverName];
+    [driverName in keyof BuiltinDriverOptions]: {
+      name: driverName;
+      options?: BuiltinDriverOptions[driverName] }
+  }[keyof BuiltinDriverOptions];
   headers?: boolean;
   whiteList?: string[];
   throwError?: boolean;
@@ -25,7 +25,7 @@ export type RateLimiter = {
 };
 
 export type XssValidator = {
-  /** Array of methods for which the validator will be invoked. 
+  /** Array of methods for which the validator will be invoked.
   @default ['GET', 'POST']
   */
   methods?: Array<HTTPMethod>;
