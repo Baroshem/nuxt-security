@@ -1,18 +1,18 @@
-import { defineEventHandler, getRequestHeader, createError } from '#imports'
+import { defineEventHandler, getRequestHeader, createError } from 'h3'
 import { defaultSecurityConfig } from '../../../defaultConfig'
 import { resolveSecurityRules } from '../../nitro/context'
 import { type RequestSizeLimiter } from '../../../types/middlewares'
 import defu from 'defu'
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
-const defaultSizeLimiter = defaultSecurityConfig('').requestSizeLimiter as Required<RequestSizeLimiter>
+const defaultSizeLimiter = defaultSecurityConfig('', true).requestSizeLimiter as Required<RequestSizeLimiter>
 
 export default defineEventHandler((event) => {
   const rules  = resolveSecurityRules(event)
 
   if (rules.enabled && rules.requestSizeLimiter) {
     const requestSizeLimiter = defu(
-      rules.requestSizeLimiter, 
+      rules.requestSizeLimiter,
       defaultSizeLimiter,
     )
     if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {

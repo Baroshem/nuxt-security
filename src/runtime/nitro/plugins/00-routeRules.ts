@@ -1,4 +1,4 @@
-import { defineNitroPlugin, useRuntimeConfig } from "#imports"
+import { defineNitroPlugin, useRuntimeConfig } from "nitropack/runtime"
 import { getAppSecurityOptions } from '../context'
 import { defuReplaceArray } from '../../../utils/merge'
 import { standardToSecurity, backwardsCompatibleSecurity } from '../../../utils/headers'
@@ -13,6 +13,7 @@ export default defineNitroPlugin(async(nitroApp) => {
   // First insert standard route rules headers
   for (const route in runtimeConfig.nitro.routeRules) {
     const rule = runtimeConfig.nitro.routeRules[route]
+    if (!rule) continue
     const { headers } = rule
     const securityHeaders = standardToSecurity(headers)
     if (securityHeaders) {
@@ -36,6 +37,7 @@ export default defineNitroPlugin(async(nitroApp) => {
   // Then insert route specific security headers
   for (const route in runtimeConfig.nitro.routeRules) {
     const rule = runtimeConfig.nitro.routeRules[route]
+    if (!rule) continue
     const { security } = rule
     if (security) {
       const { headers } = security
@@ -63,4 +65,3 @@ export default defineNitroPlugin(async(nitroApp) => {
 
   await nitroApp.hooks.callHook('nuxt-security:ready')
 })
-

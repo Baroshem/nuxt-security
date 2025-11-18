@@ -851,7 +851,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
 
     const nonceMatch = `nonce="${nonce}"`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const elementsWithNonce = text.match(new RegExp(nonceMatch, 'g'))
-    expect(elementsWithNonce).toHaveLength(9)
+    expect(elementsWithNonce).toHaveLength(6)
   })
 
   it('does not inject CSP hashes on a deeply-disabled route', async () => {

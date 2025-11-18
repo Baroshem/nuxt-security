@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from '#imports'
+import { defineNitroPlugin } from 'nitropack/runtime'
 import { resolveSecurityRules } from '../context'
 import type { ContentSecurityPolicyValue } from '../../../types/headers'
 
@@ -7,7 +7,7 @@ import type { ContentSecurityPolicyValue } from '../../../types/headers'
  */
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (response, { event }) => {
-    // TODO: find alternative for modern Nuxt versions that don't have the island property anymore, or remove logic
+    // @ts-expect-error TODO: find alternative for modern Nuxt versions that don't have the island property anymore, or remove logic
     if (response.island) {
       // When rendering server-only (NuxtIsland) components, do not update CSP headers.
       // The CSP headers from the page that the island components are mounted into are used.
@@ -17,7 +17,7 @@ export default defineNitroPlugin((nitroApp) => {
     const rules = resolveSecurityRules(event)
     if (rules.enabled && rules.headers) {
       const headers = rules.headers
-      
+
       if (headers.contentSecurityPolicy) {
         const csp = headers.contentSecurityPolicy
         const nonce = event.context.security?.nonce
@@ -53,7 +53,7 @@ function updateCspVariables(csp: ContentSecurityPolicyValue, nonce?: string, scr
         }
       })
       .filter(source => source)
-    
+
     if (['script-src', 'script-src-elem'].includes(directive) && scriptHashes) {
       modifiedSources.push(...scriptHashes)
     }
@@ -65,4 +65,3 @@ function updateCspVariables(csp: ContentSecurityPolicyValue, nonce?: string, scr
   }))
   return generatedCsp
 }
-

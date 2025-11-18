@@ -1,4 +1,4 @@
-import { defineEventHandler, createError, getQuery, readBody, readMultipartFormData } from '#imports'
+import { defineEventHandler, createError, getQuery, readBody, readMultipartFormData } from 'h3'
 import { FilterXSS, type IFilterXSSOptions } from 'xss'
 import { resolveSecurityRules } from '../../nitro/context'
 import type { HTTPMethod } from '../../../types/middlewares'

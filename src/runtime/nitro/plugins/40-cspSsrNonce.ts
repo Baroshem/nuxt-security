@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from '#imports'
+import { defineNitroPlugin } from 'nitropack/runtime'
 import { resolveSecurityRules } from '../context'
 import { generateRandomNonce } from '../../../utils/crypto'
 
