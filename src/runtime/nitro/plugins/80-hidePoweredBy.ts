@@ -1,4 +1,5 @@
-import { defineNitroPlugin, removeResponseHeader } from '#imports'
+import { defineNitroPlugin } from 'nitropack/runtime'
+import { removeResponseHeader } from 'h3'
 import { resolveSecurityRules } from '../context'
 
 /**

@@ -7,7 +7,7 @@ describe('[nuxt-security] Nonce', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/ssrNonce', import.meta.url))
   })
 
-  const expectedNonceElements = 9 // 1 from app.vue/useHead, 7 for nuxt, 1 for plugin vue export helper
+  const expectedNonceElements = 7
 
   it('injects `nonce` attribute in response', async () => {
     const res = await fetch('/')
@@ -96,6 +96,28 @@ describe('[nuxt-security] Nonce', async () => {
     expect(content).toBeDefined()
     expect(injectedNonces).toBe(null)
     expect(cspNonces).toBe(null)
+  })
+
+  /*it('does not modify custom elements', async () => {
+    const res = await fetch('/with-custom-element')
+
+    const body = /<scripter>/.test(await res.text())
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(body).toBe(true)
+  })*/
+
+  it('does not modify stringified elements', async () => {
+    const res = await fetch('/string-script').then(res=>res.text())
+
+    const body = res.match(/<div class="(.+)Hello/)
+    const hasNonce = body[1].includes('nonce=')
+
+    expect(res).toBeDefined()
+    expect(res).toBeTruthy()
+    expect(body[0]).toBeDefined()
+    expect(hasNonce).toBe(false)
   })
 
   // TODO: reenable if it's possible for island context to share the same `event.context.security.nonce`

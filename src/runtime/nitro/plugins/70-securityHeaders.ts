@@ -1,4 +1,5 @@
-import { defineNitroPlugin, setResponseHeader, removeResponseHeader, getRouteRules, getResponseHeader } from '#imports'
+import { defineNitroPlugin, getRouteRules } from 'nitropack/runtime'
+import { setResponseHeader, removeResponseHeader, getResponseHeader } from 'h3'
 import { resolveSecurityRules } from '../context'
 import { getNameFromKey, headerStringFromObject } from '../../../utils/headers'
 import type { OptionKey } from '../../../types/headers'
