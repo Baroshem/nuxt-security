@@ -68,5 +68,5 @@ For all available configuration options check out the [docs](https://nuxt-securi
 [github-actions-ci-href]: https://github.com/baroshem/nuxt-security/actions?query=workflow%3Aci
 [license-src]: https://img.shields.io/npm/l/nuxt-security.svg
 [license-href]: https://npmjs.com/package/nuxt-security
-[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
+[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt
 [nuxt-href]: https://nuxt.com
