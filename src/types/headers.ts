@@ -89,6 +89,10 @@ export type ContentSecurityPolicyValue = {
   'require-trusted-types-for'?: string | false;
   'trusted-types'?: string[] | string | false;
   'upgrade-insecure-requests'?: boolean;
+  /**
+   * When set to true, the Content-Security-Policy-Report-Only header will be used instead of Content-Security-Policy.
+   */
+  'report-only'?: boolean;
 };
 
 export type StrictTransportSecurityValue = {
@@ -165,7 +169,7 @@ export type PermissionsPolicyValue = {
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
-  
+
   'idle-detection'?: string[] | string | false;
   /**
    * 🧪 Mozilla-undocumented. Expect browser behavior to change in the future.
@@ -222,7 +226,7 @@ export type PermissionsPolicyValue = {
   /**
    * 🧪 Experimental. Expect browser behavior to change in the future.
    */
-  
+
   'usb'?: string[] | string | false;
   /**
    * 🧪 Mozilla-undocumented. Expect browser behavior to change in the future.
@@ -246,13 +250,13 @@ export type PermissionsPolicyValue = {
   'xr-spatial-tracking'?: string[] | string | false;
 }
 
-export type OptionKey = 
-  'contentSecurityPolicy' | 
-  'crossOriginEmbedderPolicy' | 
+export type OptionKey =
+  'contentSecurityPolicy' |
+  'crossOriginEmbedderPolicy' |
   'crossOriginOpenerPolicy' |
   'crossOriginResourcePolicy' |
-  'originAgentCluster' | 
-  'referrerPolicy' | 
+  'originAgentCluster' |
+  'referrerPolicy' |
   'strictTransportSecurity' |
   'xContentTypeOptions' |
   'xDNSPrefetchControl' |
@@ -262,8 +266,9 @@ export type OptionKey =
   'xXSSProtection' |
   'permissionsPolicy'
 
-export type HeaderName = 
+export type HeaderName =
   'Content-Security-Policy' |
+  'Content-Security-Policy-Report-Only' |
   'Cross-Origin-Embedder-Policy' |
   'Cross-Origin-Opener-Policy' |
   'Cross-Origin-Resource-Policy' |

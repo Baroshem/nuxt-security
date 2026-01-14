@@ -30,7 +30,10 @@ const NAMES_TO_KEYS = Object.fromEntries(Object.entries(KEYS_TO_NAMES).map(([key
  *
  * Converts a valid OptionKey into its corresponding standard header name
  */
-export function getNameFromKey(key: OptionKey) {
+export function getNameFromKey(key: OptionKey, options?: { reportOnly?: boolean }) {
+  if (key === 'contentSecurityPolicy' && options?.reportOnly) {
+    return 'Content-Security-Policy-Report-Only' as HeaderName
+  }
   return KEYS_TO_NAMES[key]
 }
 
@@ -56,7 +59,7 @@ export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclud
   if (optionKey === 'contentSecurityPolicy') {
     const policies = optionValue as ContentSecurityPolicyValue
     return Object.entries(policies)
-      .filter(([, value]) => value !== false)
+      .filter(([directive, value]) => value !== false && directive !== 'report-only')
       .map(([directive, sources]) => {
         if (directive === 'upgrade-insecure-requests') {
           return 'upgrade-insecure-requests;'

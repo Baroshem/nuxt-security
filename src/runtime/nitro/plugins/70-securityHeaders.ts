@@ -14,7 +14,12 @@ export default defineNitroPlugin((nitroApp) => {
       const headers = rules.headers
 
       Object.entries(headers).forEach(([header, value]) => {
-        const headerName = getNameFromKey(header as OptionKey)
+        const headerName = getNameFromKey(
+          header as OptionKey,
+          header === 'contentSecurityPolicy' && value && typeof value === 'object'
+            ? { reportOnly: (value as Record<string, unknown>)['report-only'] === true }
+            : undefined
+        )
         if (value === false) {
           const { headers: standardHeaders } = getRouteRules(event)
           const standardHeaderValue = standardHeaders?.[headerName]
