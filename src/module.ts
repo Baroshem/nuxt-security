@@ -1,4 +1,4 @@
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports, addTypeTemplate } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports, addTypeTemplate, hasNuxtModule } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { readFile, readdir } from 'node:fs/promises'
 import { join, isAbsolute } from 'pathe'
@@ -313,6 +313,13 @@ export {}
         nuxt.hooks.callHook('nuxt-security:prerenderedHeaders', prerenderedHeaders)
       })
     })
+
+    // Adjust route rules for Nuxt Hints compatibility
+    if (hasNuxtModule('@nuxt/hints') && nuxt.options.dev) {
+      nuxt.options.routeRules = defu(nuxt.options.routeRules, {
+        '/__nuxt_hydration': { xssValidator: false }
+      })
+    }
   }
 })
 
