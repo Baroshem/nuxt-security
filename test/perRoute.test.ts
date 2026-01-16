@@ -976,4 +976,43 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(rp).toBeDefined()
     expect(rp).toBeNull()
   })
+
+  it('sets Content-Security-Policy-Report-Only header when contentSecurityPolicyReportOnly is true', async () => {
+    const res = await fetch('/csp-report-only')
+    expect(res.status).toBe(200)
+
+    const { headers } = res
+    const csp = headers.get('content-security-policy')
+    const cspReportOnly = headers.get('content-security-policy-report-only')
+
+    expect(csp).toBeNull()
+    expect(cspReportOnly).toBeDefined()
+    expect(cspReportOnly).toContain("script-src 'self' 'strict-dynamic' example.com;")
+  })
+
+  it('inherits contentSecurityPolicyReportOnly on deep routes', async () => {
+    const res = await fetch('/csp-report-only/deep/page')
+    expect(res.status).toBe(200)
+
+    const { headers } = res
+    const csp = headers.get('content-security-policy')
+    const cspReportOnly = headers.get('content-security-policy-report-only')
+
+    expect(csp).toBeNull()
+    expect(cspReportOnly).toBeDefined()
+    expect(cspReportOnly).toContain("script-src 'self' 'strict-dynamic' example.com;")
+  })
+
+  it('disables contentSecurityPolicyReportOnly when explicitly set to false on deep route', async () => {
+    const res = await fetch('/csp-report-only/deep/disabled')
+    expect(res.status).toBe(200)
+
+    const { headers } = res
+    const csp = headers.get('content-security-policy')
+    const cspReportOnly = headers.get('content-security-policy-report-only')
+
+    expect(csp).toBeDefined()
+    expect(csp).toContain("script-src 'self' 'strict-dynamic' example.com;")
+    expect(cspReportOnly).toBeNull()
+  })
 })

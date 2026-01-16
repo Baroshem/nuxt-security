@@ -2,7 +2,7 @@ import { defineNitroPlugin, getRouteRules } from 'nitropack/runtime'
 import { setResponseHeader, removeResponseHeader, getResponseHeader } from 'h3'
 import { resolveSecurityRules } from '../context'
 import { getNameFromKey, headerStringFromObject } from '../../../utils/headers'
-import type { OptionKey } from '../../../types/headers'
+import type { HeaderName, OptionKey } from '../../../types/headers'
 
 /**
  * This plugin sets the security headers for the response.
@@ -14,7 +14,10 @@ export default defineNitroPlugin((nitroApp) => {
       const headers = rules.headers
 
       Object.entries(headers).forEach(([header, value]) => {
-        const headerName = getNameFromKey(header as OptionKey)
+        const headerName: HeaderName = header === 'contentSecurityPolicy' && rules.contentSecurityPolicyReportOnly
+          ? 'Content-Security-Policy-Report-Only'
+          : getNameFromKey(header as OptionKey)
+
         if (value === false) {
           const { headers: standardHeaders } = getRouteRules(event)
           const standardHeaderValue = standardHeaders?.[headerName]

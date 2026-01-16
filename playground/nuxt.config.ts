@@ -55,6 +55,11 @@ export default defineNuxtConfig({
         },
       },
     },
+    '/cspReportOnly': {
+      security: {
+        contentSecurityPolicyReportOnly: true
+      }
+    }
   },
 
   // Global configuration
