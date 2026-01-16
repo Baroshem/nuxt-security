@@ -977,7 +977,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(rp).toBeNull()
   })
 
-  it('sets Content-Security-Policy-Report-Only header when report-only is true', async () => {
+  it('sets Content-Security-Policy-Report-Only header when contentSecurityPolicyReportOnly is true', async () => {
     const res = await fetch('/csp-report-only')
     expect(res.status).toBe(200)
 
@@ -988,10 +988,9 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(csp).toBeNull()
     expect(cspReportOnly).toBeDefined()
     expect(cspReportOnly).toContain("script-src 'self' 'strict-dynamic' example.com;")
-    expect(cspReportOnly).not.toContain('report-only')
   })
 
-  it('inherits report-only on deep routes', async () => {
+  it('inherits contentSecurityPolicyReportOnly on deep routes', async () => {
     const res = await fetch('/csp-report-only/deep/page')
     expect(res.status).toBe(200)
 
@@ -1004,7 +1003,7 @@ describe('[nuxt-security] Per-route Configuration', async () => {
     expect(cspReportOnly).toContain("script-src 'self' 'strict-dynamic' example.com;")
   })
 
-  it('disables report-only when explicitly set to false on deep route', async () => {
+  it('disables contentSecurityPolicyReportOnly when explicitly set to false on deep route', async () => {
     const res = await fetch('/csp-report-only/deep/disabled')
     expect(res.status).toBe(200)
 

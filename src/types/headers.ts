@@ -89,10 +89,6 @@ export type ContentSecurityPolicyValue = {
   'require-trusted-types-for'?: string | false;
   'trusted-types'?: string[] | string | false;
   'upgrade-insecure-requests'?: boolean;
-  /**
-   * When set to true, the Content-Security-Policy-Report-Only header will be used instead of Content-Security-Policy.
-   */
-  'report-only'?: boolean;
 };
 
 export type StrictTransportSecurityValue = {

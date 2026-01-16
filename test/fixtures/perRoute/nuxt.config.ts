@@ -287,9 +287,9 @@ export default defineNuxtConfig({
     },
     '/csp-report-only/**': {
       security: {
+        contentSecurityPolicyReportOnly: true,
         headers: {
           contentSecurityPolicy: {
-            'report-only': true,
             'script-src': ["'self'", "'strict-dynamic'", "example.com"]
           }
         }
@@ -297,11 +297,7 @@ export default defineNuxtConfig({
     },
     '/csp-report-only/deep/disabled': {
       security: {
-        headers: {
-          contentSecurityPolicy: {
-            'report-only': false
-          }
-        }
+        contentSecurityPolicyReportOnly: false
       }
     }
   },
