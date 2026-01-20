@@ -425,8 +425,12 @@ async function hashBundledAssets(nitro: Nitro) {
           if (appCdnUrl) {
             // If the cdnURL option was set, the url will be in the form https://...
             const relativePath = isAbsolute(fullPath) ? fullPath.slice(1) : fullPath
-            const abdsoluteCdnUrl = appCdnUrl.endsWith('/') ? appCdnUrl : appCdnUrl + '/'
-            url = new URL(relativePath, abdsoluteCdnUrl).href
+            const absoluteCdnUrl = appCdnUrl.endsWith('/') ? appCdnUrl : appCdnUrl + '/'
+            try {
+              url = new URL(relativePath, absoluteCdnUrl).href
+            } catch {
+              url = join(appCdnUrl, relativePath)
+            }
           } else {
             // If not, the url will be in a relative form: /_nuxt/...
             url = join('/', appBaseUrl, fullPath)
