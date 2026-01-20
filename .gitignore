@@ -52,6 +52,7 @@ Temporary Items
 
 # Claude Code
 .claude/*
+.claude/rules/*
 .auto-claude/*
 CLAUDE.md
 
