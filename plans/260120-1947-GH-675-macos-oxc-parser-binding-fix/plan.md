@@ -30,13 +30,13 @@ The issue is NOT in nuxt-security - it's a known npm/pnpm bug with optional depe
 | Phase | Description | Status | Link |
 |-------|-------------|--------|------|
 | 01 | Add troubleshooting docs | done | [phase-01](./phase-01-add-troubleshooting-docs.md) |
-| 02 | Update playground config | pending | [phase-02](./phase-02-update-playground-config.md) |
+| 02 | Update playground config | done | [phase-02](./phase-02-update-playground-config.md) |
 
 ## Success Criteria
 
-- [ ] FAQ page includes macOS installation troubleshooting section
-- [ ] Playground works on macOS Apple Silicon with pnpm
-- [ ] No code changes to nuxt-security core
+- [x] FAQ page includes macOS installation troubleshooting section
+- [x] Playground works on macOS Apple Silicon with pnpm
+- [x] No code changes to nuxt-security core
 
 ## Risk Assessment
 
