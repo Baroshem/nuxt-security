@@ -1,7 +1,7 @@
 ---
 title: "macOS oxc-parser Native Binding Fix"
 description: "Add troubleshooting documentation for macOS Apple Silicon installation issues"
-status: in-progress
+status: done
 priority: P3
 effort: 1h
 branch: feat/issue-675-enhancement-this-repo-didn-t-support-on-

@@ -1,0 +1,146 @@
+```
+affff-hub-consolidated/apps/www on  feat/issue-27-enhancement-migrate-nuxt-3-to-bun-js [$?] via 🐳 orbstack is 📦 v0.0.0 via  v20.18.0 on ☁️  (ap-southeast-2) 
+❯ pnpm i       
+Lockfile is up to date, resolution step is skipped
+Packages: +1134
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1134, reused 1134, downloaded 0, added 1134, done
+
+devDependencies:
++ @antfu/eslint-config 0.29.4
++ @hypernym/nuxt-gsap 2.4.3
++ @iconify-json/carbon 1.2.18
++ @iconify-json/twemoji 1.2.5
++ @meforma/vue-toaster 1.3.0
++ @nuxt/image 1.11.0
++ @nuxtjs/color-mode 3.5.2
++ @nuxtjs/device 3.2.4
++ @nuxtjs/google-fonts 3.0.0-1
++ @nuxtjs/tailwindcss 6.14.0
++ @pinia/nuxt 0.4.11
++ @servicestack/client 2.1.13
++ @tailwindcss/line-clamp 0.4.4
++ @tailwindcss/typography 0.5.19
++ @types/numeral 2.0.5
++ @vueuse/core 12.8.2
++ @vueuse/gesture 2.0.0
++ @vueuse/motion 2.2.6
++ @vueuse/nuxt 9.13.0
++ @zadigetvoltaire/nuxt-gtm 0.0.13
++ atropos 2.0.2
++ class-variance-authority 0.7.1
++ clsx 2.1.1
++ cross-env 7.0.3
++ dayjs-nuxt 2.1.11
++ dotenv 16.6.1
++ es-toolkit 1.43.0
++ eslint 8.57.1
++ fluid-player 3.57.0
++ lottie-web 5.13.0
++ lucide-vue-next 0.460.0
++ numeral 2.0.6
++ nuxt 3.20.2
++ nuxt-icon 0.6.10
++ nuxt-security 2.5.0
++ pinia 2.3.1
++ pinia-plugin-persistedstate 4.7.1
++ radix-vue 1.9.17
++ sass 1.97.2
++ shadcn-nuxt 0.11.4
++ sitemap 7.1.2
++ swiper 11.2.10
++ tailwind-merge 2.6.0
++ tailwindcss-animate 1.0.7
++ twind 0.16.19
++ typescript 5.9.3
++ vee-validate 4.15.1
++ vue-router 4.6.4
++ vue-writer 1.2.0
++ vue3-carousel 0.2.16
++ vue3-marquee 3.2.1
++ yup 0.32.11
+
+> nuxt3-starter@0.0.0 postinstall /Users/jackhuynh/Documents/Projects/affff-ecosystem/affff-hub-consolidated/apps/www
+> nuxi prepare
+
+
+[6:47:55 PM]  ERROR  Cannot find native binding. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try npm i again after removing both package-lock.json and node_modules directory.
+
+    at node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:571:11
+    at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+    at async loadNuxt (node_modules/.pnpm/@nuxt+kit@3.20.2_magicast@0.5.1/node_modules/@nuxt/kit/dist/index.mjs:3010:37)
+    at async Object.run (node_modules/.pnpm/@nuxt+cli@3.32.0_cac@6.7.14_magicast@0.5.1/node_modules/@nuxt/cli/dist/prepare-CQwaXQtb.mjs:28:16)
+    at async runCommand (node_modules/.pnpm/citty@0.1.6/node_modules/citty/dist/index.mjs:316:16)
+    at async runCommand (node_modules/.pnpm/citty@0.1.6/node_modules/citty/dist/index.mjs:307:11)
+    at async runMain (node_modules/.pnpm/citty@0.1.6/node_modules/citty/dist/index.mjs:445:7)
+
+  [cause]: Cannot find module '@oxc-parser/binding-darwin-arm64'
+Require stack:
+- /Users/jackhuynh/Documents/Projects/affff-ecosystem/affff-hub-consolidated/apps/www/node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js
+
+      at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+      at Module._load (node:internal/modules/cjs/loader:1051:27)
+      at Module.require (node:internal/modules/cjs/loader:1311:19)
+      at require (node:internal/modules/helpers:179:18)
+      at requireNative (node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:219:25)
+      at node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:530:17
+      at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+      at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+      at async loadNuxt (node_modules/.pnpm/@nuxt+kit@3.20.2_magicast@0.5.1/node_modules/@nuxt/kit/dist/index.mjs:3010:37)
+      at async Object.run (node_modules/.pnpm/@nuxt+cli@3.32.0_cac@6.7.14_magicast@0.5.1/node_modules/@nuxt/cli/dist/prepare-CQwaXQtb.mjs:28:16)
+
+    [cause]: Cannot find module './parser.darwin-arm64.node'
+Require stack:
+- /Users/jackhuynh/Documents/Projects/affff-ecosystem/affff-hub-consolidated/apps/www/node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js
+
+        at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+        at Module._load (node:internal/modules/cjs/loader:1051:27)
+        at Module.require (node:internal/modules/cjs/loader:1311:19)
+        at require (node:internal/modules/helpers:179:18)
+        at requireNative (node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:214:16)
+        at node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:530:17
+        at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+        at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+        at async loadNuxt (node_modules/.pnpm/@nuxt+kit@3.20.2_magicast@0.5.1/node_modules/@nuxt/kit/dist/index.mjs:3010:37)
+        at async Object.run (node_modules/.pnpm/@nuxt+cli@3.32.0_cac@6.7.14_magicast@0.5.1/node_modules/@nuxt/cli/dist/prepare-CQwaXQtb.mjs:28:16)
+
+      [cause]: Cannot find module '@oxc-parser/binding-darwin-universal'
+Require stack:
+- /Users/jackhuynh/Documents/Projects/affff-ecosystem/affff-hub-consolidated/apps/www/node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js
+
+          at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+          at Module._load (node:internal/modules/cjs/loader:1051:27)
+          at Module.require (node:internal/modules/cjs/loader:1311:19)
+          at require (node:internal/modules/helpers:179:18)
+          at requireNative (node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:187:23)
+          at node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:530:17
+          at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+          at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+          at async loadNuxt (node_modules/.pnpm/@nuxt+kit@3.20.2_magicast@0.5.1/node_modules/@nuxt/kit/dist/index.mjs:3010:37)
+          at async Object.run (node_modules/.pnpm/@nuxt+cli@3.32.0_cac@6.7.14_magicast@0.5.1/node_modules/@nuxt/cli/dist/prepare-CQwaXQtb.mjs:28:16)
+
+        [cause]: Cannot find module './parser.darwin-universal.node'
+Require stack:
+- /Users/jackhuynh/Documents/Projects/affff-ecosystem/affff-hub-consolidated/apps/www/node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js
+
+            at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+            at Module._load (node:internal/modules/cjs/loader:1051:27)
+            at Module.require (node:internal/modules/cjs/loader:1311:19)
+            at require (node:internal/modules/helpers:179:18)
+            at requireNative (node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:182:14)
+            at node_modules/.pnpm/oxc-parser@0.102.0/node_modules/oxc-parser/src-js/bindings.js:530:17
+            at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+            at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+            at async loadNuxt (node_modules/.pnpm/@nuxt+kit@3.20.2_magicast@0.5.1/node_modules/@nuxt/kit/dist/index.mjs:3010:37)
+            at async Object.run (node_modules/.pnpm/@nuxt+cli@3.32.0_cac@6.7.14_magicast@0.5.1/node_modules/@nuxt/cli/dist/prepare-CQwaXQtb.mjs:28:16) 
+
+
+
+[6:47:55 PM]  ERROR  Cannot find native binding. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try npm i again after removing both package-lock.json and node_modules directory.
+
+
+
+⏺ Native binding issue with oxc-parser. This is a known pnpm bug with optional dependencies on Apple Silicon. Let me fix it.    
+
+```
