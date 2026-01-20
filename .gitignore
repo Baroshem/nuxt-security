@@ -50,5 +50,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Claude Code
+.claude/*
+.auto-claude/*
+CLAUDE.md
+
 # Yarn is the package manager, do not commit npm lock file
 package-lock.json
