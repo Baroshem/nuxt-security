@@ -317,7 +317,7 @@ export {}
     // Adjust route rules for Nuxt Hints compatibility
     if (hasNuxtModule('@nuxt/hints') && nuxt.options.dev) {
       nuxt.options.routeRules = defu(nuxt.options.routeRules, {
-        '/__nuxt_hydration': {
+        '/__nuxt_hints/**': {
           enabled: false,
          },
       })
