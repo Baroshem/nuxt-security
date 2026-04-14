@@ -1,6 +1,11 @@
+import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { setup, fetch } from '@nuxt/test-utils'
+
+function sha256Base64(content: string): string {
+  return createHash('sha256').update(content, 'utf-8').digest('base64')
+}
 
 describe('[nuxt-security] SSG support of CSP', async () => {
   await setup({
@@ -261,6 +266,33 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(metaCsp).not.toBeNull()
     const metaFrameAncestors = metaCsp!.split(';').find(policy => policy.trim().startsWith('frame-ancestors'))
     expect(metaFrameAncestors).toBeUndefined()
+  })
+
+  it('hashes match inline content in the final served HTML', async () => {
+    // The `server/plugins/transform-inline.ts` fixture plugin collapses whitespace inside
+    // inline <script>/<style> tags during `render:html`. Every inline script/style in the
+    // served body must have a matching hash in the CSP meta tag.
+    const res = await fetch('/inline-script')
+    const body = await res.text()
+    const { csp } = extractDataFromBody(body)
+
+    // Confirm the fixture plugin actually ran by checking the served inline script has no
+    // newlines (collapsed by the plugin).
+    const inlineScriptMatch = body.match(/<script[^>]*>(window\.myImportantVar[^<]*)<\/script>/)
+    expect(inlineScriptMatch).not.toBeNull()
+    expect(inlineScriptMatch![1]!).not.toMatch(/\n/)
+
+    // Every inline <script>/<style> in the served HTML must hash into the CSP meta tag.
+    const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi
+    const INLINE_STYLE_RE = /<style[^>]*>([\s\S]*?)<\/style>/gi
+    for (const [, content] of body.matchAll(INLINE_SCRIPT_RE)) {
+      if (!content) continue
+      expect(csp, `script hash missing for content: ${content.slice(0, 40)}`).toContain(`'sha256-${sha256Base64(content)}'`)
+    }
+    for (const [, content] of body.matchAll(INLINE_STYLE_RE)) {
+      if (!content) continue
+      expect(csp, `style hash missing for content: ${content.slice(0, 40)}`).toContain(`'sha256-${sha256Base64(content)}'`)
+    }
   })
 
   it('sets CSP meta at top of head after charset meta', async () => {
