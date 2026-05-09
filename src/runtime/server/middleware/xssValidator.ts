@@ -34,10 +34,8 @@ export default defineEventHandler(async(event) => {
             : await readBody(event)
         // Fix for problems when one middleware is returning an error and it is catched in the next
         if (valueToFilter && Object.keys(valueToFilter).length) {
-          if (
-            valueToFilter.statusMessage &&
-            valueToFilter.statusMessage !== 'Bad Request'
-          ) {
+          // Only skip XSS filtering if statusMessage === 'Bad Request' (for error propagation)
+          if (valueToFilter.statusMessage === 'Bad Request') {
             return
           }
           const stringifiedValue = JSON.stringify(valueToFilter)
