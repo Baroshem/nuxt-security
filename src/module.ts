@@ -22,6 +22,18 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'security'
   },
   async setup (options, nuxt) {
+    // Auto-disable security middleware for @nuxt/hints hydration route only if hints module is present
+    if (hasNuxtModule('@nuxt/hints')) {
+      nuxt.options.routeRules = nuxt.options.routeRules || {}
+      nuxt.options.routeRules['/__nuxt_hints/**'] = {
+        security: {
+          rateLimiter: false,
+          requestSizeLimiter: false,
+          xssValidator: false,
+          corsHandler: false,
+        }
+      }
+    }
     const resolver = createResolver(import.meta.url)
 
     nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
@@ -313,13 +325,6 @@ export {}
         nuxt.hooks.callHook('nuxt-security:prerenderedHeaders', prerenderedHeaders)
       })
     })
-
-    // Adjust route rules for Nuxt Hints compatibility
-    if (hasNuxtModule('@nuxt/hints') && nuxt.options.dev) {
-      nuxt.options.routeRules = defu(nuxt.options.routeRules, {
-        '/__nuxt_hydration': { xssValidator: false }
-      })
-    }
   }
 })
 

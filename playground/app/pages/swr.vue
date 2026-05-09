@@ -10,11 +10,11 @@
 <script setup lang="ts">
 const formData = new FormData()
 formData.append('test', 'test')
-const { data: time } = useFetch('/api/test', {
+const { data: time } = useCsrfFetch('/api/test', {
   method: 'POST',
   body: formData
 })
-const newTime = await $fetch('/api/test', {
+const newTime = await useCsrfFetch('/api/test', {
   method: 'POST',
   body: formData
 })
