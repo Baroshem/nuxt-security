@@ -284,6 +284,21 @@ export default defineNuxtConfig({
           contentSecurityPolicy: false
         }
       }
+    },
+    '/csp-report-only/**': {
+      security: {
+        contentSecurityPolicyReportOnly: true,
+        headers: {
+          contentSecurityPolicy: {
+            'script-src': ["'self'", "'strict-dynamic'", "example.com"]
+          }
+        }
+      }
+    },
+    '/csp-report-only/deep/disabled': {
+      security: {
+        contentSecurityPolicyReportOnly: false
+      }
     }
   },
   security: {

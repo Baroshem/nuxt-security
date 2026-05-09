@@ -29,6 +29,7 @@ export interface ModuleOptions {
   basicAuth: BasicAuth | false;
   csrf: CsrfOptions | boolean;
   removeLoggers: RemoveOptions | boolean;
+  contentSecurityPolicyReportOnly: boolean;
 }
 
 export type NuxtSecurityRouteRules = Partial<

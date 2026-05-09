@@ -88,7 +88,8 @@ export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
       nitroHeaders: true,
       exportToPresets: true,
     },
-    sri: true
+    sri: true,
+    contentSecurityPolicyReportOnly: false
   }
 
   if (strict) {
