@@ -3,8 +3,8 @@ import { defineNitroPlugin } from 'nitropack/runtime'
 // Simulates a third-party module (e.g. a minifier) that mutates inline <script>/<style>
 // content during `render:html`. The generated CSP hashes must match the final served
 // HTML.
-const INLINE_SCRIPT_RE = /<script([^>]*)>([\s\S]*?)<\/script>/gi
-const INLINE_STYLE_RE = /<style([^>]*)>([\s\S]*?)<\/style>/gi
+const INLINE_SCRIPT_RE = /<script([^>]*)>([\s\S]*?)<\/script(?:\s+[^>]*)?\s*>/gi
+const INLINE_STYLE_RE = /<style([^>]*)>([\s\S]*?)<\/style(?:\s+[^>]*)?\s*>/gi
 
 function collapseWhitespace(content: string): string {
   return content.replace(/\s+/g, ' ').trim()
