@@ -26,8 +26,10 @@ export default defineEventHandler((event) => {
     return
   }
 
-  // Check for exclusion paths
-  const excludePaths = basicAuthConfig?.exclude || ['/']
+
+  // Secure default: no excluded paths by default
+  // All routes require auth unless user sets exclude/include explicitly
+  const excludePaths = basicAuthConfig?.exclude || []
   const isPathExcluded = excludePaths.some(el => event.path?.startsWith(el))
 
   // Check for inclusion paths

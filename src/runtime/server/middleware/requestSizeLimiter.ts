@@ -3,9 +3,13 @@ import { defaultSecurityConfig } from '../../../defaultConfig'
 import { resolveSecurityRules } from '../../nitro/context'
 import { type RequestSizeLimiter } from '../../../types/middlewares'
 import defu from 'defu'
+import { useRuntimeConfig } from '#imports';
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
-const defaultSizeLimiter = defaultSecurityConfig('', true).requestSizeLimiter as Required<RequestSizeLimiter>
+const runtimeConfig = useRuntimeConfig();
+const strict = runtimeConfig.security?.strict ?? false;
+
+const defaultSizeLimiter = defaultSecurityConfig('', strict).requestSizeLimiter as Required<RequestSizeLimiter>
 
 export default defineEventHandler((event) => {
   const rules  = resolveSecurityRules(event)

@@ -5,6 +5,12 @@ import { resolveSecurityRoute, resolveSecurityRules } from '../../nitro/context'
 import type { RateLimiter } from '../../../types/middlewares'
 import { defaultSecurityConfig } from '../../../defaultConfig'
 import defu from 'defu'
+import { useRuntimeConfig } from '#imports';
+
+const runtimeConfig = useRuntimeConfig();
+const strict = runtimeConfig.security?.strict ?? false;
+
+const defaultRateLimiter = defaultSecurityConfig('', strict).rateLimiter as Required<RateLimiter>
 
 type StorageItem = {
   value: number,
@@ -12,7 +18,6 @@ type StorageItem = {
 }
 
 const storage = useStorage<StorageItem>('#rate-limiter-storage')
-const defaultRateLimiter = defaultSecurityConfig('', true).rateLimiter as Required<RateLimiter>
 
 export default defineEventHandler(async(event) => {
   // Disable rate limiter in prerender mode

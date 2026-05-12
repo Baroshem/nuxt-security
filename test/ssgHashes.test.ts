@@ -1,6 +1,11 @@
+import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { setup, fetch } from '@nuxt/test-utils'
+
+function sha256Base64(content: string): string {
+  return createHash('sha256').update(content, 'utf-8').digest('base64')
+}
 
 describe('[nuxt-security] SSG support of CSP', async () => {
   await setup({
@@ -261,6 +266,68 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(metaCsp).not.toBeNull()
     const metaFrameAncestors = metaCsp!.split(';').find(policy => policy.trim().startsWith('frame-ancestors'))
     expect(metaFrameAncestors).toBeUndefined()
+  })
+
+  const INLINE_SCRIPT_HASH_RE = /<script(?![^>]*?\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi
+  const INLINE_STYLE_HASH_RE = /<style[^>]*>([\s\S]*?)<\/style>/gi
+
+  function assertAllInlineContentHashed(body: string, cspValue: string, label: string) {
+    for (const [, content] of body.matchAll(INLINE_SCRIPT_HASH_RE)) {
+      if (!content) continue
+      expect(cspValue, `${label}: script hash missing for content: ${content.slice(0, 40)}`).toContain(`'sha256-${sha256Base64(content)}'`)
+    }
+    for (const [, content] of body.matchAll(INLINE_STYLE_HASH_RE)) {
+      if (!content) continue
+      expect(cspValue, `${label}: style hash missing for content: ${content.slice(0, 40)}`).toContain(`'sha256-${sha256Base64(content)}'`)
+    }
+  }
+
+  it('hashes match inline content in the final served HTML', async () => {
+    // The `server/plugins/transform-inline.ts` fixture plugin collapses whitespace inside
+    // inline <script>/<style> tags during `render:html`. Every inline script/style in the
+    // served body must have a matching hash in the CSP meta tag.
+    const res = await fetch('/inline-script')
+    const body = await res.text()
+    const { csp } = extractDataFromBody(body)
+
+    // Confirm the fixture plugin actually ran by checking the served inline script has no
+    // newlines (collapsed by the plugin).
+    const inlineScriptMatch = body.match(/<script[^>]*>(window\.myImportantVar[^<]*)<\/script>/)
+    expect(inlineScriptMatch).not.toBeNull()
+    expect(inlineScriptMatch![1]!).not.toMatch(/\n/)
+
+    assertAllInlineContentHashed(body, csp!, '/inline-script meta')
+  })
+
+  it.each([
+    '/',
+    '/inline-script',
+    '/inline-script-with-linebreak',
+    '/inline-style',
+    '/inline-style-with-linebreak',
+    '/inline-elem',
+    '/external-script',
+    '/external-style',
+  ])('hashes match served content in both meta and header for %s', async (path) => {
+    const res = await fetch(path)
+    const body = await res.text()
+    const { csp: metaCsp } = extractDataFromBody(body)
+    const headerCsp = res.headers.get('content-security-policy')
+
+    expect(metaCsp).toBeDefined()
+    expect(headerCsp).toBeDefined()
+
+    // Each inline script/style in served HTML must be hashed into both the meta tag
+    // and the response header.
+    assertAllInlineContentHashed(body, metaCsp!, `${path} meta`)
+    assertAllInlineContentHashed(body, headerCsp!, `${path} header`)
+  })
+
+  it('injects exactly one CSP meta tag', async () => {
+    const res = await fetch('/inline-script')
+    const body = await res.text()
+    const matches = body.match(/<meta http-equiv="Content-Security-Policy"/gi) ?? []
+    expect(matches.length).toBe(1)
   })
 
   it('sets CSP meta at top of head after charset meta', async () => {

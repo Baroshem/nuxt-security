@@ -14,6 +14,12 @@ describe('[nuxt-security] Cross Site Scripting', async () => {
     expect(res.statusText).toBe('Bad Request')
   })
 
+  it('should NOT bypass XSS filtering when statusMessage param is present', async () => {
+    const res = await fetch('/?statusMessage=foo&test=<script>alert(1)</script>')
+    expect(res.status).toBe(400)
+    expect(res.statusText).toBe('Bad Request')
+  })
+
   it('should return 200 OK when passing a script in query or body for certain route', async () => {
     const res = await fetch('/test?text=<script>alert(1)</script>')
 
