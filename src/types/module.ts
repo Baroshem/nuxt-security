@@ -7,6 +7,7 @@ import type { HookResult } from '@nuxt/schema'
 
 export type Ssg = {
   meta?: boolean;
+  hashAlgorithm?: 'SHA-256' | 'SHA-384' | 'SHA-512';
   hashScripts?: boolean;
   hashStyles?: boolean;
   nitroHeaders?: boolean;
