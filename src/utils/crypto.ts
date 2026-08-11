@@ -1,4 +1,6 @@
-export async function generateHash(content: Buffer | string, hashAlgorithm: 'SHA-256' | 'SHA-384' | 'SHA-512') {
+import { type Ssg } from "../module";
+
+export async function generateHash(content: Buffer | string, hashAlgorithm: NonNullable<Ssg['hashAlgorithm']>) {
   let buffer: Uint8Array<ArrayBuffer>
   if (typeof content === 'string') {
     buffer = new TextEncoder().encode(content);

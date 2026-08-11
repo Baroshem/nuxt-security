@@ -4,9 +4,9 @@ import { generateHash } from '../../../utils/crypto'
 
 
 const INLINE_SCRIPT_RE = /<script(?![^>]*?\bsrc="[\w:.\-\\/]+")[^>]*>([\s\S]*?)<\/script>/gi
-const STYLE_RE = /<style[^>]*>([\s\S]*?)<\/style>/gi
+const INLINE_STYLE_RE = /<style[^>]*>([\s\S]*?)<\/style>/gi
 const SCRIPT_RE = /<script(?=[^>]+\bsrc="[^"]+")(?=[^>]+\bintegrity="([\w\-+/=]+)")[^>]+(?:\/>|><\/script[^>]*?>)/gi
-const LINK_RE = /<link(?=[^>]+\brel="(stylesheet|preload|modulepreload)")(?=[^>]+\bintegrity="([\w\-+/=]+)")(?=(?:[^>]+\bas="(\w+)")?)[^>]+>/gi
+const STYLE_RE = /<link(?=[^>]+\brel="stylesheet")(?=[^>]+\bintegrity="([\w\-+/=]+)")[^>]+>/gi
 
 
 
@@ -39,11 +39,10 @@ export default defineNitroPlugin((nitroApp) => {
     }
     const scriptHashes = event.context.security!.hashes.script
     const styleHashes = event.context.security!.hashes.style
-    const hashAlgorithm = 'SHA-256'
 
     // Parse HTML if SSG is enabled for this route
     if (rules.ssg) {
-      const { hashScripts, hashStyles } = rules.ssg
+      const { hashScripts, hashStyles, hashAlgorithm } = rules.ssg
 
       // Only process string bodies (HTML responses)
       const body = response.body
@@ -67,42 +66,15 @@ export default defineNitroPlugin((nitroApp) => {
 
       // Parse all style tags
       if (hashStyles) {
-        const styleMatches = body.matchAll(STYLE_RE)
-        for (const [, styleText] of styleMatches) {
+        const inlineStyleMatches = body.matchAll(INLINE_STYLE_RE)
+        for (const [, styleText] of inlineStyleMatches) {
           if (!styleText) continue
           const hash = await generateHash(styleText, hashAlgorithm)
           styleHashes.add(`'${hash}'`)
         }
-      }
-
-      // Parse all link tags
-      const linkMatches = body.matchAll(LINK_RE)
-      for (const [, rel, integrity, as] of linkMatches) {
-        // Whitelist links to external resources with integrity
-        if (integrity) {
-          // HTML standard defines only 3 rel values for valid integrity attributes on links : stylesheet, preload and modulepreload
-          // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-integrity
-          if (rel === 'stylesheet' && hashStyles) {
-            // style: add to style-src
-            styleHashes.add(`'${integrity}'`)
-          } else if (rel === 'preload' && hashScripts) {
-            // Fetch standard defines the destination (https://fetch.spec.whatwg.org/#destination-table)
-            // This table is the official mapping between HTML and CSP
-            // We only support script-src for now, but we could populate other policies in the future
-            switch (as) {
-              case 'script':
-              case 'audioworklet':
-              case 'paintworklet':
-              case 'xlst':
-                scriptHashes.add(`'${integrity}'`)
-                break
-              default:
-                break
-            }
-          } else if (rel === 'modulepreload' && hashScripts) {
-            // script is the default and only possible destination
-            scriptHashes.add(`'${integrity}'`)
-          }
+        const externalStyleMatches = body.matchAll(STYLE_RE)
+        for (const [, integrity] of externalStyleMatches) {
+          styleHashes.add(`'${integrity}'`)
         }
       }
     }
