@@ -1,7 +1,7 @@
 import { defineEventHandler, createError, getQuery, readBody, readMultipartFormData } from 'h3'
-import { FilterXSS, type IFilterXSSOptions } from 'xss'
+import { type IFilterXSSOptions } from 'xss'
 import { resolveSecurityRules } from '../../nitro/context'
-import type { HTTPMethod } from '../../../types/middlewares'
+import { hasMaliciousPayload } from '../utils/xssPayload'
 
 export default defineEventHandler(async(event) => {
   const rules = resolveSecurityRules(event)
@@ -11,38 +11,19 @@ export default defineEventHandler(async(event) => {
       ...rules.xssValidator,
       escapeHtml: undefined
     }
-    if (rules.xssValidator.escapeHtml === false) {
-      // No html escaping (by default "<" is replaced by "&lt;" and ">" by "&gt;")
-      filterOpt.escapeHtml = (value: string) => value
-    }
-    const xssValidator = new FilterXSS(filterOpt)
-
     if (event.node.req.socket.readyState !== 'readOnly') {
-      if (
-        rules.xssValidator.methods &&
-        rules.xssValidator.methods.includes(
-          event.node.req.method! as HTTPMethod
-        )
-      ) {
+      const method = event.node.req.method
+      if (method && (rules.xssValidator.methods as readonly string[]).includes(method)) {
         const valueToFilter =
-          event.node.req.method === 'GET'
+            method === 'GET'
             ? getQuery(event)
             : event.node.req.headers['content-type']?.includes(
                 'multipart/form-data'
               )
             ? await readMultipartFormData(event)
             : await readBody(event)
-        // Fix for problems when one middleware is returning an error and it is catched in the next
         if (valueToFilter && Object.keys(valueToFilter).length) {
-          // Only skip XSS filtering if statusMessage === 'Bad Request' (for error propagation)
-          if (valueToFilter.statusMessage === 'Bad Request') {
-            return
-          }
-          const stringifiedValue = JSON.stringify(valueToFilter)
-          const processedValue = xssValidator.process(
-            JSON.stringify(valueToFilter)
-          )
-          if (processedValue !== stringifiedValue) {
+          if (hasMaliciousPayload(valueToFilter, filterOpt)) {
             const badRequestError = {
               statusCode: 400,
               statusMessage: 'Bad Request'
