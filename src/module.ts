@@ -200,15 +200,11 @@ export default defineNuxtModule<ModuleOptions>({
     addImportsDir(resolver.resolve('./runtime/composables'))
     addServerImports([{ name: 'defuReplaceArray', from: resolver.resolve('./utils/merge')}])
 
-    // Record SRI Hashes in the Virtual File System at build time
-    let sriHashes: Record<string, string> = {}
+    // Hash lazily so public assets finalized in `rollup:before` are included.
     nuxt.options.nitro.virtual = defu(
-      { '#sri-hashes': () => `export default ${JSON.stringify(sriHashes)}` },
+      { '#sri-hashes': async () => `export default ${JSON.stringify(await hashBundledAssets(useNitro()))}` },
       nuxt.options.nitro.virtual
     )
-    nuxt.hook('nitro:build:before', async(nitro) => {
-      sriHashes = await hashBundledAssets(nitro)
-    })
 
     addTypeTemplate({
       filename: "types/nuxt-security.d.ts",
