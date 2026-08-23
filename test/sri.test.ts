@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
 import { describe, it, expect } from 'vitest'
 import { setup, fetch } from '@nuxt/test-utils'
 
@@ -44,6 +45,14 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
     expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 image
+  })
+
+  it('hashes public assets after they are finalized in `rollup:before`', async () => {
+    const res = await fetch('/late-asset')
+    const text = await res.text()
+    const expected = createHash('sha384').update('final asset contents').digest('base64')
+
+    expect(text).toContain(`integrity="sha384-${expected}"`)
   })
 
   it('does not modify `integrity` attributes when manually provided', async () => {
