@@ -8,6 +8,12 @@ const SCRIPT_RE = /<script\b([^>]*?>)/gi
 const STYLE_RE = /<style\b([^>]*?>)/gi
 const QUOTE_MASK_RE = /"([^"\\]*(?:\\.[^"\\]*)*)"/g;
 const QUOTE_RESTORE_RE = /__QUOTE_PLACEHOLDER_(\d+)__/g
+// Chunk-scope regexes: negative lookahead so we don't re-stamp scripts/styles/links
+// that were already noncified by the `render:html` hook (head / bodyPrepend, which
+// still work in streaming mode).
+const CHUNK_SCRIPT_RE = /<script(?![^>]*\snonce=)([^>]*>)/g
+const CHUNK_STYLE_RE = /<style(?![^>]*\snonce=)([^>]*>)/g
+const CHUNK_LINK_RE = /<link(?![^>]*\snonce=)([^>]*>)/g
 
 function injectNonceToTags(element: string, nonce: string) {
   // Skip non-string elements
@@ -99,4 +105,53 @@ export default defineNitroPlugin((nitroApp) => {
       )
     }
   })
+
+  // Streaming SSR (Nuxt 4.5+ `experimental.ssrStreaming: true`) flushes body chunks
+  // to the wire before the `render:html` hook can mutate `body`/`bodyAppend` — so
+  // scripts injected there (notably `window.__NUXT__` and `__NUXT_DATA__`) reach
+  // the browser without a nonce and are blocked by a strict CSP.
+  // The `render:html:chunk` hook fires once per streamed chunk and lets us patch
+  // those tags on their way out. In buffered mode this hook simply never fires,
+  // so behavior for non-streaming apps is unchanged.
+  // We use a negative lookahead so we do NOT re-stamp scripts that were already
+  // noncified via `render:html` (head / bodyPrepend still work in streaming mode).
+  // Cast the hook name because `render:html:chunk` is only declared on newer
+  // Nitro/Nuxt versions; on older versions the cast is a no-op at runtime.
+  nitroApp.hooks.hook(
+    'render:html:chunk' as 'render:html',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ((ctx: { chunk: Uint8Array | string }, { event }: { event: any }) => {
+      const rules = resolveSecurityRules(event)
+      if (
+        !rules.enabled
+        || !rules.headers
+        || !rules.headers.contentSecurityPolicy
+        || !rules.nonce
+      ) {
+        return
+      }
+      const nonce = event.context?.security?.nonce
+      if (!nonce) return
+
+      const chunkIsString = typeof ctx.chunk === 'string'
+      const text = chunkIsString
+        ? (ctx.chunk as string)
+        : Buffer.from(ctx.chunk as Uint8Array).toString('utf-8')
+
+      // Cheap prefilter — chunks without any of these tags are the common case.
+      if (!/<(?:script|style|link)\b/i.test(text)) return
+
+      const patched = text
+        .replace(CHUNK_SCRIPT_RE, `<script nonce="${nonce}"$1`)
+        .replace(CHUNK_STYLE_RE, `<style nonce="${nonce}"$1`)
+        .replace(CHUNK_LINK_RE, `<link nonce="${nonce}"$1`)
+
+      if (patched === text) return
+
+      ctx.chunk = chunkIsString
+        ? patched
+        : (Buffer.from(patched, 'utf-8') as unknown as Uint8Array)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }) as any,
+  )
 })
