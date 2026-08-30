@@ -209,6 +209,11 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.hook('nitro:build:before', async(nitro) => {
       sriHashes = await hashBundledAssets(nitro)
     })
+    nuxt.hook('nitro:init', (nitro) => {
+      nitro.hooks.hook('rollup:before', async() => {
+        sriHashes = { ...sriHashes, ...await hashBundledAssets(nitro) }
+      })
+    })
 
     addTypeTemplate({
       filename: "types/nuxt-security.d.ts",
