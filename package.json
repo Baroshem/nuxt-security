@@ -29,7 +29,8 @@
   "exports": {
     ".": {
       "types": "./dist/types.d.mts",
-      "import": "./dist/module.mjs"
+      "import": "./dist/module.mjs",
+      "default": "./dist/module.mjs"
     }
   },
   "files": [
