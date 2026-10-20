@@ -7,11 +7,10 @@ export default defineEventHandler(async(event) => {
   const rules = resolveSecurityRules(event)
 
   if (rules.enabled && rules.xssValidator) {
-    const filterOpt: IFilterXSSOptions = {
-      ...rules.xssValidator,
-      escapeHtml: undefined
-    }
-    if (rules.xssValidator.escapeHtml === false) {
+    // xss >= 1.0.16 only falls back to its default escapeHtml when the key is absent
+    const { escapeHtml, ...xssValidatorOptions } = rules.xssValidator
+    const filterOpt: IFilterXSSOptions = { ...xssValidatorOptions }
+    if (escapeHtml === false) {
       // No html escaping (by default "<" is replaced by "&lt;" and ">" by "&gt;")
       filterOpt.escapeHtml = (value: string) => value
     }
