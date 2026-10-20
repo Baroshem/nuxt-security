@@ -19,7 +19,7 @@ export default defineEventHandler((event) => {
       origin = origin.map((o) => new RegExp(o, 'i'))
     }
 
-    handleCors(event, {
+    const preflightResponse = handleCors(event, {
       origin,
       methods: corsHandler.methods,
       allowHeaders: corsHandler.allowHeaders,
@@ -28,6 +28,11 @@ export default defineEventHandler((event) => {
       maxAge: corsHandler.maxAge,
       preflight: corsHandler.preflight
     })
+
+    // h3 v1 sends the preflight response itself and returns true, h3 v2 returns the response to send
+    if (preflightResponse) {
+      return preflightResponse
+    }
   }
 
 })

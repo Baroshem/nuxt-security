@@ -84,4 +84,14 @@ describe('[nuxt-security] CORS', async () => {
     res = await fetch('/regexp-multi', { headers: { origin: 'https://a.b.c.foo.example.com' } })
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://a.b.c.foo.example.com')
   })
+
+  it('should answer preflight requests without running the route', async () => {
+    const res = await fetch('/single', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://example.com', 'access-control-request-method': 'GET' }
+    })
+    expect(res.status).toBe(204)
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://example.com')
+    expect(await res.text()).toBe('')
+  })
 })
