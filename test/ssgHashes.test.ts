@@ -14,7 +14,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
 
   const expectedIntegrityAttributes = 4 // 3 links (entry, page, build meta), 1 script (entry)
   const expectedInlineScriptHashes = 2 // 1 Hydration data, 1 Nuxt global
-  const expectedExternalScriptHashes = 2 // 1 entry (modulepreload + script), 1 index (modulepreload)
+  const expectedExternalScriptHashes = 1 // 1 entry
   const expectedInlineStyleHashes = 0
   const expectedExternalStyleHashes = 0
 

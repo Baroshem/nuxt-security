@@ -83,6 +83,7 @@ export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
     removeLoggers: true,
     ssg: {
       meta: true,
+      hashAlgorithm: 'SHA-256',
       hashScripts: true,
       hashStyles: false,
       nitroHeaders: true,
