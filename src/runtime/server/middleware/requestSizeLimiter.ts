@@ -3,7 +3,7 @@ import { defaultSecurityConfig } from '../../../defaultConfig'
 import { resolveSecurityRules } from '../../nitro/context'
 import { type RequestSizeLimiter } from '../../../types/middlewares'
 import defu from 'defu'
-import { useRuntimeConfig } from '#imports';
+import { useRuntimeConfig } from 'nitropack/runtime'
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 const runtimeConfig = useRuntimeConfig();
