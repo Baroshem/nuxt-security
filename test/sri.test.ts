@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
 import { describe, it, expect } from 'vitest'
 import { setup, fetch } from '@nuxt/test-utils'
 
@@ -19,6 +20,41 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
     expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + nuxt-link
+  })
+
+  it.each(['/', '/asset', '/public'])('hashes served scripts and styles on %s with an entry import map', async (route) => {
+    const res = await fetch(route)
+    const text = await res.text()
+    const importMap = text.match(/<script[^>]*type="importmap"[^>]*>([\s\S]*?)<\/script>/)
+    expect(importMap).not.toBeNull()
+    expect(JSON.parse(importMap![1]).imports['#entry']).toBeTruthy()
+
+    const tags = text.match(/<(?:script|link)\b[^>]*>/g) ?? []
+    let scriptsChecked = 0
+    let stylesChecked = 0
+    for (const tag of tags) {
+      const url = tag.match(/\b(?:src|href)="([^"]+)"/)?.[1]
+      const integrity = tag.match(/\bintegrity="([^"]+)"/)?.[1]
+      // SRI enforcement for the entry import map concerns scripts and styles.
+      // Do not include JSON build metadata or image preload links here.
+      if (!url?.endsWith('.js') && !url?.endsWith('.css')) {
+        continue
+      }
+      expect(url).toMatch(/^\/(?!\/)/)
+      const asset = await fetch(url!)
+      expect(asset.status).toBe(200)
+      const digest = createHash('sha384').update(Buffer.from(await asset.arrayBuffer())).digest('base64')
+      expect(integrity, url).toBe(`sha384-${digest}`)
+      if (url!.endsWith('.js')) {
+        scriptsChecked++
+      } else {
+        stylesChecked++
+      }
+    }
+    expect(scriptsChecked).toBeGreaterThan(0)
+    if (route === '/asset') {
+      expect(stylesChecked).toBeGreaterThan(0)
+    }
   })
 
   it('injects `integrity` on resources bundled from assets folder', async () => {
