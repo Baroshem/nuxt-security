@@ -56,8 +56,10 @@
     "@nuxt/kit": "^4.2.1",
     "basic-auth": "^2.0.1",
     "defu": "^6.1.4",
+    "lru-cache": "^11.2.6",
     "nuxt-csurf": "^1.6.5",
     "pathe": "^2.0.3",
+    "radix3": "^1.1.2",
     "unplugin-remove": "^1.0.3",
     "xss": "^1.0.15"
   },

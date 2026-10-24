@@ -112,6 +112,10 @@ export default defineNuxtModule<ModuleOptions>({
     // Then insert route specific security headers
     for (const route in nuxt.options.nitro.routeRules) {
       const rule = nuxt.options.nitro.routeRules[route]
+      if (rule && rule.security) {
+        // Nitro v3 rejects route rules that do not survive a JSON round-trip, Nitro v2 serializes them the same way
+        rule.security = JSON.parse(JSON.stringify(rule.security))
+      }
       if (rule && rule.security && rule.security.headers) {
         const { security : { headers } } = rule
         const routeSecurityHeaders = getHeadersApplicableToAllResources(headers)
@@ -299,6 +303,16 @@ export {}
 `
     }, { nitro: true, nuxt: false });
 
+    // Prerendering saves the headers to build:nuxt-security, which Nitro v3 no longer mounts by default
+    nuxt.hook('nitro:config', (config) => {
+      config.devStorage = defu(config.devStorage, {
+        'build:nuxt-security': {
+          driver: 'fs',
+          base: join(nuxt.options.buildDir, 'nuxt-security')
+        }
+      })
+    })
+
     // Register init hook to add pre-rendered headers to responses
     nuxt.hook('nitro:init', nitro => {
       nitro.hooks.hook('prerender:done', async() => {
@@ -310,7 +324,10 @@ export {}
 
         // In some Nitro presets (e.g. Vercel), the header rules are generated for the static server
         // By default we update the nitro headers route rules with their calculated value to support this possibility
-        const prerenderedHeaders = await nitro.storage.getItem<Record<string, Record<string, string>>>('build:nuxt-security:headers.json') || {}
+        const prerenderedHeadersFile = join(nuxt.options.buildDir, 'nuxt-security/headers.json')
+        const prerenderedHeaders: Record<string, Record<string, string>> = existsSync(prerenderedHeadersFile)
+          ? JSON.parse(await readFile(prerenderedHeadersFile, 'utf-8'))
+          : {}
 
         if (securityOptions.ssg && securityOptions.ssg.exportToPresets) {
           const prerenderedHeadersRouteRules = Object.fromEntries(Object.entries(prerenderedHeaders).map(([route, headers]) => [route, { headers }]))

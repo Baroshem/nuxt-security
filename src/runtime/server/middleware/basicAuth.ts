@@ -1,5 +1,5 @@
 import { useRuntimeConfig } from 'nitropack/runtime'
-import { createError, defineEventHandler, sendError, setHeader } from 'h3'
+import { createError, defineEventHandler, setHeader } from 'h3'
 // @ts-ignore : the basic-auth module does not export types
 import getCredentials from 'basic-auth'
 
@@ -41,9 +41,9 @@ export default defineEventHandler((event) => {
   }
 
   if (!credentials || !validateCredentials(credentials, basicAuthConfig)) {
-    // Set the authentication header and send an error response
+    // Set the authentication header and stop the request with an error response
     setHeader(event, 'WWW-Authenticate', `Basic realm=${basicAuthConfig.message || 'Please enter username and password'}`)
-    sendError(event, createError({ statusCode: 401, statusMessage: 'Access denied' }))
+    throw createError({ statusCode: 401, statusMessage: 'Access denied' })
   }
 })
 

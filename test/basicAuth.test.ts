@@ -38,6 +38,13 @@ describe('[nuxt-security] Basic Auth', async () => {
     expect(res.status).toBe(200)
   })
 
+  it ('should not run the route handler when credentials are missing', async () => {
+    const res = await fetch('/admin/secret')
+
+    expect(res.status).toBe(401)
+    expect(await res.text()).not.toContain('Secret')
+  })
+
   it ('should return a 401 status code for any arbitrary path', async () => {
     const res = await fetch('/arbitrary')
 
