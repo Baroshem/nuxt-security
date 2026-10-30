@@ -94,4 +94,13 @@ describe('[nuxt-security] CORS', async () => {
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://example.com')
     expect(await res.text()).toBe('')
   })
+
+  it('should answer preflight requests without a server error', async () => {
+    await fetch('/single', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://example.com', 'access-control-request-method': 'GET' }
+    })
+    const errors = await fetch('/api/errors').then(res => res.json())
+    expect(errors).toEqual([])
+  })
 })
