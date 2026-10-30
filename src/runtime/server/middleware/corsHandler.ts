@@ -30,7 +30,7 @@ export default defineEventHandler((event) => {
     })
 
     // h3 v1 sends the preflight response itself and returns true, h3 v2 returns the response to send
-    if (preflightResponse) {
+    if (preflightResponse && preflightResponse !== true) {
       return preflightResponse
     }
   }
