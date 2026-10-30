@@ -50,6 +50,10 @@ declare module 'nuxt/schema' {
   interface NuxtHooks {
     'nuxt-security:prerenderedHeaders': (prerenderedHeaders: Record<string, Record<string, string>>) => HookResult
   }
+  // Route rules on Nitro v3, whose NitroRouteConfig is a type alias that cannot be augmented
+  interface RouteRuleConfigExtensions {
+    security?: NuxtSecurityRouteRules;
+  }
 }
 
 declare module 'nitropack/types' {

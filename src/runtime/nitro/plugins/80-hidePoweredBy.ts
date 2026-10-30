@@ -1,15 +1,14 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
-import { removeResponseHeader } from 'h3'
+import { defineNitroPlugin, onResponse } from '#nuxt-security/server'
 import { resolveSecurityRules } from '../context'
 
 /**
  * This plugin hides the X-Powered-By header from the response.
  */
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('beforeResponse', (event) => {
+  onResponse(nitroApp, (event, headers) => {
     const rules = resolveSecurityRules(event)
-    if (rules.enabled && rules.hidePoweredBy && !event.node.res.headersSent) {
-      removeResponseHeader(event, 'x-powered-by')
+    if (rules.enabled && rules.hidePoweredBy) {
+      headers.delete('x-powered-by')
     }
   })
 })

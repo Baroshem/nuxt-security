@@ -1,5 +1,4 @@
-import { useRuntimeConfig } from 'nitropack/runtime'
-import { createError, defineEventHandler, setHeader } from 'h3'
+import { createError, defineEventHandler, getRequestHeader, setHeader, useRuntimeConfig } from '#nuxt-security/server'
 // @ts-ignore : the basic-auth module does not export types
 import getCredentials from 'basic-auth'
 
@@ -18,7 +17,7 @@ export type BasicAuth = {
 }
 
 export default defineEventHandler((event) => {
-  const credentials = getCredentials(event.node.req)
+  const credentials = getCredentials.parse(getRequestHeader(event, 'authorization'))
   const securityConfig = useRuntimeConfig(event).private
   const basicAuthConfig = securityConfig.basicAuth
 

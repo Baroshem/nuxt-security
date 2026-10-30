@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin, onPageHtml } from '#nuxt-security/server'
 import { resolveSecurityRules } from '../context'
 import type { ContentSecurityPolicyValue } from '../../../types/headers'
 
@@ -9,7 +9,7 @@ import type { ContentSecurityPolicyValue } from '../../../types/headers'
  * 30-cspSsgHashes) are already available when the CSP directive is composed.
  */
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:response', (response, { event }) => {
+  onPageHtml(nitroApp, (event) => {
     const rules = resolveSecurityRules(event)
     if (rules.enabled && rules.headers) {
       const headers = rules.headers

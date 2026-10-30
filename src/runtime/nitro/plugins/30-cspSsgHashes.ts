@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin, onPageHtml } from '#nuxt-security/server'
 import { resolveSecurityRules } from '../context'
 import { generateHash } from '../../../utils/crypto'
 
@@ -26,7 +26,7 @@ export default defineNitroPlugin((nitroApp) => {
     return
   }
 
-  nitroApp.hooks.hook('render:response', async(response, { event }) => {
+  onPageHtml(nitroApp, async(event, body) => {
     // Exit if no CSP defined
     const rules = resolveSecurityRules(event)
     if (!rules.enabled || !rules.headers || !rules.headers.contentSecurityPolicy) {
@@ -46,7 +46,6 @@ export default defineNitroPlugin((nitroApp) => {
       const { hashScripts, hashStyles } = rules.ssg
 
       // Only process string bodies (HTML responses)
-      const body = response.body
       if (typeof body !== 'string' || !body) {
         return
       }

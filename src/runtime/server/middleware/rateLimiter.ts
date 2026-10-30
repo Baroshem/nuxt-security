@@ -1,11 +1,9 @@
-import { defineEventHandler, createError, setResponseHeader, getRequestIP, getRequestHeader } from 'h3'
-import { useStorage } from 'nitropack/runtime'
+import { defineEventHandler, createError, setResponseHeader, getRequestIP, getRequestHeader, useRuntimeConfig, useStorage } from '#nuxt-security/server'
 import type { H3Event } from 'h3'
 import { resolveSecurityRoute, resolveSecurityRules } from '../../nitro/context'
 import type { RateLimiter } from '../../../types/middlewares'
 import { defaultSecurityConfig } from '../../../defaultConfig'
 import defu from 'defu'
-import { useRuntimeConfig } from 'nitropack/runtime'
 
 const runtimeConfig = useRuntimeConfig();
 const strict = runtimeConfig.security?.strict ?? false;

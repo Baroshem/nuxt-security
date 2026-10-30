@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin } from '#nuxt-security/server'
 import { resolveSecurityRules } from '../context'
 import { generateRandomNonce } from '../../../utils/crypto'
 

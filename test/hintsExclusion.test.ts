@@ -15,6 +15,7 @@ vi.mock('@nuxt/kit', async (importOriginal) => {
     addTypeTemplate: vi.fn(),
     useNitro: vi.fn(() => ({ options: { routeRules: {}, virtual: {}, publicAssets: [] }, hooks: { hook: vi.fn() } })),
     installModule: vi.fn(),
+    resolveServerVariant: vi.fn(() => 'nitro2'),
   }
 })
 
@@ -26,6 +27,7 @@ describe('nuxt-security module', () => {
     const nuxt = {
       options: {
         routeRules: undefined,
+        alias: {},
         security: {},
         runtimeConfig: { security: {}, private: {} },
         build: { transpile: [] },
@@ -55,6 +57,7 @@ describe('nuxt-security module', () => {
     const nuxt = {
       options: {
         routeRules: undefined,
+        alias: {},
         security: {},
         runtimeConfig: { security: {}, private: {} },
         build: { transpile: [] },

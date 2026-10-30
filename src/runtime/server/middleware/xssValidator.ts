@@ -1,4 +1,4 @@
-import { defineEventHandler, createError, getQuery, readBody, readMultipartFormData } from 'h3'
+import { defineEventHandler, createError, getBodyEvent, getQuery, getRequestHeader, readBody, readMultipartFormData } from '#nuxt-security/server'
 import { FilterXSS, type IFilterXSSOptions } from 'xss'
 import { resolveSecurityRules } from '../../nitro/context'
 import type { HTTPMethod } from '../../../types/middlewares'
@@ -16,21 +16,23 @@ export default defineEventHandler(async(event) => {
     }
     const xssValidator = new FilterXSS(filterOpt)
 
-    if (event.node.req.socket.readyState !== 'readOnly') {
+    // Only Node.js runtimes have a socket
+    if (event.node?.req.socket.readyState !== 'readOnly') {
       if (
         rules.xssValidator.methods &&
         rules.xssValidator.methods.includes(
-          event.node.req.method! as HTTPMethod
+          event.method as HTTPMethod
         )
       ) {
         const valueToFilter =
-          event.node.req.method === 'GET'
+          event.method === 'GET'
             ? getQuery(event)
-            : event.node.req.headers['content-type']?.includes(
+            : getRequestHeader(event, 'content-type')?.includes(
                 'multipart/form-data'
               )
-            ? await readMultipartFormData(event)
-            : await readBody(event)
+            // Reads a copy of the body, which the route handler reads too
+            ? await readMultipartFormData(getBodyEvent(event))
+            : await readBody(getBodyEvent(event))
         // Fix for problems when one middleware is returning an error and it is catched in the next
         if (valueToFilter && Object.keys(valueToFilter).length) {
           // Only skip XSS filtering if statusMessage === 'Bad Request' (for error propagation)

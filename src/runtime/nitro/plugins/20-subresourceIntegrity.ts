@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin } from '#nuxt-security/server'
 //@ts-expect-error : we are importing from the virtual file system
 import sriHashes from '#sri-hashes'
 import { resolveSecurityRules } from '../context'

@@ -1,9 +1,8 @@
-import { defineEventHandler, getRequestHeader, createError } from 'h3'
+import { defineEventHandler, getRequestHeader, createError, useRuntimeConfig } from '#nuxt-security/server'
 import { defaultSecurityConfig } from '../../../defaultConfig'
 import { resolveSecurityRules } from '../../nitro/context'
 import { type RequestSizeLimiter } from '../../../types/middlewares'
 import defu from 'defu'
-import { useRuntimeConfig } from 'nitropack/runtime'
 
 const FILE_UPLOAD_HEADER = 'multipart/form-data'
 const runtimeConfig = useRuntimeConfig();
@@ -19,7 +18,7 @@ export default defineEventHandler((event) => {
       rules.requestSizeLimiter,
       defaultSizeLimiter,
     )
-    if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {
+    if (['POST', 'PUT', 'DELETE'].includes(event.method)) {
       const contentLengthValue = getRequestHeader(event, 'content-length')
       const contentTypeValue = getRequestHeader(event, 'content-type')
 
