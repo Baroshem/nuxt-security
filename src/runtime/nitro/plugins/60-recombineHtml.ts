@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin, onPageHtml } from '#nuxt-security/server'
 import { resolveSecurityRules } from '../context'
 import { headerStringFromObject } from '../../../utils/headers'
 
@@ -19,7 +19,7 @@ export default defineNitroPlugin((nitroApp) => {
     return
   }
 
-  nitroApp.hooks.hook('render:response', (response, { event }) => {
+  onPageHtml(nitroApp, (event, body) => {
     // Exit if no need to parse HTML for this route
     const rules = resolveSecurityRules(event)
     if (!rules.enabled) {
@@ -27,7 +27,6 @@ export default defineNitroPlugin((nitroApp) => {
     }
 
     if (rules.ssg && rules.ssg.meta && rules.headers && rules.headers.contentSecurityPolicy) {
-      const body = response.body
       if (typeof body !== 'string' || !body) {
         return
       }
@@ -39,22 +38,20 @@ export default defineNitroPlugin((nitroApp) => {
 
       // If a previous run already inserted a CSP meta tag, replace it so hashes stay fresh.
       if (META_CSP_RE.test(body)) {
-        response.body = body.replace(META_CSP_RE, metaTag)
-        return
+        return body.replace(META_CSP_RE, metaTag)
       }
 
       // Insert just after the charset meta tag when available, otherwise right after <head>.
       const charsetMatch = HEAD_CHARSET_RE.exec(body)
       if (charsetMatch) {
         const insertAt = charsetMatch.index + charsetMatch[0].length
-        response.body = body.slice(0, insertAt) + metaTag + body.slice(insertAt)
-        return
+        return body.slice(0, insertAt) + metaTag + body.slice(insertAt)
       }
 
       const headMatch = HEAD_OPEN_RE.exec(body)
       if (headMatch) {
         const insertAt = headMatch.index + headMatch[0].length
-        response.body = body.slice(0, insertAt) + metaTag + body.slice(insertAt)
+        return body.slice(0, insertAt) + metaTag + body.slice(insertAt)
       }
     }
   })

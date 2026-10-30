@@ -1,4 +1,4 @@
-import { defineNitroPlugin, useRuntimeConfig } from "nitropack/runtime"
+import { defineNitroPlugin, useRuntimeConfig } from '#nuxt-security/server'
 import { getAppSecurityOptions } from '../context'
 import { defuReplaceArray } from '../../../utils/merge'
 import { standardToSecurity, backwardsCompatibleSecurity } from '../../../utils/headers'

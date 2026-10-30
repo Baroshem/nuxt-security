@@ -1,4 +1,4 @@
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports, addTypeTemplate, hasNuxtModule } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports, addTypeTemplate, hasNuxtModule, resolveServerVariant } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { readFile, readdir } from 'node:fs/promises'
 import { join, isAbsolute } from 'pathe'
@@ -37,6 +37,10 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
 
     nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
+
+    // The server runtime imports Nitro and h3 from the adapter of the Nitro major in use
+    const serverApi = resolveServerVariant({ nitro2: 'nitro2', nitro3: 'nitro3' } as const)
+    nuxt.options.alias['#nuxt-security/server'] = resolver.resolve(`./runtime/nitro/adapters/${serverApi ?? 'nitro2'}`)
 
     // First merge module options with default options
     const strict = options.strict || nuxt.options.security?.strict || nuxt.options.runtimeConfig.security?.strict || false
@@ -157,36 +161,45 @@ export default defineNuxtModule<ModuleOptions>({
     reorderNitroPlugins(nuxt)
 
     // Register request size limiter middleware
+    // Nitro v3 registers a handler without a route as global middleware only when it is marked as one
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/requestSizeLimiter')
     })
 
     // Register CORS middleware
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/corsHandler')
     })
 
     // Register allowed methods restricter middleware
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/allowedMethodsRestricter')
     })
 
     // Register rate limiter middleware
     registerRateLimiterStorage(nuxt, securityOptions)
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/rateLimiter')
     })
 
     // Register XSS validator middleware
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/xssValidator')
     })
 
     // Register basicAuth middleware that is disabled by default
     const basicAuthConfig = nuxt.options.runtimeConfig.private.basicAuth
     if (basicAuthConfig && (basicAuthConfig.enabled || (basicAuthConfig as any)?.value?.enabled)) {
+      const route: string = (basicAuthConfig as any).route || ''
       addServerHandler({
-        route: (basicAuthConfig as any).route || '',
+        // Nitro v2 runs a routed middleware below its route too, Nitro v3 only on the route itself
+        route: route && serverApi === 'nitro3' ? join(route, '**') : route,
+        middleware: true,
         handler: resolver.resolve('./runtime/server/middleware/basicAuth')
       })
     }

@@ -1,4 +1,4 @@
-import { defineEventHandler, handleCors } from 'h3'
+import { defineEventHandler, handleCors } from '#nuxt-security/server'
 import type { H3CorsOptions } from 'h3'
 import { resolveSecurityRules } from '../../nitro/context'
 

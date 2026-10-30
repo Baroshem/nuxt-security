@@ -1,4 +1,4 @@
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler, createError } from '#nuxt-security/server'
 import { resolveSecurityRules } from '../../nitro/context'
 import type { HTTPMethod } from '../../../types/middlewares'
 
@@ -10,7 +10,7 @@ export default defineEventHandler((event) => {
 
     const allowedMethods = allowedMethodsRestricter.methods
 
-    if (allowedMethods !== '*' && !allowedMethods.includes(event.node.req.method! as HTTPMethod)) {
+    if (allowedMethods !== '*' && !allowedMethods.includes(event.method as HTTPMethod)) {
       const methodNotAllowedError = {
         statusCode: 405,
         statusMessage: 'Method not allowed'
