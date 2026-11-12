@@ -39,61 +39,46 @@ export default defineEventHandler(async(event) => {
     }
     const url = ip + route
 
-    let storageItem = await storage.getItem(url) as StorageItem
+    let storageItem = await storage.getItem(url) as StorageItem | null
 
-    if (!storageItem) {
-      await setStorageItem(rateLimiter, url)
-    } else {
-      if (typeof storageItem !== 'object') { return }
+    if (storageItem && typeof storageItem !== 'object') { return }
 
-      const timeSinceFirstRateLimit = storageItem.date
-      const timeForInterval = storageItem.date + Number(rateLimiter.interval)
+    if (!storageItem || Date.now() >= storageItem.date + Number(rateLimiter.interval)) {
+      storageItem = { value: rateLimiter.tokensPerInterval, date: Date.now() }
+    }
 
-      if (Date.now() >= timeForInterval) {
-        await setStorageItem(rateLimiter, url)
-        storageItem = await storage.getItem(url) as StorageItem
+    const timeForInterval = storageItem.date + Number(rateLimiter.interval)
+
+    if (storageItem.value <= 0) {
+      const tooManyRequestsError = {
+        statusCode: 429,
+        statusMessage: 'Too Many Requests'
       }
 
-      const isLimited = timeSinceFirstRateLimit <= timeForInterval && storageItem.value === 0
-
-      if (isLimited) {
-        const tooManyRequestsError = {
-          statusCode: 429,
-          statusMessage: 'Too Many Requests'
-        }
-
-        if (rules.rateLimiter.headers) {
-          setResponseHeader(event, 'x-ratelimit-remaining', 0)
-          setResponseHeader(event, 'x-ratelimit-limit', rateLimiter.tokensPerInterval)
-          setResponseHeader(event, 'x-ratelimit-reset', timeForInterval)
-        }
-
-        if (rateLimiter.throwError === false) {
-          return tooManyRequestsError
-        }
-        throw createError(tooManyRequestsError)
-      }
-
-      const newItemDate = timeSinceFirstRateLimit > timeForInterval ? Date.now() : storageItem.date
-
-      const newStorageItem: StorageItem = { value: storageItem.value - 1, date: newItemDate }
-
-      await storage.setItem(url, newStorageItem)
-      const currentItem = await storage.getItem(url)as StorageItem
-
-      if (currentItem && rateLimiter.headers) {
-        setResponseHeader(event, 'x-ratelimit-remaining', currentItem.value)
+      if (rules.rateLimiter.headers) {
+        setResponseHeader(event, 'x-ratelimit-remaining', 0)
         setResponseHeader(event, 'x-ratelimit-limit', rateLimiter.tokensPerInterval)
         setResponseHeader(event, 'x-ratelimit-reset', timeForInterval)
       }
+
+      if (rateLimiter.throwError === false) {
+        return tooManyRequestsError
+      }
+      throw createError(tooManyRequestsError)
+    }
+
+    const newStorageItem: StorageItem = { value: storageItem.value - 1, date: storageItem.date }
+
+    await storage.setItem(url, newStorageItem)
+    const currentItem = await storage.getItem(url)as StorageItem
+
+    if (currentItem && rateLimiter.headers) {
+      setResponseHeader(event, 'x-ratelimit-remaining', currentItem.value)
+      setResponseHeader(event, 'x-ratelimit-limit', rateLimiter.tokensPerInterval)
+      setResponseHeader(event, 'x-ratelimit-reset', timeForInterval)
     }
   }
 })
-
-async function setStorageItem(rateLimiter: Required<RateLimiter>, url: string) {
-  const rateLimitedObject: StorageItem = { value: rateLimiter.tokensPerInterval, date: Date.now() }
-  await storage.setItem(url, rateLimitedObject)
-}
 
 function getIP (event: H3Event, customIpHeader?: string) {
   const ip = customIpHeader ? getRequestHeader(event, customIpHeader) || '' : getRequestIP(event, { xForwardedFor: true }) || ''

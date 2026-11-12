@@ -64,6 +64,32 @@ describe('[nuxt-security] Rate Limiter', async () => {
     expect(res6.statusText).toBe('OK')
   })
 
+  it ('should return 429 for the first request over the limit in the first interval', async () => {
+    const res1 = await fetch('/firstInterval')
+    const res2 = await fetch('/firstInterval')
+    const res3 = await fetch('/firstInterval')
+    const res4 = await fetch('/firstInterval')
+
+    expect(res1.status).toBe(200)
+    expect(res2.status).toBe(200)
+    expect(res3.status).toBe(200)
+    expect(res4.status).toBe(429)
+    expect(res4.statusText).toBe('Too Many Requests')
+
+    expect(res1.headers.get('x-ratelimit-limit')).toBe('3')
+    expect(res1.headers.get('x-ratelimit-remaining')).toBe('2')
+    expect(res2.headers.get('x-ratelimit-remaining')).toBe('1')
+    expect(res3.headers.get('x-ratelimit-remaining')).toBe('0')
+    expect(res4.headers.get('x-ratelimit-remaining')).toBe('0')
+  })
+
+  it ('should return 429 for the first request when tokensPerInterval is 0', async () => {
+    const res = await fetch('/zeroTokens')
+
+    expect(res.status).toBe(429)
+    expect(res.statusText).toBe('Too Many Requests')
+  })
+
   it ('should return 200 OK after multiple requests for a route with localhost ip whitelisted', async () => {
     const res1 = await fetch('/whitelistBase')
     await fetch('/whitelistBase')
