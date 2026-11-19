@@ -82,6 +82,22 @@ describe('[nuxt-security] Nonce', async () => {
     expect(elementsWithNonce).toBe(expectedNonceElements + 1) // one extra for the style tag
   })
 
+  it('injects `nonce` attribute in every tag after a style with escaped quotes', async () => {
+    const res = await fetch('/css-escaped-quotes')
+
+    const cspHeaderValue = res.headers.get('content-security-policy')
+    const nonce = cspHeaderValue?.match(/'nonce-(.*?)'/)?.[1]
+
+    const text = await res.text()
+    const tags = text.match(/<(?:script|link|style)\b[^>]*>/g) ?? []
+    const tagsWithoutNonce = tags.filter((tag) => !tag.includes(`nonce="${nonce}"`))
+
+    expect(nonce).toBeDefined()
+    expect(text).toMatch('image\\.svg\\"\\)')
+    expect(tags.some((tag) => tag.startsWith('<script') && tag.includes('type="module"'))).toBe(true)
+    expect(tagsWithoutNonce).toEqual([])
+  })
+
   it('removes the nonces in pre-render mode', async () => {
     const res = await fetch('/prerendered')
 
