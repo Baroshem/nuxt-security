@@ -148,4 +148,19 @@ describe('[nuxt-security] Rate Limiter', async () => {
       expect(result).toMatchObject({ status: 'fulfilled', value: 429 })
     }
   })
+
+  it ('should count the base path of a wildcard route with its sub-paths, not against the global limit', async () => {
+    const headers = { 'X-Forwarded-For': '203.0.113.1' }
+    const res1 = await fetch('/wildcard/abc', { headers })
+    await fetch('/wildcard', { headers })
+    const res3 = await fetch('/wildcard', { headers })
+
+    expect(res1.status).toBe(200)
+    expect(res3.status).toBe(429)
+    expect(res3.statusText).toBe('Too Many Requests')
+
+    const res4 = await fetch('/', { headers })
+    expect(res4.status).toBe(200)
+    expect(res4.statusText).toBe('OK')
+  })
 })

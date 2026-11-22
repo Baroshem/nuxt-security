@@ -43,7 +43,11 @@ export function resolveSecurityRoute(event: H3Event) {
     const router = createRouter<{ name: string }>({ routes: routeNames})
     const eventPathNoQuery = event.path.split('?')[0]
     const match = eventPathNoQuery ? router.lookup(eventPathNoQuery) : undefined
-    const route = match?.name ?? ''
+    // router.lookup('/foo') falls back to a parent catch-all instead of matching '/foo/**'
+    const baseCatchAll = eventPathNoQuery && match?.name.includes('/**')
+      ? routeNames[`${eventPathNoQuery.replace(/\/$/, '')}/**`]
+      : undefined
+    const route = (baseCatchAll ?? match)?.name ?? ''
     event.context.security.route = route
   }
   return event.context.security.route
