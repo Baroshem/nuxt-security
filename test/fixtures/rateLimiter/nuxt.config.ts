@@ -16,6 +16,13 @@ export default defineNuxtConfig({
         }
       }
     },
+    '/wildcard/**': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 1,
+        }
+      }
+    },
     '/whitelistBase': {
       security: {
         rateLimiter: {
