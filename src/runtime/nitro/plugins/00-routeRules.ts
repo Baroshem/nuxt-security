@@ -1,4 +1,5 @@
-import { defineNitroPlugin, useRuntimeConfig } from "nitropack/runtime"
+import { defineNitroPlugin, useRuntimeConfig } from '#nuxt-security/server'
+import { runtimeSecurityOverrides } from '../../../utils/runtimeOverrides'
 import { getAppSecurityOptions } from '../context'
 import { defuReplaceArray } from '../../../utils/merge'
 import { standardToSecurity, backwardsCompatibleSecurity } from '../../../utils/headers'
@@ -64,4 +65,11 @@ export default defineNitroPlugin(async(nitroApp) => {
   })
 
   await nitroApp.hooks.callHook('nuxt-security:ready')
+  nitroApp.hooks.hook('request', event => {
+    const config = useRuntimeConfig(event)
+    const overrides = runtimeSecurityOverrides(runtimeConfig.security, config.security)
+    event.context.security ||= {}
+    event.context.security.globalRules = defuReplaceArray({}, overrides, appSecurityOptions['/**'])
+  })
+
 })

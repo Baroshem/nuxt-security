@@ -1,6 +1,6 @@
-import { defineNitroPlugin, getRouteRules } from 'nitropack/runtime'
-import { setResponseHeader, removeResponseHeader, getResponseHeader } from 'h3'
-import { resolveSecurityRules } from '../context'
+import { defineNitroPlugin, getRouteRulesHeaders, onPageResponse, onResponse } from '#nuxt-security/server'
+import { extensionHeaders } from '../../../utils/extensions'
+import { getAppSecurityOptions, resolveSecurityRules } from '../context'
 import { getNameFromKey, headerStringFromObject } from '../../../utils/headers'
 import type { HeaderName, OptionKey } from '../../../types/headers'
 
@@ -8,28 +8,41 @@ import type { HeaderName, OptionKey } from '../../../types/headers'
  * This plugin sets the security headers for the response.
  */
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:response', (response, { event }) => {
+  onPageResponse(nitroApp, (event, responseHeaders) => {
     const rules = resolveSecurityRules(event)
     if (rules.enabled && rules.headers) {
       const headers = rules.headers
 
       Object.entries(headers).forEach(([header, value]) => {
+        if (header === 'contentSecurityPolicy' && rules.contentSecurityPolicyReportOnly && headers.contentSecurityPolicyReportOnly) return
         const headerName: HeaderName = header === 'contentSecurityPolicy' && rules.contentSecurityPolicyReportOnly
           ? 'Content-Security-Policy-Report-Only'
           : getNameFromKey(header as OptionKey)
 
         if (value === false) {
-          const { headers: standardHeaders } = getRouteRules(event)
+          const standardHeaders = getRouteRulesHeaders(event)
           const standardHeaderValue = standardHeaders?.[headerName]
-          const currentHeaderValue = getResponseHeader(event, headerName)
+          const currentHeaderValue = responseHeaders.get(headerName)
           if (standardHeaderValue === currentHeaderValue) {
-            removeResponseHeader(event, headerName)
+            responseHeaders.delete(headerName)
           }
         } else {
           const headerValue = headerStringFromObject(header as OptionKey, value)
-          setResponseHeader(event, headerName, headerValue)
+          responseHeaders.set(headerName, headerValue)
         }
       })
     }
   })
+  onResponse(nitroApp, (event, responseHeaders) => {
+    const extension = extensionHeaders(event.path, getAppSecurityOptions()['/**']?.byFileExtension)
+    const rules = resolveSecurityRules(event)
+    if (!extension || !rules.enabled || !rules.headers) return
+    for (const name of Object.keys(extension)) {
+      const key = name as OptionKey
+      const value = rules.headers[key]
+      if (value === false) responseHeaders.delete(getNameFromKey(key))
+      else if (value !== undefined) responseHeaders.set(getNameFromKey(key), headerStringFromObject(key, value))
+    }
+  })
+
 })

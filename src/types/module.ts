@@ -6,6 +6,8 @@ import type { HookResult } from '@nuxt/schema'
 
 
 export type Ssg = {
+  /** Serve prerendered HTML through the server with a fresh nonce. / 經 server 為預渲染 HTML 產生新 nonce。 */
+  dynamicNonce?: boolean;
   meta?: boolean;
   hashScripts?: boolean;
   hashStyles?: boolean;
@@ -14,6 +16,8 @@ export type Ssg = {
 };
 
 export interface ModuleOptions {
+  byFileExtension?: Record<string, { headers: SecurityHeaders }>;
+  devtools?: boolean;
   strict: boolean;
   headers: SecurityHeaders | false;
   requestSizeLimiter: RequestSizeLimiter | false;
@@ -117,6 +121,7 @@ declare module 'h3' {
     security?: {
       route?: string;
       rules?: NuxtSecurityRouteRules;
+      globalRules?: NuxtSecurityRouteRules;
       nonce?: string;
       hashes?: {
         script: Set<string>;

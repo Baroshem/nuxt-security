@@ -1,44 +1,27 @@
-import { defineEventHandler, getRequestHeader, createError } from 'h3'
+import { getMethod, defineEventHandler, getRequestHeader, createError, useRuntimeConfig, enforceBodyLimit } from '#nuxt-security/server'
 import { defaultSecurityConfig } from '../../../defaultConfig'
 import { resolveSecurityRules } from '../../nitro/context'
-import { type RequestSizeLimiter } from '../../../types/middlewares'
+import type { RequestSizeLimiter } from '../../../types/middlewares'
 import defu from 'defu'
-import { useRuntimeConfig } from 'nitropack/runtime'
 
-const FILE_UPLOAD_HEADER = 'multipart/form-data'
-const runtimeConfig = useRuntimeConfig();
-const strict = runtimeConfig.security?.strict ?? false;
-
-const defaultSizeLimiter = defaultSecurityConfig('', strict).requestSizeLimiter as Required<RequestSizeLimiter>
-
-export default defineEventHandler((event) => {
-  const rules  = resolveSecurityRules(event)
-
-  if (rules.enabled && rules.requestSizeLimiter) {
-    const requestSizeLimiter = defu(
-      rules.requestSizeLimiter,
-      defaultSizeLimiter,
-    )
-    if (['POST', 'PUT', 'DELETE'].includes(event.node.req.method!)) {
-      const contentLengthValue = getRequestHeader(event, 'content-length')
-      const contentTypeValue = getRequestHeader(event, 'content-type')
-
-      const isFileUpload = contentTypeValue?.includes(FILE_UPLOAD_HEADER)
-
-      const requestLimit = isFileUpload
-        ? requestSizeLimiter.maxUploadFileRequestInBytes
-        : requestSizeLimiter.maxRequestSizeInBytes
-
-      if (parseInt(contentLengthValue as string) >= requestLimit) {
-        const payloadTooLargeError = {
-          statusCode: 413,
-          statusMessage: 'Payload Too Large'
-        }
-        if (requestSizeLimiter.throwError === false) {
-          return payloadTooLargeError
-        }
-        throw createError(payloadTooLargeError)
-      }
-    }
+export default defineEventHandler(async(event) => {
+  const rules = resolveSecurityRules(event)
+  if (!rules.enabled || !rules.requestSizeLimiter || ['GET', 'HEAD'].includes(getMethod(event))) return
+  const defaults = defaultSecurityConfig('', useRuntimeConfig(event).security?.strict ?? false).requestSizeLimiter as Required<RequestSizeLimiter>
+  const options = defu(rules.requestSizeLimiter, defaults)
+  const type = getRequestHeader(event, 'content-type') || ''
+  const limit = /^multipart\/form-data(?:;|$)/i.test(type) ? options.maxUploadFileRequestInBytes : options.maxRequestSizeInBytes
+  const rawLength = getRequestHeader(event, 'content-length')
+  // Some internal fetch implementations stringify absent headers. Actual bytes are still checked. / 內部 fetch 可能字串化缺失標頭，仍檢查實際 bytes。
+  const length = rawLength === 'undefined' || rawLength === 'null' ? undefined : rawLength
+  if (length !== undefined && length !== null && length !== "" && !/^\d+$/.test(length)) throw createError({ statusCode: 400, statusMessage: 'Invalid Content-Length' })
+  try {
+    if (length !== undefined && Number(length) > limit) throw Object.assign(new Error('Payload Too Large'), { statusCode: 413 })
+    await enforceBodyLimit(event, limit)
+  } catch (error) {
+    if ((error as { statusCode?: number }).statusCode !== 413) throw error
+    const result = { statusCode: 413, statusMessage: 'Payload Too Large' }
+    if (options.throwError === false) return result
+    throw createError(result)
   }
 })

@@ -12,14 +12,27 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/ssgHashes', import.meta.url))
   })
 
-  const expectedIntegrityAttributes = 4 // 3 links (entry, page, build meta), 1 script (entry)
-  const expectedInlineScriptHashes = 2 // 1 Hydration data, 1 Nuxt global
   const expectedExternalScriptHashes = 2 // 1 entry (modulepreload + script), 1 index (modulepreload)
   const expectedInlineStyleHashes = 0
   const expectedExternalStyleHashes = 0
 
+  async function assertResourceIntegrity(body: string) {
+    const tags = body.match(/<(?:script|link)\b[^>]*>/g) ?? []
+    let checked = 0
+    for (const tag of tags) {
+      if (tag.startsWith('<link') && !/ rel="(?:stylesheet|modulepreload|preload)"/.test(tag)) continue
+      const url = tag.match(/\b(?:src|href)="([^"]+)"/)?.[1]
+      if (!url?.startsWith('/') || !/\.(?:js|css)$/.test(url)) continue
+      const asset = await fetch(url)
+      expect(asset.status).toBe(200)
+      const digest = createHash('sha384').update(Buffer.from(await asset.arrayBuffer())).digest('base64')
+      expect(tag).toContain(`integrity="sha384-${digest}"`)
+      checked++
+    }
+    expect(checked).toBeGreaterThan(0)
+  }
+
   function extractDataFromBody(body: string) {
-    const elementsWithIntegrity = body.match(/ integrity="sha384-/g)?.length ?? 0
     const metaTag = body.match(/<meta http-equiv="Content-Security-Policy" content="(.*?)">/)
     const csp = metaTag?.[1]
     const policies = csp?.split(';').map(policy => policy.trimStart()) || []
@@ -31,22 +44,22 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const styleSrcValues = styleSrcPolicy?.split(' ') || []
     const inlineStyleHashes = styleSrcValues.filter(value => value.startsWith("'sha256-")).length
     const externalStyleHashes = styleSrcValues.filter(value => value.startsWith("'sha384-")).length
-    return { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes }
+    return { metaTag, csp, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes }
   }
 
   it('sets CSP via meta in SSG mode', async () => {
     const res = await fetch('/')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
+    await assertResourceIntegrity(body)
+    assertAllInlineContentHashed(body, csp!, 'meta')
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
@@ -85,15 +98,15 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/inline-script')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes + 1) // Inlined script in head
+    await assertResourceIntegrity(body)
+    assertAllInlineContentHashed(body, csp!, 'meta')
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
@@ -102,15 +115,15 @@ describe('[nuxt-security] SSG support of CSP', async () => {
   it('sets script-src for inline scripts with line break', async () => {
     const res = await fetch('/inline-script-with-linebreak')
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes + 1) // Inlined script in head
+    await assertResourceIntegrity(body)
+    assertAllInlineContentHashed(body, csp!, 'meta')
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
@@ -120,15 +133,15 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/inline-style')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
+    await assertResourceIntegrity(body)
+    assertAllInlineContentHashed(body, csp!, 'meta')
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes + 1) // Inlined style
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
@@ -138,15 +151,15 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/inline-style-with-linebreak')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
+    await assertResourceIntegrity(body)
+    assertAllInlineContentHashed(body, csp!, 'meta')
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes + 1) // Inlined style
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
@@ -157,15 +170,15 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/external-script')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 External script
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
+    await assertResourceIntegrity(body)
+    assertAllInlineContentHashed(body, csp!, 'meta')
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes + 1) // External script
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
@@ -175,7 +188,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/external-style')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
 
     expect(res).toBeDefined()
@@ -183,8 +196,8 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 External style
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
+    await assertResourceIntegrity(body)
+    assertAllInlineContentHashed(body, csp!, 'meta')
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes + 1) // External style
@@ -194,7 +207,7 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/external-link')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
 
     expect(res).toBeDefined()
@@ -202,8 +215,8 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     expect(body).toBeDefined()
     expect(metaTag).toBeDefined()
     expect(csp).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 External link on image
-    expect(inlineScriptHashes).toBe(expectedInlineScriptHashes)
+    await assertResourceIntegrity(body)
+    assertAllInlineContentHashed(body, csp!, 'meta')
     expect(externalScriptHashes).toBe(expectedExternalScriptHashes)
     expect(inlineStyleHashes).toBe(expectedInlineStyleHashes)
     expect(externalStyleHashes).toBe(expectedExternalStyleHashes)
@@ -213,14 +226,14 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/not-ssg')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
     expect(metaTag).toBeNull()
     expect(csp).toBeUndefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 3) // + 1 External script + 2 links (style + icon)
+    await assertResourceIntegrity(body)
     expect(inlineScriptHashes).toBe(0)
     expect(externalScriptHashes).toBe(0)
     expect(inlineStyleHashes).toBe(0)
@@ -231,14 +244,14 @@ describe('[nuxt-security] SSG support of CSP', async () => {
     const res = await fetch('/no-meta-tag')
 
     const body = await res.text()
-    const { metaTag, csp, elementsWithIntegrity, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
+    const { metaTag, csp, inlineScriptHashes, externalScriptHashes, inlineStyleHashes, externalStyleHashes } = extractDataFromBody(body)
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(body).toBeDefined()
     expect(metaTag).toBeNull()
     expect(csp).toBeUndefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes)
+    await assertResourceIntegrity(body)
     expect(inlineScriptHashes).toBe(0)
     expect(externalScriptHashes).toBe(0)
     expect(inlineStyleHashes).toBe(0)

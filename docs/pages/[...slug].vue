@@ -1,28 +1,15 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'docs',
+  key: route => route.path,
 })
 const route = useRoute()
 
-const { data: page } = await useAsyncData(`docs-${route.path}`, () =>
-  queryContent(route.path).findOne(),
-)
-
-const { data: surround } = await useAsyncData(
-  `docs-${route.path}-surround`,
-  () => {
-    return queryContent()
-      .where({ _extension: 'md', navigation: { $ne: false } })
-      .findSurround(
-        route.path.endsWith('/') ? route.path.slice(0, -1) : route.path,
-      )
-  },
-  {
-    transform(surround) {
-      return surround.map(doc => (doc.navigation === false ? null : doc))
-    },
-  },
-)
+const { data: content } = await useFetch('/api/docs', {
+  query: computed(() => ({ path: route.path.replace(/\/$/, '') })),
+})
+const page = computed(() => content.value?.page)
+const surround = computed(() => content.value?.surround || [])
 
 useSeoMeta({
   titleTemplate: '%s - Nuxt Security',
@@ -33,13 +20,13 @@ useSeoMeta({
 })
 
 const headline = computed(() =>
-  page?.value ? findPageHeadline(page.value) : 'Nuxt Security Headline',
+  page?.value ? page.value.title : 'Nuxt Security Headline',
 )
 const communityLinks = computed(() => [
   {
     icon: 'i-ph-pen-duotone',
     label: 'Edit this page',
-    to: `https://github.com/Baroshem/nuxt-security/edit/main/docs/content/${page?.value?._file}`,
+    to: `https://github.com/Baroshem/nuxt-security/edit/main/docs/content/${page?.value?.stem}.md`,
     target: '_blank',
   },
   {
@@ -90,17 +77,17 @@ const communityLinks = computed(() => [
         v-if="surround?.length"
         class="my-8"
       >
-      <UDocsSurround :surround="surround" />
+      <UContentSurround :surround="surround" />
     </UPageBody>
 
     <template
       v-if="page?.body?.toc?.links?.length"
       #right
     >
-      <UDocsToc :links="page.body.toc.links">
+      <UContentToc :links="page.body.toc.links">
         <template #bottom>
           <div class="hidden !mt-6 lg:block space-y-6">
-            <UDivider
+            <USeparator
               v-if="page.body?.toc?.links?.length"
               dashed
             />
@@ -110,7 +97,7 @@ const communityLinks = computed(() => [
             />
           </div>
         </template>
-      </UDocsToc>
+      </UContentToc>
     </template>
   </UPage>
 </template>

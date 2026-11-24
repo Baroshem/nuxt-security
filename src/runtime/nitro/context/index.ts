@@ -1,5 +1,6 @@
 import type { NuxtSecurityRouteRules } from "~/src/types/module"
 import { createRouter, toRouteMatcher } from "radix3"
+import { extensionHeaders } from '../../../utils/extensions'
 import type { H3Event } from "h3"
 import { defuReplaceArray } from '../../../utils/merge'
 
@@ -21,11 +22,15 @@ export function resolveSecurityRules(event: H3Event): NuxtSecurityRouteRules {
     event.context.security = {}
   }
   if (!event.context.security.rules) {
-    const router = createRouter<NuxtSecurityRouteRules>({ routes: structuredClone(nitroAppSecurityOptions) })
+    const router = createRouter<NuxtSecurityRouteRules>({ routes: structuredClone({ ...nitroAppSecurityOptions, '/**': event.context.security.globalRules || nitroAppSecurityOptions['/**'] }) })
     const matcher = toRouteMatcher(router)
     const eventPathNoQuery = event.path.split('?')[0]
     const matches = eventPathNoQuery ? matcher.matchAll(eventPathNoQuery) : []
-    const rules: NuxtSecurityRouteRules = defuReplaceArray({}, ...matches.reverse())
+    const extension = extensionHeaders(eventPathNoQuery || '/', nitroAppSecurityOptions['/**']?.byFileExtension)
+    const ordered = matches.reverse()
+    // The global rule is last; extension defaults precede it, while explicit routes win. / 明確路由優先於副檔名及全域。
+    const globals = ordered.pop()
+    const rules: NuxtSecurityRouteRules = defuReplaceArray({}, ...ordered, extension ? { headers: extension } : {}, globals)
     event.context.security.rules = rules
   }
   return event.context.security.rules

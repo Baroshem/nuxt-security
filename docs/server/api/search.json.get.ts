@@ -1,5 +1,3 @@
-import { serverQueryContent } from '#content/server'
+import { queryCollectionSearchSections } from '@nuxt/content/server'
 
-export default eventHandler(async (event) => {
-  return serverQueryContent(event).where({ _type: 'markdown', navigation: { $ne: false } }).find()
-})
+export default defineEventHandler(event => queryCollectionSearchSections(event, 'docs'))

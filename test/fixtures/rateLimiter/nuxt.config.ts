@@ -5,10 +5,12 @@ export default defineNuxtConfig({
   security: {
     rateLimiter: {
       tokensPerInterval: 3,
-      interval: 300000
+      interval: 300000,
+      trustProxy: true
     }
   },
   routeRules: {
+    '/spoof': { security: { rateLimiter: { tokensPerInterval: 1, trustProxy: false } } },
     '/test': {
       security: {
         rateLimiter: {

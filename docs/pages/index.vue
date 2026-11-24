@@ -63,13 +63,13 @@ const items =
 <template>
   <section>
     <span class="gradient" />
-    <ULandingHero
+    <UPageHero
       orientation="horizontal"
       :ui="{ container: 'flex lg:gap-12' }"
     >
       <Illustration />
       <template #title>
-        <h1>More Secure <span class="text-primary-400">Nuxt Apps</span><br> by default</h1>
+        <h1>More Secure <span class="text-primary">Nuxt Apps</span><br> by default</h1>
       </template>
       <template #description>
         {{ seo.description }}
@@ -97,7 +97,7 @@ const items =
           <template #trailing>
             <UButton
               aria-label="Copy Code"
-              :color="copied ? 'green' : 'gray'"
+              :color="copied ? 'primary' : 'neutral'"
               variant="ghost"
               :padded="false"
               :icon="copied ? 'i-ph-check-square-duotone' : 'i-ph-copy-duotone'"
@@ -106,25 +106,25 @@ const items =
           </template>
         </UInput>
       </template>
-    </ULandingHero>
+    </UPageHero>
 
 
 
-    <ULandingSection style="padding-top: 0px">
+    <UPageSection style="padding-top: 0px">
       <template #title>
         Protect your app with <br> <span class="text-primary-400">no configuration</span>
       </template>
 
       <UPageGrid>
-        <ULandingCard
+        <UPageCard
           v-for="(item, index) of items"
           :key="index"
           v-bind="item"
         />
       </UPageGrid>
-    </ULandingSection>
+    </UPageSection>
 
-    <ULandingSection align="left">
+    <UPageSection align="left">
       <template #title>
         Discover how it helps ship<br><span class="text-primary-400">secure applications</span>
       </template>
@@ -154,7 +154,7 @@ const items =
           allowfullscreen
         />
       </div>
-    </ULandingSection>
+    </UPageSection>
   </section>
 </template>
 
@@ -172,11 +172,4 @@ const items =
   z-index: -1;
 }
 
-.prose {
-  @apply text-white;
-
-  :where(:deep(code)) {
-    @apply text-gray-200;
-  }
-}
 </style>

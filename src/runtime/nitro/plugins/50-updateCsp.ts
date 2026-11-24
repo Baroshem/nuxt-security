@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin, onPageHtml, onResponse } from '#nuxt-security/server'
 import { resolveSecurityRules } from '../context'
 import type { ContentSecurityPolicyValue } from '../../../types/headers'
 
@@ -9,23 +9,35 @@ import type { ContentSecurityPolicyValue } from '../../../types/headers'
  * 30-cspSsgHashes) are already available when the CSP directive is composed.
  */
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:response', (response, { event }) => {
+  onPageHtml(nitroApp, (event) => {
     const rules = resolveSecurityRules(event)
     if (rules.enabled && rules.headers) {
       const headers = rules.headers
 
-      if (headers.contentSecurityPolicy) {
-        const csp = headers.contentSecurityPolicy
+      for (const key of ['contentSecurityPolicy', 'contentSecurityPolicyReportOnly'] as const) {
+      if (headers[key]) {
+        const csp = headers[key]
         const nonce = event.context.security?.nonce
         const scriptHashes = event.context.security?.hashes?.script
         const styleHashes = event.context.security?.hashes?.style
-        headers.contentSecurityPolicy = updateCspVariables(csp, nonce, scriptHashes, styleHashes)
+        headers[key] = updateCspVariables(csp, nonce, scriptHashes, styleHashes)
+      }
       }
     }
   })
+  onResponse(nitroApp, (event, headers) => {
+    const nonce = event.context.security?.nonce
+    for (const name of ['content-security-policy', 'content-security-policy-report-only']) {
+      const value = headers.get(name)
+      if (typeof value === 'string' && value.includes('{{nonce}}')) {
+        headers.set(name, value.replace(/'nonce-\{\{nonce\}\}'/g, nonce ? `'nonce-${nonce}'` : ''))
+      }
+    }
+  })
+
 })
 
-function updateCspVariables(csp: ContentSecurityPolicyValue, nonce?: string, scriptHashes?: Set<string>, styleHashes?: Set<string>) {
+export function updateCspVariables(csp: ContentSecurityPolicyValue, nonce?: string, scriptHashes?: Set<string>, styleHashes?: Set<string>) {
   const generatedCsp = <ContentSecurityPolicyValue>Object.fromEntries(Object.entries(csp).map(([directive, value]) => {
     // Return boolean values unchanged
     if (typeof value === 'boolean') {

@@ -189,4 +189,10 @@ describe('[nuxt-security] Rate Limiter', async () => {
     expect(res4.status).toBe(200)
     expect(res4.statusText).toBe('OK')
   })
+  it('does not let direct clients bypass limits by spoofing forwarded IPs', async () => {
+    const first = await fetch('/spoof', { headers: { 'X-Forwarded-For': '198.51.100.1' } })
+    const second = await fetch('/spoof', { headers: { 'X-Forwarded-For': '198.51.100.2' } })
+    expect(first.status).toBe(200)
+    expect(second.status).toBe(429)
+  })
 })
