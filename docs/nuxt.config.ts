@@ -1,6 +1,9 @@
 export default defineNuxtConfig({
-  extends: '@nuxt/ui-pro',
+  content: { experimental: { sqliteConnector: 'native' } },
+  srcDir: '.',
+  css: ['~/assets/css/main.css'],
 
+  compatibilityDate: '2026-11-23',
   experimental: {
     // Need this otherwise vue-server-renderer not found
     externalVue: false
@@ -9,7 +12,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/content',
     '@nuxt/ui',
-    'nuxt-security',
+    '../src/module',
     '@vueuse/nuxt'
   ],
 
@@ -17,13 +20,6 @@ export default defineNuxtConfig({
     preference: 'dark',
   },
 
-  ui: {
-    icons: ['heroicons', 'simple-icons', 'ph'],
-  },
-
-  uiPro: {
-    license: 'oss'
-  },
 
   security: {
     strict: true,

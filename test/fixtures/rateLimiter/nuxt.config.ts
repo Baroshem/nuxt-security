@@ -5,14 +5,23 @@ export default defineNuxtConfig({
   security: {
     rateLimiter: {
       tokensPerInterval: 3,
-      interval: 300000
+      interval: 300000,
+      trustProxy: true
     }
   },
   routeRules: {
+    '/spoof': { security: { rateLimiter: { tokensPerInterval: 1, trustProxy: false } } },
     '/test': {
       security: {
         rateLimiter: {
           tokensPerInterval: 10,
+        }
+      }
+    },
+    '/wildcard/**': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 1,
         }
       }
     },
@@ -81,9 +90,26 @@ export default defineNuxtConfig({
     '/customIpHeader': {
       security: {
         rateLimiter: {
-          tokensPerInterval: 0,
+          tokensPerInterval: 1,
           interval: 300000,
           ipHeader: 'X-Custom-IP'
+        }
+      }
+    },
+    '/firstInterval': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 3,
+          interval: 300000,
+          headers: true
+        }
+      }
+    },
+    '/zeroTokens': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 0,
+          interval: 300000
         }
       }
     },

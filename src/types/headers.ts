@@ -248,6 +248,7 @@ export type PermissionsPolicyValue = {
 
 export type OptionKey =
   'contentSecurityPolicy' |
+  'contentSecurityPolicyReportOnly' |
   'crossOriginEmbedderPolicy' |
   'crossOriginOpenerPolicy' |
   'crossOriginResourcePolicy' |
@@ -284,6 +285,7 @@ export interface SecurityHeaders {
   crossOriginOpenerPolicy?: CrossOriginOpenerPolicyValue | false;
   crossOriginEmbedderPolicy?: CrossOriginEmbedderPolicyValue | false;
   contentSecurityPolicy?: ContentSecurityPolicyValue | false;
+  contentSecurityPolicyReportOnly?: ContentSecurityPolicyValue | false;
   originAgentCluster?: '?1' | false;
   referrerPolicy?: ReferrerPolicyValue | false;
   strictTransportSecurity?: StrictTransportSecurityValue | false;

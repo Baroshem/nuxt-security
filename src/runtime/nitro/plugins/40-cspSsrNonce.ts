@@ -1,49 +1,7 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin, getInheritedNonce } from '#nuxt-security/server'
 import { resolveSecurityRules } from '../context'
 import { generateRandomNonce } from '../../../utils/crypto'
-
-const LINK_RE = /<link\b([^>]*?>)/gi
-const NONCE_RE = /nonce="[^"]+"/i
-const SCRIPT_RE = /<script\b([^>]*?>)/gi
-const STYLE_RE = /<style\b([^>]*?>)/gi
-const QUOTE_MASK_RE = /"([^"\\]*(?:\\.[^"\\]*)*)"/g;
-const QUOTE_RESTORE_RE = /__QUOTE_PLACEHOLDER_(\d+)__/g
-
-function injectNonceToTags(element: string, nonce: string) {
-  // Skip non-string elements
-  if (typeof element !== 'string') {
-    return element;
-  }
-  const quotes: string[] = [];
-
-  // Mask attributes to avoid manipulating stringified elements
-  let maskedElement = element.replace(QUOTE_MASK_RE, (match) => {
-    quotes.push(match);
-    return `__QUOTE_PLACEHOLDER_${quotes.length - 1}__`;
-  });
-  // Add nonce to all link tags
-  maskedElement = maskedElement.replace(LINK_RE, (match, rest) => {
-    if (NONCE_RE.test(rest)) {
-      return match.replace(NONCE_RE, `nonce="${nonce}"`);
-    }
-    return `<link nonce="${nonce}"` + rest
-  })
-  // Add nonce to all script tags
-  maskedElement = maskedElement.replace(SCRIPT_RE, (match, rest) => {
-    return `<script nonce="${nonce}"` + rest
-  })
-  // Add nonce to all style tags
-  maskedElement = maskedElement.replace(STYLE_RE, (match, rest) => {
-    return `<style nonce="${nonce}"` + rest
-  })
-
-  // Restore the original quoted content.
-  const restoredHtml = maskedElement.replace(QUOTE_RESTORE_RE, (match, index) => {
-    return quotes[parseInt(index, 10)];
-  });
-
-  return restoredHtml;
-}
+import { injectNonceToTags } from '../../../utils/nonce'
 
 /**
  * This plugin generates a nonce for the current request and adds it to the HTML.
@@ -66,7 +24,8 @@ export default defineNitroPlugin((nitroApp) => {
 
     const rules = resolveSecurityRules(event)
     if (rules.enabled && rules.nonce && !import.meta.prerender) {
-      const nonce = generateRandomNonce()
+      const inherited = /(?:^|\/)__nuxt_island\//.test(event.path.split('?')[0]) ? getInheritedNonce(event) : undefined
+      const nonce = inherited || generateRandomNonce()
       event.context.security!.nonce = nonce
     }
   })
@@ -78,7 +37,7 @@ export default defineNitroPlugin((nitroApp) => {
     if (
       !rules.enabled ||
       !rules.headers ||
-      !rules.headers.contentSecurityPolicy ||
+      !(rules.headers.contentSecurityPolicy || rules.headers.contentSecurityPolicyReportOnly) ||
       !rules.nonce
     ) {
       return
@@ -99,4 +58,12 @@ export default defineNitroPlugin((nitroApp) => {
       )
     }
   })
+  // Streaming emits hydration/config tags after the shell. / 串流在 shell 之後才輸出 hydration/config。
+  nitroApp.hooks.hook('render:html:close', (html, { event }) => {
+    const rules = resolveSecurityRules(event)
+    const nonce = event.context.security?.nonce
+    if (!rules.enabled || !rules.nonce || !nonce) return
+    html.bodyAppend = html.bodyAppend.map(element => injectNonceToTags(element, nonce))
+  })
+
 })

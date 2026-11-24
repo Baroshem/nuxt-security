@@ -64,6 +64,32 @@ describe('[nuxt-security] Rate Limiter', async () => {
     expect(res6.statusText).toBe('OK')
   })
 
+  it ('should return 429 for the first request over the limit in the first interval', async () => {
+    const res1 = await fetch('/firstInterval')
+    const res2 = await fetch('/firstInterval')
+    const res3 = await fetch('/firstInterval')
+    const res4 = await fetch('/firstInterval')
+
+    expect(res1.status).toBe(200)
+    expect(res2.status).toBe(200)
+    expect(res3.status).toBe(200)
+    expect(res4.status).toBe(429)
+    expect(res4.statusText).toBe('Too Many Requests')
+
+    expect(res1.headers.get('x-ratelimit-limit')).toBe('3')
+    expect(res1.headers.get('x-ratelimit-remaining')).toBe('2')
+    expect(res2.headers.get('x-ratelimit-remaining')).toBe('1')
+    expect(res3.headers.get('x-ratelimit-remaining')).toBe('0')
+    expect(res4.headers.get('x-ratelimit-remaining')).toBe('0')
+  })
+
+  it ('should return 429 for the first request when tokensPerInterval is 0', async () => {
+    const res = await fetch('/zeroTokens')
+
+    expect(res.status).toBe(429)
+    expect(res.statusText).toBe('Too Many Requests')
+  })
+
   it ('should return 200 OK after multiple requests for a route with localhost ip whitelisted', async () => {
     const res1 = await fetch('/whitelistBase')
     await fetch('/whitelistBase')
@@ -147,5 +173,26 @@ describe('[nuxt-security] Rate Limiter', async () => {
     for (const result of retryResults) {
       expect(result).toMatchObject({ status: 'fulfilled', value: 429 })
     }
+  })
+
+  it ('should count the base path of a wildcard route with its sub-paths, not against the global limit', async () => {
+    const headers = { 'X-Forwarded-For': '203.0.113.1' }
+    const res1 = await fetch('/wildcard/abc', { headers })
+    await fetch('/wildcard', { headers })
+    const res3 = await fetch('/wildcard', { headers })
+
+    expect(res1.status).toBe(200)
+    expect(res3.status).toBe(429)
+    expect(res3.statusText).toBe('Too Many Requests')
+
+    const res4 = await fetch('/', { headers })
+    expect(res4.status).toBe(200)
+    expect(res4.statusText).toBe('OK')
+  })
+  it('does not let direct clients bypass limits by spoofing forwarded IPs', async () => {
+    const first = await fetch('/spoof', { headers: { 'X-Forwarded-For': '198.51.100.1' } })
+    const second = await fetch('/spoof', { headers: { 'X-Forwarded-For': '198.51.100.2' } })
+    expect(first.status).toBe(200)
+    expect(second.status).toBe(429)
   })
 })

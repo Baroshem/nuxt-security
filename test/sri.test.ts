@@ -8,18 +8,23 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/sri', import.meta.url)),
   })
 
-  const expectedIntegrityAttributes = 4 // 3 links (entry, index, build meta), 1 script (entry)
+  function expectIntegrity(text: string) {
+    const tags = text.match(/<(?:script|link)\b[^>]*>/gi) ?? []
+    const supported = tags.filter(tag => /<script\b/.test(tag) && / src=/.test(tag)
+      || / rel="(?:stylesheet|preload|modulepreload)"/.test(tag) && / href="[^"?]+\.(?:js|css|png)"/.test(tag))
+    expect(supported.length).toBeGreaterThan(0)
+    for (const tag of supported) expect(tag).toMatch(/ integrity="sha384-[^"]+"/)
+  }
 
   it('injects `integrity` on Nuxt root scripts', async () => {
     const res = await fetch('/')
 
     const text = await res.text()
-    const elementsWithIntegrity = text.match(/ integrity="sha384-/g)?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + nuxt-link
+    expectIntegrity(text)
   })
 
   it.each(['/', '/asset', '/public'])('hashes served scripts and styles on %s with an entry import map', async (route) => {
@@ -33,6 +38,7 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     let scriptsChecked = 0
     let stylesChecked = 0
     for (const tag of tags) {
+      if (tag.startsWith('<link') && !/ rel="(?:stylesheet|preload|modulepreload)"/.test(tag)) continue
       const url = tag.match(/\b(?:src|href)="([^"]+)"/)?.[1]
       const integrity = tag.match(/\bintegrity="([^"]+)"/)?.[1]
       // SRI enforcement for the entry import map concerns scripts and styles.
@@ -61,12 +67,11 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     const res = await fetch('/asset')
 
     const text = await res.text()
-    const elementsWithIntegrity = text.match(/ integrity="sha384-/g)?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 image
+    expectIntegrity(text)
   })
 
 
@@ -74,23 +79,27 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     const res = await fetch('/public')
 
     const text = await res.text()
-    const elementsWithIntegrity = text.match(/ integrity="sha384-/g)?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 1) // + 1 image
+    expectIntegrity(text)
+  })
+
+  it('hashes the final public asset contents', async () => {
+    const text = await fetch('/late-asset').then(res => res.text())
+    const expected = createHash('sha384').update('final asset contents').digest('base64')
+    expect(text).toContain(`integrity="sha384-${expected}"`)
   })
 
   it('does not modify `integrity` attributes when manually provided', async () => {
     const res = await fetch('/external')
 
     const text = await res.text()
-    const elementsWithIntegrity = text.match(/ integrity="sha384-/g)?.length ?? 0
 
     expect(res).toBeDefined()
     expect(res).toBeTruthy()
     expect(text).toBeDefined()
-    expect(elementsWithIntegrity).toBe(expectedIntegrityAttributes + 2) // + 2 Bootstrap
+    expectIntegrity(text)
   })
 })

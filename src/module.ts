@@ -1,12 +1,16 @@
-import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports, addTypeTemplate, hasNuxtModule } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports, addTypeTemplate, hasNuxtModule, importModule, resolveServerVariant, addPlugin, addDevServerHandler, addTemplate } from '@nuxt/kit'
+import { normalizeCloudflareHeaders } from './utils/cloudflareHeaders'
+import { fileURLToPath } from 'node:url'
 import { existsSync } from 'node:fs'
-import { readFile, readdir } from 'node:fs/promises'
-import { join, isAbsolute } from 'pathe'
+import { readFile, readdir, writeFile } from 'node:fs/promises'
+import { join, isAbsolute, relative } from 'pathe'
 import { defu } from 'defu'
 import viteRemove from 'unplugin-remove/vite'
-import { getHeadersApplicableToAllResources } from './utils/headers'
+import { getHeadersApplicableToAllResources, getNameFromKey, getKeyFromName, headerStringFromObject } from './utils/headers'
 import { generateHash } from './utils/crypto'
 import { defuReplaceArray } from './utils/merge'
+import { extensionHeaders } from './utils/extensions'
+import { securitySummary } from './utils/inspector'
 import { defaultSecurityConfig } from './defaultConfig'
 import type { Nuxt } from '@nuxt/schema'
 import type { Nitro } from 'nitropack'
@@ -25,16 +29,19 @@ export default defineNuxtModule<ModuleOptions>({
     // Auto-disable security middleware for @nuxt/hints hydration route only if hints module is present
     if (hasNuxtModule('@nuxt/hints')) {
       nuxt.options.routeRules = nuxt.options.routeRules || {}
-      nuxt.options.routeRules['/__nuxt_hints/**'] = {
+      nuxt.options.routeRules['/__nuxt_hints/**'] = defuReplaceArray(nuxt.options.routeRules['/__nuxt_hints/**'], {
         security: {
           rateLimiter: false,
           requestSizeLimiter: false,
           xssValidator: false,
           corsHandler: false,
         }
-      }
+      })
     }
     const resolver = createResolver(import.meta.url)
+    const serverApi = resolveServerVariant({ nitro2: 'nitro2', nitro3: 'nitro3' } as const) || 'nitro2'
+    nuxt.options.alias ||= {}
+    nuxt.options.alias['#nuxt-security/server'] = resolver.resolve(`./runtime/nitro/adapters/${serverApi}`)
 
     nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
 
@@ -66,9 +73,17 @@ export default defineNuxtModule<ModuleOptions>({
 
     // At this point we have all security options merged into runtimeConfig
     const securityOptions = nuxt.options.runtimeConfig.security
+    nuxt.options.alias['#nuxt-security/redis'] = resolver.resolve(securityOptions.rateLimiter && securityOptions.rateLimiter.redis ? './runtime/nitro/context/rateLimit' : './runtime/nitro/context/rateLimit.disabled')
 
     // Disable module when `enabled` is set to `false`
     if (!securityOptions.enabled) { return }
+
+    if (nuxt.options.dev && securityOptions.devtools !== false) {
+      const summary = securitySummary(securityOptions, nuxt.options.routeRules || {})
+      const content = JSON.stringify(summary, null, 2).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      addDevServerHandler({ route: '/__nuxt_security', handler: () => new Response('<!doctype html><html lang="en"><title>Nuxt Security</title><pre>' + content + '</pre></html>', { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } }) })
+      nuxt.hook('devtools:customTabs', tabs => { tabs.push({ name: 'nuxt-security', title: 'Security', icon: 'i-ph-shield', view: { type: 'iframe', src: '/__nuxt_security' } }) })
+    }
 
     // Register transform plugin to remove loggers
     if (securityOptions.removeLoggers) {
@@ -88,6 +103,11 @@ export default defineNuxtModule<ModuleOptions>({
             },
             nuxt.options.vite.build
           )
+        } else if (Number((await importModule<{ version: string }>('vite', { paths: nuxt.options.modulesDir })).version.split('.')[0]) >= 8) {
+          // Vite 8 uses Oxc minification. / Vite 8 改用 Oxc 壓縮設定。
+          nuxt.options.vite.build = defuReplaceArray({
+            rolldownOptions: { output: { minify: { compress: { dropConsole: true, dropDebugger: true } } } }
+          }, nuxt.options.vite.build)
         } else {
           // In case of esbuild, set the drop option
           nuxt.options.vite.esbuild = defu(
@@ -126,6 +146,20 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
+    // Normalize legacy headers before Nitro stringifies false or object values. / 在 Nitro 字串化前正規化舊格式標頭。
+    nuxt.hook('nitro:config', config => {
+      for (const rule of Object.values(config.routeRules || {})) {
+        if (!rule?.headers) continue
+        for (const [name, value] of Object.entries(rule.headers)) {
+          const key = getKeyFromName(name)
+          if (key && (value === false || typeof value === 'object')) {
+            rule.security = defuReplaceArray(rule.security, { headers: { [key]: value } })
+            rule.headers[name] = headerStringFromObject(key, value)
+          }
+        }
+      }
+    })
+
     // Register nitro plugin to manage security rules at the level of each route
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/00-routeRules'))
 
@@ -134,6 +168,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register nitro plugin to enable CSP Hashes for SSG
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/30-cspSsgHashes'))
+
+    addPlugin({ src: resolver.resolve('./runtime/plugins/nonce.server'), mode: 'server' })
 
     // Nitro plugin to enable CSP Nonce for SSR
     addServerPlugin(resolver.resolve('./runtime/nitro/plugins/40-cspSsrNonce'))
@@ -158,35 +194,40 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register request size limiter middleware
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/requestSizeLimiter')
     })
 
     // Register CORS middleware
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/corsHandler')
     })
 
     // Register allowed methods restricter middleware
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/allowedMethodsRestricter')
     })
 
     // Register rate limiter middleware
     registerRateLimiterStorage(nuxt, securityOptions)
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/rateLimiter')
     })
 
     // Register XSS validator middleware
     addServerHandler({
+      middleware: true,
       handler: resolver.resolve('./runtime/server/middleware/xssValidator')
     })
 
     // Register basicAuth middleware that is disabled by default
-    const basicAuthConfig = nuxt.options.runtimeConfig.private.basicAuth
-    if (basicAuthConfig && (basicAuthConfig.enabled || (basicAuthConfig as any)?.value?.enabled)) {
+    {
       addServerHandler({
-        route: (basicAuthConfig as any).route || '',
+      middleware: true,
+        route: '',
         handler: resolver.resolve('./runtime/server/middleware/basicAuth')
       })
     }
@@ -198,20 +239,53 @@ export default defineNuxtModule<ModuleOptions>({
       } else {
         await installModule('nuxt-csurf')
       }
+      if (serverApi === 'nitro3') {
+        // Generate portable copies before Nuxt scans imports for its compatibility layer.
+        // 在 Nuxt 掃描 compatibility imports 前產生明確使用原生 adapter 的副本。
+        const csurf = createResolver(import.meta.resolve('nuxt-csurf'))
+        const replacements = new Map<string, string>()
+        for (const file of ['utils.js', 'server/helpers.js', 'server/middleware/csrf.js', 'server/plugin/csrf.js']) {
+          const source = csurf.resolve(`./runtime/${file}`)
+          const template = addTemplate({ filename: `nuxt-security/csurf/${file}`, write: true, getContents: async() => (await readFile(source, 'utf8')).replace(/from ["']#imports["']/g, "from '#nuxt-security/server'") })
+          replacements.set(source, template.dst)
+          replacements.set(source.replace(/\.js$/, ''), template.dst)
+        }
+        for (const handler of nuxt.options.serverHandlers) if (replacements.has(handler.handler)) {
+          handler.handler = replacements.get(handler.handler)!
+          handler.middleware = true
+          handler.route ||= ''
+        }
+        const plugins = Reflect.get(nuxt.options, '_serverPlugins') as { plugin: string }[] | undefined
+        for (const plugin of plugins || []) if (replacements.has(plugin.plugin)) plugin.plugin = replacements.get(plugin.plugin)!
+        nuxt.options.nitro.plugins = nuxt.options.nitro.plugins?.map(plugin => replacements.get(plugin) || plugin)
+      }
     }
+
+    addServerHandler({ middleware: true, handler: resolver.resolve('./runtime/server/middleware/dynamicPrerender') })
 
     // Import composables
     addImportsDir(resolver.resolve('./runtime/composables'))
     addServerImports([{ name: 'defuReplaceArray', from: resolver.resolve('./utils/merge')}])
 
-    // Record SRI Hashes in the Virtual File System at build time
-    let sriHashes: Record<string, string> = {}
+    // Hash lazily so public assets finalized in `rollup:before` are included.
     nuxt.options.nitro.virtual = defu(
-      { '#sri-hashes': () => `export default ${JSON.stringify(sriHashes)}` },
+      { '#sri-hashes': async () => `export default ${JSON.stringify(await hashBundledAssets(useNitro()))}` },
       nuxt.options.nitro.virtual
     )
-    nuxt.hook('nitro:build:before', async(nitro) => {
-      sriHashes = await hashBundledAssets(nitro)
+
+    nuxt.hook('nitro:build:before', async nitro => {
+      if (!securityOptions.byFileExtension) return
+      for (const asset of nitro.options.publicAssets) {
+        if (!existsSync(asset.dir)) continue
+        for (const entry of await readdir(asset.dir, { recursive: true, withFileTypes: true })) {
+          if (!entry.isFile()) continue
+          const path = join('/', asset.baseURL || '', relative(asset.dir, join(entry.parentPath, entry.name)))
+          const headers = extensionHeaders(path, securityOptions.byFileExtension)
+          if (!headers) continue
+          const values = Object.fromEntries(Object.entries(headers).filter(([, value]) => value !== false).map(([key, value]) => [getNameFromKey(key as any), headerStringFromObject(key as any, value)]))
+          nitro.options.routeRules[path] = defuReplaceArray(nitro.options.routeRules[path], { headers: values })
+        }
+      }
     })
 
     addTypeTemplate({
@@ -313,8 +387,20 @@ export {}
       })
     })
 
+    nuxt.hook('nitro:init', nitro => {
+      if (!securityOptions.ssg || !securityOptions.ssg.dynamicNonce) return
+      if (['static', 'github-pages', 'cloudflare-pages-static'].includes(nitro.options.preset)) throw new Error('dynamicNonce requires a server runtime / dynamicNonce 需要 server runtime')
+      nitro.hooks.hook('prerender:generate', route => {
+        if (route.contentType?.includes('text/html') && route.contents) route.skip = true
+      })
+    })
+
     // Register init hook to add pre-rendered headers to responses
     nuxt.hook('nitro:init', nitro => {
+      if (nitro.options.preset.includes('cloudflare')) nitro.hooks.hook('compiled', async() => {
+        const path = join(nitro.options.output.publicDir, '_headers')
+        if (existsSync(path)) await writeFile(path, normalizeCloudflareHeaders(await readFile(path, 'utf8')))
+      })
       nitro.hooks.hook('prerender:done', async() => {
         // Add the prenredered headers to the Nitro server assets
         nitro.options.serverAssets.push({
@@ -329,12 +415,11 @@ export {}
           ? JSON.parse(await readFile(prerenderedHeadersFile, 'utf-8'))
           : {}
 
-        if (securityOptions.ssg && securityOptions.ssg.exportToPresets) {
+        if (securityOptions.ssg && securityOptions.ssg.exportToPresets && !securityOptions.ssg.dynamicNonce) {
           const prerenderedHeadersRouteRules = Object.fromEntries(Object.entries(prerenderedHeaders).map(([route, headers]) => [route, { headers }]))
-          const n = useNitro()
-          n.options.routeRules = defuReplaceArray(
+          nitro.options.routeRules = defuReplaceArray(
             prerenderedHeadersRouteRules,
-            n.options.routeRules
+            nitro.options.routeRules
           )
         }
 
@@ -374,6 +459,9 @@ function registerRateLimiterStorage(nuxt: Nuxt, securityOptions: ModuleOptions) 
  */
 function reorderNitroPlugins(nuxt: Nuxt) {
   nuxt.hook('nitro:init', nitro => {
+    for (const mount of Object.values(nitro.options.storage || {})) {
+      if (typeof mount.driver === 'string' && mount.driver.startsWith('file://')) nitro.options.alias[mount.driver] = fileURLToPath(mount.driver).split(String.fromCharCode(92)).join('/')
+    }
     const resolver = createResolver(import.meta.url)
     const securityPluginsPrefix = resolver.resolve('./runtime/nitro/plugins')
 
@@ -395,6 +483,12 @@ function reorderNitroPlugins(nuxt: Nuxt) {
     })
     // SSG: Reorder plugins in Nitro hook
     nitro.hooks.hook('prerender:config', config => {
+      for (const mount of Object.values(config.storage || {})) {
+        if (typeof mount.driver === 'string' && mount.driver.startsWith('file://')) {
+          config.alias ||= {}
+          config.alias[mount.driver] = fileURLToPath(mount.driver).split(String.fromCharCode(92)).join('/')
+        }
+      }
       config.plugins?.sort((a, b) => {
         if (a?.startsWith(securityPluginsPrefix)) {
           if (b?.startsWith(securityPluginsPrefix)) {
@@ -448,7 +542,11 @@ async function hashBundledAssets(nitro: Nitro) {
             // If the cdnURL option was set, the url will be in the form https://...
             const relativePath = isAbsolute(fullPath) ? fullPath.slice(1) : fullPath
             const abdsoluteCdnUrl = appCdnUrl.endsWith('/') ? appCdnUrl : appCdnUrl + '/'
-            url = new URL(relativePath, abdsoluteCdnUrl).href
+            try {
+              url = new URL(relativePath, abdsoluteCdnUrl).href
+            } catch {
+              url = join(appCdnUrl, relativePath)
+            }
           } else {
             // If not, the url will be in a relative form: /_nuxt/...
             url = join('/', appBaseUrl, fullPath)

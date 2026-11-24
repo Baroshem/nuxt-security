@@ -1,5 +1,4 @@
-import { useRuntimeConfig } from 'nitropack/runtime'
-import { createError, defineEventHandler, setHeader } from 'h3'
+import { createError, defineEventHandler, getRequestHeader, setHeader, useRuntimeConfig } from '#nuxt-security/server'
 // @ts-ignore : the basic-auth module does not export types
 import getCredentials from 'basic-auth'
 
@@ -18,23 +17,26 @@ export type BasicAuth = {
 }
 
 export default defineEventHandler((event) => {
-  const credentials = getCredentials(event.node.req)
+  const credentials = getCredentials.parse(getRequestHeader(event, 'authorization'))
   const securityConfig = useRuntimeConfig(event).private
   const basicAuthConfig = securityConfig.basicAuth
 
-  if (!basicAuthConfig) {
+  if (!basicAuthConfig || !basicAuthConfig.enabled) {
     return
   }
 
 
   // Secure default: no excluded paths by default
   // All routes require auth unless user sets exclude/include explicitly
+  const path = event.path.split('?')[0]
+  const matchesPath = (prefix: string) => prefix === '/' || path === prefix || path.startsWith(prefix.replace(/\/$/, '') + '/')
+  if (basicAuthConfig.route && !matchesPath(basicAuthConfig.route)) return
   const excludePaths = basicAuthConfig?.exclude || []
-  const isPathExcluded = excludePaths.some(el => event.path?.startsWith(el))
+  const isPathExcluded = excludePaths.some(el => matchesPath(el))
 
   // Check for inclusion paths
   const includePaths = basicAuthConfig?.include || []
-  const isPathIncluded = includePaths.some(el => event.path?.startsWith(el))
+  const isPathIncluded = includePaths.some(el => matchesPath(el))
 
   if (isPathExcluded && !isPathIncluded) {
     return

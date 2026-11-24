@@ -11,6 +11,9 @@ export type RequestSizeLimiter = {
 };
 
 export type RateLimiter = {
+  /** Redis atomic counter shared by all instances. / 所有 instance 共用的 Redis 原子計數器。 */
+  redis?: { url: string; prefix?: string };
+
   tokensPerInterval?: number;
   interval?: string | number;
   driver?: {
@@ -22,6 +25,8 @@ export type RateLimiter = {
   whiteList?: string[];
   throwError?: boolean;
   ipHeader?: string;
+  /** Trust forwarded IPs only behind a proxy that overwrites them. / 僅在可信代理覆寫標頭時啟用。 */
+  trustProxy?: boolean;
 };
 
 export type XssValidator = {
@@ -38,6 +43,7 @@ export type XssValidator = {
 };
 
 export type BasicAuth = {
+  route?: string;
   exclude?: string[];
   include?: string[];
   name: string;

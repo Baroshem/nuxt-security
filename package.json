@@ -49,32 +49,44 @@
     "release": "yarn lint && yarn test && yarn prepack && changelogen --release && npm publish && git push --follow-tags",
     "test": "vitest run --silent",
     "test:watch": "vitest watch",
+    "test:compat": "vitest run --config vitest.compat.config.ts",
     "stackblitz": "cd .stackblitz && yarn && yarn dev"
   },
   "packageManager": "yarn@1.22.19",
   "dependencies": {
-    "@nuxt/kit": "^4.2.1",
+    "@nuxt/kit": "^4.6.4",
     "basic-auth": "^2.0.1",
-    "defu": "^6.1.4",
+    "defu": "^6.1.7",
     "lru-cache": "^11.2.6",
     "nuxt-csurf": "^1.6.5",
     "pathe": "^2.0.3",
     "radix3": "^1.1.2",
     "unplugin-remove": "^1.0.3",
-    "xss": "^1.0.15"
+    "xss": "^1.0.15",
+    "redis": "^5.10.0",
+    "@opentelemetry/api": "^1.9.0"
   },
   "devDependencies": {
+    "@nuxt/cli": "^3.26.4",
     "@nuxt/eslint-config": "^0.3.10",
-    "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.2.1",
-    "@nuxt/test-utils": "^3.20.1",
+    "@nuxt/module-builder": "^1.0.4",
+    "@nuxt/schema": "^4.6.4",
+    "@nuxt/test-utils": "^3.23.0",
     "@types/node": "^24.10.1",
     "changelogen": "^0.6.2",
     "eslint": "^8.57.0",
     "nuxi": "^3.30.0",
-    "nuxt": "^4.2.1",
+    "nuxt": "^4.6.4",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.8"
+    "vitest": "^4.1.12",
+    "vite": "^8.3.8",
+    "rolldown": "~1.2.19",
+    "vue": "^3.5.46",
+    "@vue/compiler-core": "^3.5.46",
+    "esbuild": "^0.28.2",
+    "nitro": "3.0.261103-rc",
+    "miniflare": "4.20260730.0",
+    "@playwright/test": "^1.56.1"
   },
   "stackblitz": {
     "installDependencies": false,
@@ -92,10 +104,30 @@
       "./src/utils/crypto.ts",
       "./src/utils/headers.ts",
       "./src/utils/merge.ts",
+      "./src/utils/nonce.ts",
+      "./src/utils/xss.ts",
+      "./src/utils/prerenderedHeaders.ts",
+      "./src/utils/extensions.ts",
+      "./src/utils/limitedBody.ts",
+      "./src/utils/rateLimit.ts",
+      "./src/utils/runtimeOverrides.ts",
       "./src/defaultConfig.ts"
     ],
     "externals": [
       "unstorage"
     ]
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": { "minimatch": "^11.0.5" },
+    "eslint-plugin-import-x": { "minimatch": "^11.0.5" },
+    "readdir-glob": { "minimatch": "^11.0.5" },
+    "miniflare": { "undici": "^7.30.1", "sharp": "^0.35.5" }
+  },
+  "resolutions": {
+    "**/@typescript-eslint/typescript-estree/minimatch": "^11.0.5",
+    "**/eslint-plugin-import-x/minimatch": "^11.0.5",
+    "**/readdir-glob/minimatch": "^11.0.5",
+    "**/miniflare/undici": "^7.30.1",
+    "**/miniflare/sharp": "^0.35.5"
   }
 }

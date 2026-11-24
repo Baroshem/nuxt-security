@@ -9,6 +9,7 @@ import type {
 
 const KEYS_TO_NAMES: Record<OptionKey, HeaderName> = {
   contentSecurityPolicy: 'Content-Security-Policy',
+  contentSecurityPolicyReportOnly: 'Content-Security-Policy-Report-Only',
   crossOriginEmbedderPolicy: 'Cross-Origin-Embedder-Policy',
   crossOriginOpenerPolicy: 'Cross-Origin-Opener-Policy',
   crossOriginResourcePolicy: 'Cross-Origin-Resource-Policy',
@@ -53,7 +54,7 @@ export function headerStringFromObject(optionKey: OptionKey, optionValue: Exclud
     return ''
   }
   // Detect if we are in one of the three object cases and stringify them
-  if (optionKey === 'contentSecurityPolicy') {
+  if ((optionKey === 'contentSecurityPolicy' || optionKey === 'contentSecurityPolicyReportOnly')) {
     const policies = optionValue as ContentSecurityPolicyValue
     return Object.entries(policies)
       .filter(([, value]) => value !== false)
@@ -107,7 +108,7 @@ export function headerObjectFromString(optionKey: OptionKey, headerValue: string
     return false
   }
   // Detect if we are in one of the three cases for object format, and objectify them
-  if (optionKey === 'contentSecurityPolicy') {
+  if ((optionKey === 'contentSecurityPolicy' || optionKey === 'contentSecurityPolicyReportOnly')) {
     const directives = headerValue.split(';').map(directive => directive.trim()).filter(directive => directive)
     const objectForm = {} as ContentSecurityPolicyValue
     for (const directive of directives) {
@@ -228,7 +229,7 @@ export function backwardsCompatibleSecurity(securityHeaders?: SecurityHeaders | 
 
   Object.entries(securityHeaders).forEach(([key, value]) => {
     const optionKey = key as OptionKey
-    if ((optionKey === 'contentSecurityPolicy' || optionKey === 'permissionsPolicy' || optionKey === 'strictTransportSecurity') && (typeof value === 'string')) {
+    if (((optionKey === 'contentSecurityPolicy' || optionKey === 'contentSecurityPolicyReportOnly') || optionKey === 'permissionsPolicy' || optionKey === 'strictTransportSecurity') && (typeof value === 'string')) {
       // Altough this does not make sense in post-rc1 typescript definitions
       // It was possible before rc1 though, so let's ensure backwards compatibility here
       const objectValue: any = headerObjectFromString(optionKey, value)

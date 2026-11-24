@@ -1,5 +1,7 @@
 # Dependencies
 node_modules
+.data
+.vercel
 
 # Logs
 *.log*
@@ -19,6 +21,7 @@ dist
 # Nuxt
 .nuxt
 .output
+.output-*
 .vercel_build_output
 .build-*
 .env

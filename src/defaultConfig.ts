@@ -57,6 +57,7 @@ export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
       },
       whiteList: undefined,
       ipHeader: undefined,
+      trustProxy: false,
       ...defaultThrowErrorValue
     },
     xssValidator: {
@@ -65,7 +66,7 @@ export const defaultSecurityConfig = (serverlUrl: string, strict: boolean) => {
     },
     corsHandler: {
       // Options by CORS middleware for Express https://github.com/expressjs/cors#configuration-options
-      origin: serverlUrl,
+      origin: serverlUrl || [],
       methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
       preflight: {
         statusCode: 204
