@@ -1,7 +1,7 @@
 import { defineNuxtModule, addServerHandler, installModule, addVitePlugin, addServerPlugin, createResolver, addImportsDir, useNitro, addServerImports, addTypeTemplate, hasNuxtModule } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { readFile, readdir } from 'node:fs/promises'
-import { join, isAbsolute } from 'pathe'
+import { join, isAbsolute, relative } from 'pathe'
 import { defu } from 'defu'
 import viteRemove from 'unplugin-remove/vite'
 import { getHeadersApplicableToAllResources } from './utils/headers'
@@ -428,21 +428,14 @@ async function hashBundledAssets(nitro: Nitro) {
     const { dir, baseURL = '' } = publicAsset
 
     if (existsSync(dir)) {
-      // Node 16 compatibility maintained
-      // Node 18.17+ supports recursive option on readdir
-      // const entries = await readdir(dir, { withFileTypes: true, recursive: true })
-      const entries = await readdir(dir, { withFileTypes: true })
+      const entries = await readdir(dir, { withFileTypes: true, recursive: true })
       for (const entry of entries) {
         if (entry.isFile()) {
-
-          // Node 16 compatibility maintained
-          // Node 18.17+ supports entry.path on DirEnt
-          // const fullPath = join(entry.path, entry.name)
-          const path = join(dir, entry.name)
+          const path = join(entry.parentPath, entry.name)
           const content = await readFile(path)
           const hash = await generateHash(content, hashAlgorithm)
           // construct the url as it will appear in the head template
-          const fullPath = join(baseURL, entry.name)
+          const fullPath = join(baseURL, relative(dir, path))
           let url: string
           if (appCdnUrl) {
             // If the cdnURL option was set, the url will be in the form https://...

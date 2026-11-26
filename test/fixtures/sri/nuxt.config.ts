@@ -7,7 +7,10 @@ export default defineNuxtConfig({
   },
   vite: {
     build: {
-      target: 'esnext' // ensure the entry import map is used by this fixture
+      target: 'esnext', // ensure the entry import map is used by this fixture
+      rollupOptions: {
+        output: { entryFileNames: '_nuxt/nested/[name].[hash].js' }
+      }
     }
   },
 
