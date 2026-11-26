@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin, useRuntimeConfig } from 'nitropack/runtime'
 //@ts-expect-error : we are importing from the virtual file system
 import sriHashes from '#sri-hashes'
 import { resolveSecurityRules } from '../context'
@@ -18,6 +18,13 @@ export default defineNitroPlugin((nitroApp) => {
       return
     }
 
+    const relativeBase = import.meta.prerender && useRuntimeConfig(event).app.baseURL === './'
+
+    // Relative static output uses './' for the same assets indexed from '/'.
+    function getIntegrity(url: string): string | undefined {
+      return sriHashes[url] ?? (relativeBase && url.startsWith('./') ? sriHashes[url.slice(1)] : undefined)
+    }
+
     // Scan all relevant sections of the NuxtRenderHtmlContext
     // Note: integrity can only be set on scripts and on links with rel preload, modulepreload and stylesheet
     // However the SRI standard provides that other elements may be added to that list in the future
@@ -30,7 +37,7 @@ export default defineNitroPlugin((nitroApp) => {
         }
 
         element = element.replace(SCRIPT_RE, (match, rest: string, src: string) => {
-          const hash = sriHashes[src]
+          const hash = getIntegrity(src)
           if (hash) {
             const integrityScript = `<script integrity="${hash}"${rest}></script>`
             return integrityScript
@@ -40,7 +47,7 @@ export default defineNitroPlugin((nitroApp) => {
         })
 
         element = element.replace(LINK_RE, (match, rest: string, href: string) => {
-          const hash = sriHashes[href]
+          const hash = getIntegrity(href)
           if (hash) {
             const integrityLink = `<link integrity="${hash}"${rest}>`
             return integrityLink
