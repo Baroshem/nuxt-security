@@ -27,7 +27,7 @@ describe('[nuxt-security] Subresource Integrity', async () => {
     const text = await res.text()
     const importMap = text.match(/<script[^>]*type="importmap"[^>]*>([\s\S]*?)<\/script>/)
     expect(importMap).not.toBeNull()
-    expect(JSON.parse(importMap![1]).imports['#entry']).toBeTruthy()
+    expect(JSON.parse(importMap![1]).imports['#entry']).toMatch(/^\/_nuxt\/nested\/[^/]+\.js$/)
 
     const tags = text.match(/<(?:script|link)\b[^>]*>/g) ?? []
     let scriptsChecked = 0
